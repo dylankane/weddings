@@ -1,0 +1,51 @@
+﻿{% extends "admin/base/layout.njk" %}
+
+{% block content %}
+  <p><a href="/admin/settings?tab=delivery">← Settings / Delivery</a></p>
+  <h1>New Delivery Zone</h1>
+
+  <form method="POST" action="/admin/rental/delivery-zones/create">
+    <div>
+      <label>Zone Name *</label>
+      <input type="text" name="name" required>
+    </div>
+    <div>
+      <label>Description</label>
+      <textarea name="description"></textarea>
+    </div>
+    <div>
+      <label>Zone Type *</label>
+      <select name="zoneType" required>
+        <option value="NAMED_REGION">Named Region</option>
+        <option value="RADIUS">Radius from Business</option>
+      </select>
+    </div>
+    <div>
+      <label>Price (€) — leave blank if free</label>
+      <input type="number" step="0.01" name="price">
+    </div>
+    <div>
+      <label>Enquire Only (no price shown)</label>
+      <input type="checkbox" name="isEnquireOnly">
+    </div>
+    <div>
+      <label>Display Order</label>
+      <input type="number" name="displayOrder" value="0">
+    </div>
+    <div>
+      <label>Centre Latitude (radius zones only)</label>
+      <input type="number" step="any" name="centerLat">
+    </div>
+    <div>
+      <label>Centre Longitude (radius zones only)</label>
+      <input type="number" step="any" name="centerLng">
+    </div>
+    <div>
+      <label>Radius (km) (radius zones only)</label>
+      <input type="number" step="0.1" name="radiusKm">
+    </div>
+    <button type="submit">Create Zone</button>
+    <a href="/admin/settings?tab=delivery">Cancel</a>
+  </form>
+{% endblock %}
+

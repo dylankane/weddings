@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>New Enquiry</title>
+</head>
+<body style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; color: #333;">
+  <h2>New Enquiry Received</h2>
+
+  <p><strong>From:</strong> {{ customer.name }} ({{ customer.email }}{% if customer.phone %}, {{ customer.phone }}{% endif %})</p>
+
+  {% if enquiry.hireStartDate %}
+    <p><strong>Dates:</strong> {{ enquiry.hireStartDate | dateFormat('short') }}{% if enquiry.hireEndDate %} – {{ enquiry.hireEndDate | dateFormat('short') }}{% endif %}</p>
+  {% endif %}
+
+  {% if enquiry.venueName %}
+    <p><strong>Venue:</strong> {{ enquiry.venueName }}{% if enquiry.venueAddress %}, {{ enquiry.venueAddress }}{% endif %}{% if enquiry.venueEircode %} {{ enquiry.venueEircode }}{% endif %}</p>
+  {% endif %}
+
+  {% if enquiry.notes %}
+    <p><strong>Notes:</strong> {{ enquiry.notes }}</p>
+  {% endif %}
+
+  <p><a href="{{ adminUrl }}" style="background: #333; color: #fff; padding: 10px 20px; text-decoration: none; display: inline-block; border-radius: 4px;">View Enquiry in Admin</a></p>
+</body>
+</html>

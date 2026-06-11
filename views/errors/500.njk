@@ -1,0 +1,20 @@
+{% extends "public/layout.njk" %}
+
+{% block content %}
+  <div class="error-wrap">
+    <div class="error-inner">
+      <span class="error-code" aria-hidden="true">500</span>
+      <h1 class="error-title">Something went wrong</h1>
+      <p class="error-body">An unexpected error occurred. Please try again, or get in touch if the problem continues.</p>
+      {% if message %}
+        <div class="alert alert-error" style="text-align: left; margin-bottom: var(--s8);">
+          <p>{{ message }}</p>
+        </div>
+      {% endif %}
+      <div class="cta-group">
+        <a href="/" class="btn btn-dark btn-lg">Back to Home</a>
+        <a href="/enquiry" class="btn btn-outline btn-lg">Contact Us</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}

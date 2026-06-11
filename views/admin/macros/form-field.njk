@@ -1,0 +1,25 @@
+{% macro formField(label, name, type, value, required, error, hint, options) %}
+  <div>
+    <label for="{{ name }}">{{ label }}{% if required %} *{% endif %}</label>
+    {% if hint %}<p>{{ hint }}</p>{% endif %}
+
+    {% if type == 'textarea' %}
+      <textarea id="{{ name }}" name="{{ name }}" {% if required %}required{% endif %}>{{ value }}</textarea>
+
+    {% elif type == 'select' %}
+      <select id="{{ name }}" name="{{ name }}" {% if required %}required{% endif %}>
+        {% for opt in options %}
+          <option value="{{ opt.value }}" {% if opt.value == value %}selected{% endif %}>{{ opt.label }}</option>
+        {% endfor %}
+      </select>
+
+    {% elif type == 'checkbox' %}
+      <input type="checkbox" id="{{ name }}" name="{{ name }}" {% if value %}checked{% endif %}>
+
+    {% else %}
+      <input type="{{ type or 'text' }}" id="{{ name }}" name="{{ name }}" value="{{ value }}" {% if required %}required{% endif %}>
+    {% endif %}
+
+    {% if error %}<p>{{ error }}</p>{% endif %}
+  </div>
+{% endmacro %}

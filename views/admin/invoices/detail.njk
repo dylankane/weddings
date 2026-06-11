@@ -1,0 +1,76 @@
+﻿{% extends "admin/base/layout.njk" %}
+{% from "admin/macros/audit-entry.njk" import auditEntry %}
+
+{% block content %}
+  <p><a href="/admin/rental/bookings/{{ invoice.booking.id }}">← Booking #{{ invoice.booking.id }}</a></p>
+
+  <h1>{{ invoice.reference }} — {{ invoice.status }}</h1>
+
+  <p>
+    {% if invoice.status != 'PAID' %}
+      <form method="POST" action="/admin/rental/invoices/{{ invoice.id }}/status" style="display:inline">
+        <input type="hidden" name="status" value="PAID">
+        <button type="submit">Mark as Paid</button>
+      </form>
+    {% endif %}
+    {% if invoice.status == 'SENT' %}
+      | <form method="POST" action="/admin/rental/invoices/{{ invoice.id }}/status" style="display:inline">
+          <input type="hidden" name="status" value="OVERDUE">
+          <button type="submit">Mark Overdue</button>
+        </form>
+    {% endif %}
+  </p>
+
+  <h2>Invoice Details</h2>
+  <p>Customer: {{ invoice.booking.customer.name }}</p>
+  <p>Due Date: {{ invoice.dueDate | dateFormat('short') }}</p>
+  {% if invoice.sentAt %}<p>Sent: {{ invoice.sentAt | dateFormat('datetime') }} to {{ invoice.sentTo }}</p>{% endif %}
+
+  <h2>Line Items</h2>
+  <table>
+    <thead>
+      <tr><th>Description</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr>
+    </thead>
+    <tbody>
+      {% for item in invoice.items %}
+        <tr>
+          <td>{{ item.description }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>{{ item.unitPrice | currency }}</td>
+          <td>{{ item.lineTotal | currency }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3">Total</td>
+        <td>{{ invoice.items | sum(attribute='lineTotal') | currency }}</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <h2>Send Invoice</h2>
+  <form method="POST" action="/admin/rental/invoices/{{ invoice.id }}/send">
+    <div>
+      <label>Send To *</label>
+      <input type="email" name="sendTo" value="{{ invoice.booking.customer.email }}" required>
+    </div>
+    <div>
+      <label>Subject *</label>
+      <input type="text" name="subject" value="Your Invoice — {{ invoice.reference }}" required>
+    </div>
+    <div>
+      <label>Message</label>
+      <textarea name="message" rows="4"></textarea>
+    </div>
+    <button type="submit">Send with PDF Attached</button>
+  </form>
+
+  <h2>History</h2>
+  {% if auditLogs.length %}
+    <ul>{% for log in auditLogs %}{{ auditEntry(log) }}{% endfor %}</ul>
+  {% else %}
+    <p>No history.</p>
+  {% endif %}
+{% endblock %}
+

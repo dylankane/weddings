@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Invoice</title>
+</head>
+<body style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; color: #333;">
+  <p>Please find your invoice ({{ invoice.reference }}) attached to this email.</p>
+
+  {% if message %}
+    <div style="margin: 20px 0; padding: 16px; background: #f9f9f9; border-left: 4px solid #ccc;">
+      {{ message | nl2br }}
+    </div>
+  {% endif %}
+
+  <p>Payment is due by {{ invoice.dueDate | dateFormat('short') }}.</p>
+
+  <p>If you have any questions, please contact us:</p>
+  <p>
+    {{ companySettings.contactEmail }}<br>
+    {{ companySettings.contactPhone }}
+  </p>
+
+  <p>Kind regards,<br>{{ companySettings.companyName }}</p>
+</body>
+</html>

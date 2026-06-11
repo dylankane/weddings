@@ -1,0 +1,55 @@
+﻿{% extends "admin/base/layout.njk" %}
+
+{% block content %}
+  <p><a href="/admin/rental/bookings/{{ booking.id }}">← Booking #{{ booking.id }}</a></p>
+  <h1>Create Invoice for {{ booking.customer.name }}</h1>
+
+  <form method="POST" action="/admin/rental/invoices/create">
+    <input type="hidden" name="bookingId" value="{{ booking.id }}">
+
+    <div>
+      <label>Due Date *</label>
+      <input type="date" name="dueDate" required>
+    </div>
+    <div>
+      <label>Internal Notes</label>
+      <textarea name="notes" rows="3"></textarea>
+    </div>
+
+    <h2>Line Items</h2>
+    <table>
+      <thead>
+        <tr><th>Description</th><th>Qty</th><th>Unit Price (€)</th><th></th></tr>
+      </thead>
+      <tbody id="line-items-body">
+        {% for item in booking.items %}
+          <tr>
+            <td><input type="text" name="line[description]" value="{{ item.product.name }}" required></td>
+            <td><input type="number" name="line[quantity]" value="{{ item.quantity }}" min="1" required></td>
+            <td><input type="number" name="line[unitPrice]" step="0.01" value="{{ item.quotedPrice or '' }}" required></td>
+            <td><button type="button" onclick="this.closest('tr').remove()">Remove</button></td>
+          </tr>
+        {% endfor %}
+        {% if booking.deliveryCost %}
+          <tr>
+            <td><input type="text" name="line[description]" value="Delivery" required></td>
+            <td><input type="number" name="line[quantity]" value="1" min="1" required></td>
+            <td><input type="number" name="line[unitPrice]" step="0.01" value="{{ booking.deliveryCost }}" required></td>
+            <td><button type="button" onclick="this.closest('tr').remove()">Remove</button></td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+
+    <button type="button" id="add-line-item">Add Line</button>
+
+    <br>
+    <button type="submit">Create Invoice</button>
+    <a href="/admin/rental/bookings/{{ booking.id }}">Cancel</a>
+  </form>
+{% endblock %}
+
+{% block scripts %}
+  <script src="/js/quote-editor.js"></script>
+{% endblock %}
+

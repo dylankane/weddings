@@ -1,0 +1,45 @@
+﻿{% extends "admin/base/layout.njk" %}
+
+{% block content %}
+  <h1>Dashboard</h1>
+
+  {% if apiWarning %}
+    <p>Warning: API usage at {{ apiUsagePercent }}% of monthly budget (~${{ apiMonthlyCostEstimate }}).</p>
+  {% endif %}
+
+  <p>New enquiries: {{ newEnquiriesCount }}</p>
+  <p>Pending enquiries: {{ pendingEnquiriesCount }}</p>
+  <p>Active bookings: {{ activeBookingsCount }}</p>
+
+  {% if provisionalExpiringSoon.length %}
+    <h2>Provisional Holds Expiring Soon</h2>
+    <ul>
+      {% for booking in provisionalExpiringSoon %}
+        <li><a href="/admin/rental/bookings/{{ booking.id }}">{{ booking.customer.name }}</a> — expires {{ booking.provisionalExpiresAt | dateFormat('short') }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <h2>Recent Enquiries</h2>
+  {% if recentEnquiries.length %}
+    <ul>
+      {% for enquiry in recentEnquiries %}
+        <li><a href="/admin/rental/enquiries/{{ enquiry.id }}">{{ enquiry.customer.name if enquiry.customer else 'Unknown' }}</a> — {{ enquiry.status }} — {{ enquiry.createdAt | timeAgo }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No active enquiries.</p>
+  {% endif %}
+
+  <h2>Upcoming Bookings</h2>
+  {% if recentBookings.length %}
+    <ul>
+      {% for booking in recentBookings %}
+        <li><a href="/admin/rental/bookings/{{ booking.id }}">{{ booking.customer.name }}</a> — {{ booking.status }} — {{ booking.hireStartDatetime | dateFormat('short') }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No upcoming bookings.</p>
+  {% endif %}
+{% endblock %}
+

@@ -1,0 +1,15 @@
+{% extends "public/layout.njk" %}
+
+{% block content %}
+  <div class="error-wrap">
+    <div class="error-inner">
+      <span class="error-code" aria-hidden="true">404</span>
+      <h1 class="error-title">Page not found</h1>
+      <p class="error-body">The page you're looking for doesn't exist or may have moved.</p>
+      <div class="cta-group">
+        <a href="/" class="btn btn-dark btn-lg">Back to Home</a>
+        <a href="/products" class="btn btn-outline btn-lg">Browse Collection</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}

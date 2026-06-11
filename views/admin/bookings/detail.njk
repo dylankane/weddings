@@ -1,0 +1,95 @@
+﻿{% extends "admin/base/layout.njk" %}
+{% from "admin/macros/confirm-modal.njk" import confirmModal %}
+{% from "admin/macros/audit-entry.njk" import auditEntry %}
+
+{% block content %}
+  <p><a href="/admin/rental/bookings">← Bookings</a></p>
+
+  <h1>Booking #{{ booking.id }} — {{ booking.status }}</h1>
+
+  <p>
+    <a href="/admin/rental/bookings/{{ booking.id }}/edit">Edit</a>
+    {% if booking.status == 'PROVISIONAL' %}
+      | <form method="POST" action="/admin/rental/bookings/{{ booking.id }}/status" style="display:inline">
+          <input type="hidden" name="status" value="CONFIRMED">
+          <button type="submit">Confirm Booking</button>
+        </form>
+    {% endif %}
+    {% if booking.status == 'CONFIRMED' %}
+      | <form method="POST" action="/admin/rental/bookings/{{ booking.id }}/status" style="display:inline">
+          <input type="hidden" name="status" value="COMPLETED">
+          <button type="submit">Mark Completed</button>
+        </form>
+    {% endif %}
+    {% if booking.status != 'CANCELLED' and booking.status != 'COMPLETED' %}
+      | <button onclick="document.getElementById('cancel-modal').showModal()">Cancel</button>
+    {% endif %}
+    | <a href="/admin/rental/invoices/create?bookingId={{ booking.id }}">Create Invoice</a>
+  </p>
+
+  <h2>Customer</h2>
+  <p>Name: {{ booking.customer.name if booking.customer else '—' }}</p>
+  <p>Email: {{ booking.customer.email if booking.customer else '—' }}</p>
+  <p>Phone: {{ booking.customer.phone if booking.customer else '—' }}</p>
+
+  <h2>Hire Details</h2>
+  <p>Start: {{ booking.hireStartDatetime | dateFormat('datetime') if booking.hireStartDatetime else '—' }}</p>
+  <p>End: {{ booking.hireEndDatetime | dateFormat('datetime') if booking.hireEndDatetime else '—' }}</p>
+  <p>Fulfillment: {{ booking.fulfillmentType or '—' }}</p>
+  {% if booking.fulfillmentType == 'STAFF_DELIVERS' %}
+    <p>Delivery address: {{ booking.deliveryAddress or '—' }}</p>
+    <p>Delivery time: {{ booking.deliveryDatetime | dateFormat('datetime') if booking.deliveryDatetime else '—' }}</p>
+    <p>Collection time: {{ booking.collectionDatetime | dateFormat('datetime') if booking.collectionDatetime else '—' }}</p>
+    <p>Delivery zone: {{ booking.deliveryZone.name if booking.deliveryZone else '—' }}</p>
+    <p>Delivery cost: {{ booking.deliveryCost | currency if booking.deliveryCost != null else '—' }}</p>
+  {% endif %}
+  {% if booking.status == 'PROVISIONAL' and booking.provisionalExpiresAt %}
+    <p>Hold expires: {{ booking.provisionalExpiresAt | dateFormat('datetime') }}</p>
+  {% endif %}
+
+  <h2>Items</h2>
+  <ul>
+    {% for item in booking.items %}
+      <li>
+        {{ item.product.name }} ×{{ item.quantity }}
+        {% if item.quotedPrice %} — {{ item.quotedPrice | currency }}/unit{% endif %}
+        {% if item.customisations.length %}
+          <ul>
+            {% for c in item.customisations %}
+              <li>{{ c.customisationOption.name }}: {{ c.value }}{% if c.agreedCost %} (+{{ c.agreedCost | currency }}){% endif %}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+
+  {% if booking.notes %}
+    <h2>Notes</h2>
+    <p>{{ booking.notes }}</p>
+  {% endif %}
+
+  {% if booking.enquiry %}
+    <h2>Source Enquiry</h2>
+    <p><a href="/admin/rental/enquiries/{{ booking.enquiry.id }}">Enquiry #{{ booking.enquiry.id }}</a></p>
+  {% endif %}
+
+  {% if booking.invoices.length %}
+    <h2>Invoices</h2>
+    <ul>
+      {% for invoice in booking.invoices %}
+        <li><a href="/admin/rental/invoices/{{ invoice.id }}">{{ invoice.reference }}</a> — {{ invoice.status }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <h2>History</h2>
+  {% if auditLogs.length %}
+    <ul>{% for log in auditLogs %}{{ auditEntry(log) }}{% endfor %}</ul>
+  {% else %}
+    <p>No history yet.</p>
+  {% endif %}
+
+  {{ confirmModal('cancel-modal', 'Cancel Booking', 'Are you sure you want to cancel this booking?', '/admin/rental/bookings/' + booking.id + '/cancel', 'POST', 'Yes, Cancel Booking') }}
+{% endblock %}
+

@@ -1,0 +1,34 @@
+﻿{% extends "admin/base/layout.njk" %}
+
+{% block content %}
+  <h1>Bookings</h1>
+  <a href="/admin/rental/bookings/create">New Booking</a>
+
+  <p>
+    Filter:
+    <a href="/admin/rental/bookings">Active</a> |
+    <a href="/admin/rental/bookings?status=PROVISIONAL">Provisional</a> |
+    <a href="/admin/rental/bookings?status=CONFIRMED">Confirmed</a> |
+    <a href="/admin/rental/bookings?status=COMPLETED">Completed</a> |
+    <a href="/admin/rental/bookings?status=CANCELLED">Cancelled</a>
+  </p>
+
+  {% if bookings.length %}
+    <ul>
+      {% for booking in bookings %}
+        <li>
+          <a href="/admin/rental/bookings/{{ booking.id }}">
+            #{{ booking.id }} — {{ booking.customer.name if booking.customer else 'Unknown' }}
+          </a>
+          — {{ booking.status }}
+          {% if booking.hireStartDatetime %} — {{ booking.hireStartDatetime | dateFormat('short') }}{% if booking.hireEndDatetime %} to {{ booking.hireEndDatetime | dateFormat('short') }}{% endif %}{% endif %}
+          — {{ booking.createdAt | timeAgo }}
+        </li>
+      {% endfor %}
+    </ul>
+    <p>Page {{ currentPage }} of {{ totalPages }} ({{ total }} total)</p>
+  {% else %}
+    <p>No bookings found.</p>
+  {% endif %}
+{% endblock %}
+

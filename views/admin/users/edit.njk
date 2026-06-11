@@ -1,0 +1,36 @@
+﻿{% extends "admin/base/layout.njk" %}
+{% from "admin/macros/confirm-modal.njk" import confirmModal %}
+
+{% block content %}
+  <p><a href="/admin/settings?tab=users">← Settings / Users</a></p>
+  <h1>Edit — {{ editUser.displayName }}</h1>
+
+  <form method="POST" action="/admin/users/{{ editUser.id }}/edit">
+    <div>
+      <label>Full Name *</label>
+      <input type="text" name="displayName" value="{{ editUser.displayName }}" required>
+    </div>
+    <div>
+      <label>Email *</label>
+      <input type="email" name="email" value="{{ editUser.email }}" required>
+    </div>
+    <div>
+      <label>Role *</label>
+      <select name="role" required>
+        <option value="MANAGER" {% if editUser.role == 'MANAGER' %}selected{% endif %}>Manager</option>
+        <option value="SUPER_ADMIN" {% if editUser.role == 'SUPER_ADMIN' %}selected{% endif %}>Super Admin</option>
+      </select>
+    </div>
+    <button type="submit">Save Changes</button>
+    <a href="/admin/settings?tab=users">Cancel</a>
+  </form>
+
+  {% if editUser.isActive and editUser.id != sessionUser.id %}
+    <h2>Deactivate Account</h2>
+    <p>This will prevent {{ editUser.displayName }} from logging in. Their audit history is preserved.</p>
+    <button onclick="document.getElementById('deactivate-modal').showModal()">Deactivate Account</button>
+
+    {{ confirmModal('deactivate-modal', 'Deactivate Account', 'Prevent ' + editUser.displayName + ' from logging in?', '/admin/users/' + editUser.id + '/deactivate', 'POST', 'Deactivate') }}
+  {% endif %}
+{% endblock %}
+

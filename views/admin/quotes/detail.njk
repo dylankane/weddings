@@ -1,0 +1,81 @@
+﻿{% extends "admin/base/layout.njk" %}
+{% from "admin/macros/audit-entry.njk" import auditEntry %}
+
+{% block content %}
+  <p><a href="/admin/rental/enquiries/{{ quote.enquiry.id }}">← Enquiry #{{ quote.enquiry.id }}</a></p>
+
+  <h1>{{ quote.reference }} — {{ quote.status }}</h1>
+
+  <p>
+    {% if quote.status != 'SENT' and quote.status != 'ACCEPTED' %}
+      <form method="POST" action="/admin/rental/quotes/{{ quote.id }}/status" style="display:inline">
+        <input type="hidden" name="status" value="EXPIRED">
+        <button type="submit">Mark Expired</button>
+      </form>
+      |
+    {% endif %}
+    <form method="POST" action="/admin/rental/quotes/{{ quote.id }}/status" style="display:inline">
+      <input type="hidden" name="status" value="ACCEPTED">
+      <button type="submit">Mark Accepted</button>
+    </form>
+  </p>
+
+  <h2>Quote Details</h2>
+  <p>Customer: {{ quote.enquiry.customer.name }}</p>
+  <p>Expires: {{ quote.expiresAt | dateFormat('short') }}</p>
+  {% if quote.sentAt %}<p>Sent: {{ quote.sentAt | dateFormat('datetime') }} to {{ quote.sentTo }}</p>{% endif %}
+  <p>Created by: {{ quote.createdBy.displayName }}</p>
+
+  <h2>Line Items</h2>
+  <table>
+    <thead>
+      <tr><th>Description</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr>
+    </thead>
+    <tbody>
+      {% for item in quote.items %}
+        <tr>
+          <td>{{ item.description }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>{{ item.unitPrice | currency }}</td>
+          <td>{{ item.lineTotal | currency }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3">Total</td>
+        <td>{{ quote.items | sum(attribute='lineTotal') | currency }}</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  {% if quote.notes %}
+    <h2>Notes</h2>
+    <p>{{ quote.notes }}</p>
+  {% endif %}
+
+  <h2>Send Quote</h2>
+  <form method="POST" action="/admin/rental/quotes/{{ quote.id }}/send">
+    <div>
+      <label>Send To *</label>
+      <input type="email" name="sendTo" value="{{ quote.enquiry.customer.email }}" required>
+    </div>
+    <div>
+      <label>Subject *</label>
+      <input type="text" name="subject" value="Your Quote — {{ quote.reference }}" required>
+    </div>
+    <div>
+      <label>Message</label>
+      <textarea name="message" rows="4"></textarea>
+    </div>
+    <button type="submit">Send with PDF Attached</button>
+  </form>
+
+  <h2>History</h2>
+  {% if auditLogs.length %}
+    <ul>{% for log in auditLogs %}{{ auditEntry(log) }}{% endfor %}</ul>
+  {% else %}
+    <p>No history yet.</p>
+  {% endif %}
+{% endblock %}
+

@@ -1,0 +1,36 @@
+﻿{% extends "admin/base/layout.njk" %}
+
+{% block content %}
+  <p><a href="/admin/rental/products/{{ product.id }}">← {{ product.name }}</a></p>
+  <h1>Edit — {{ product.name }}</h1>
+
+  <form method="POST" action="/admin/rental/products/{{ product.id }}/edit">
+    <div>
+      <label>Name *</label>
+      <input type="text" name="name" value="{{ product.name }}" required>
+    </div>
+    <div>
+      <label>Description *</label>
+      <textarea name="description" required>{{ product.description }}</textarea>
+    </div>
+    <div>
+      <label>Stock Quantity *</label>
+      <input type="number" name="stockQuantity" value="{{ product.stockQuantity }}" required>
+    </div>
+    <div>
+      <label>Display Order</label>
+      <input type="number" name="displayOrder" value="{{ product.displayOrder }}">
+    </div>
+    <div>
+      <label>Is Customisable</label>
+      <input type="checkbox" name="isCustomisable" {% if product.isCustomisable %}checked{% endif %}>
+    </div>
+    <div>
+      <label>Customisation Overview</label>
+      <textarea name="customisationOverview">{{ product.customisationOverview }}</textarea>
+    </div>
+    <button type="submit">Save Changes</button>
+    <a href="/admin/rental/products/{{ product.id }}">Cancel</a>
+  </form>
+{% endblock %}
+

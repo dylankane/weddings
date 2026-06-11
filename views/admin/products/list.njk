@@ -1,0 +1,21 @@
+﻿{% extends "admin/base/layout.njk" %}
+
+{% block content %}
+  <h1>Products</h1>
+  <a href="/admin/rental/products/create">New Product</a>
+
+  {% if products.length %}
+    <ul>
+      {% for product in products %}
+        <li>
+          <a href="/admin/rental/products/{{ product.id }}">{{ product.name }}</a>
+          — {{ product.stockQuantity }} in stock
+          {% if not product.isActive %} — INACTIVE{% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No products yet. <a href="/admin/rental/products/create">Add one.</a></p>
+  {% endif %}
+{% endblock %}
+

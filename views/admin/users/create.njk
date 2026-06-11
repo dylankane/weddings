@@ -1,0 +1,32 @@
+﻿{% extends "admin/base/layout.njk" %}
+
+{% block content %}
+  <p><a href="/admin/settings?tab=users">← Settings / Users</a></p>
+  <h1>New User</h1>
+
+  <form method="POST" action="/admin/users/create">
+    <div>
+      <label>Full Name *</label>
+      <input type="text" name="displayName" value="{{ form.displayName if form }}" required>
+    </div>
+    <div>
+      <label>Email *</label>
+      <input type="email" name="email" value="{{ form.email if form }}" required>
+      {% if errors and errors.email %}<p>{{ errors.email }}</p>{% endif %}
+    </div>
+    <div>
+      <label>Role *</label>
+      <select name="role" required>
+        <option value="MANAGER" {% if (form.role if form else 'MANAGER') == 'MANAGER' %}selected{% endif %}>Manager</option>
+        <option value="SUPER_ADMIN" {% if (form.role if form) == 'SUPER_ADMIN' %}selected{% endif %}>Super Admin</option>
+      </select>
+    </div>
+    <div>
+      <label>Temporary Password * (user should change on first login)</label>
+      <input type="password" name="password" required>
+    </div>
+    <button type="submit">Create User</button>
+    <a href="/admin/settings?tab=users">Cancel</a>
+  </form>
+{% endblock %}
+
