@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Posta{% endblock %}</title>
+  {% block meta %}{% endblock %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/css/public/base.css">
+  {% block styles %}{% endblock %}
+</head>
+<body>
+
+  {% include "public/partials/nav.njk" %}
+
+  <main id="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% include "public/partials/footer.njk" %}
+
+  <script src="/js/public/reveal.js" defer></script>
+  {% block scripts %}{% endblock %}
+
+</body>
+</html>

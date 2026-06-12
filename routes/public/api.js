@@ -2,7 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { checkAvailability } = require('../services/shared/availabilityService');
+const { checkAvailability } = require('../../services/shared/availabilityService');
 
 // GET /api/availability?start=YYYY-MM-DD&end=YYYY-MM-DD
 router.get('/availability', async (req, res) => {

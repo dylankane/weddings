@@ -1,0 +1,196 @@
+{% extends "public/layout.njk" %}
+
+{% block title %}Posta — Cast Iron Post Box Hire, Ireland{% endblock %}
+
+{% block meta %}
+<meta name="description" content="Premium cast iron post box hire for Irish weddings. Delivered to your venue, collected the morning after.">
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="/css/public/index.css">
+{% endblock %}
+
+{% block content %}
+
+  <div class="sections-wrapper">
+
+  <section class="grid-container grid-1" aria-labelledby="title">
+
+    <div class="card-outer fade-slow">
+      <div class="card card-1">
+        <p class="hero-kicker">Wedding &ensp;&middot;&ensp; Rentals</p>
+        <h1 class="hero-title" id="title">
+          The Post Box<br>
+          To<br>
+          Remember
+        </h1>
+        <p class="hero-desc">
+          Collect your cards with a classic, beautiful post box for your wedding day. Quirky with a vintage charm.
+          Delivered to your venue and collected the next day.
+        </p>
+        <a href="/collection" class="hero-link">
+          View the collection
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="card-outer card-outer-2 fade-fast">
+      <img src="/images/public/posta-square-6.png" alt="Cast iron post box" loading="eager" fetchpriority="high">
+      <div class="card card-2"></div>
+    </div>
+
+  </section>
+
+  <section class="grid-container grid-2" aria-label="What we offer">
+
+    <div class="card-outer card-outer-3 reveal-left">
+      <img src="/images/public/posta-night-land.png" alt="" loading="lazy" aria-hidden="true">
+      <div class="card card-3">
+        <span class="card-num">01</span>
+        <h2 class="card-title">The Collection</h2>
+        <p class="card-desc">Cast iron post boxes available to hire. Each piece unique.</p>
+        <a href="/collection" class="card-link btn btn-text-light">
+          Browse all pieces
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="card-outer card-outer-4 reveal-right">
+      <div class="card card-4">
+        <div>
+          <span class="card-num">02</span>
+          <h2 class="card-title">Availability</h2>
+          <p class="card-desc">Check which pieces are free for your date.</p>
+          <div class="avail-mock" aria-hidden="true">
+            <label class="avail-mock-label">Your wedding date</label>
+            <input class="avail-mock-field" type="date" tabindex="-1">
+          </div>
+        </div>
+        <a href="/collection" class="card-link btn btn-text-dark">
+          Check availability
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="card-outer card-outer-5 reveal-right">
+      <div class="card card-5">
+        <div>
+          <span class="card-num">03</span>
+          <h2 class="card-title">Enquire</h2>
+          <p class="card-desc">Tell us your date and venue. We reply within 24 hours.</p>
+        </div>
+        <a href="/enquiry" class="card-link btn btn-text-light">
+          Make an enquiry
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="grid-container grid-3">
+
+    <div class="card-outer reveal-left">
+      <div class="card card-6">
+        <div>
+          <h2 class="card-title-sm">Delivery</h2>
+          <p class="card-desc">Nationwide. We deliver and collect — you don't lift a thing.</p>
+        </div>
+        <button type="button" id="delivery-toggle" class="card-link btn btn-text-dark" aria-expanded="false" aria-controls="delivery-panel">
+          Delivery information
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="card-outer reveal-bottom">
+      <div class="card card-7">
+        <div>
+          <h2 class="card-title-sm">Just Ask</h2>
+          <p class="card-desc">Not sure, just get in touch. Need more info on delivery, price, dates or anything else?</p>
+        </div>
+        <a href="/about" class="card-link btn btn-text-dark">
+          Contact us
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="card-outer reveal-right">
+      <div class="card card-8">
+        <div>
+          <h2 class="card-title-sm">Personal Touch</h2>
+          <p class="card-desc">Create you own card for the font with anything you wish or we can print something for you</p>
+        </div>
+        <a href="/custom-cards" class="card-link btn btn-text-dark">
+          View custom cards
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="grid-container grid-6 delivery-panel" id="delivery-panel" aria-label="Delivery information">
+    <div class="card-outer">
+      <div class="card card-13">
+        <div class="blob blob--delivery" aria-hidden="true"></div>
+        <div class="delivery-body">
+          <h3 class="info-heading">How It Works</h3>
+          <p>We deliver your post box directly to your venue, typically the evening before your wedding day. Collection takes place the morning after — or later if your venue allows. You don't need to arrange anything on the day itself.</p>
+          <h3 class="info-heading">Self-Collection</h3>
+          <p>Prefer to collect yourself? That's absolutely fine. You're welcome to collect from us and return the piece at an agreed time. Just mention it when you enquire and we'll arrange it around you.</p>
+          <h3 class="info-heading">Delivery Areas</h3>
+          <p>We deliver to venues across Ireland. Delivery is free to venues in Wicklow, Kildare, Meath, and Louth. All other locations are quoted on enquiry — just include your venue details and we'll confirm the cost upfront.</p>
+        </div>
+        <button type="button" class="delivery-close btn btn-text-dark" aria-label="Close delivery information">
+          Close
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid-container grid-4" aria-label="The object">
+
+    <div class="card-outer card-outer-9 reveal-left">
+      <img src="/images/public/posta-lock.jpeg" alt="" loading="lazy" aria-hidden="true">
+      <div class="card card-9"></div>
+    </div>
+
+    <div class="card-outer card-outer-10 reveal-left">
+      <img src="/images/public/manor-table.png" alt="" loading="lazy" aria-hidden="true">
+      <div class="card card-10"></div>
+    </div>
+
+    <div class="card-outer card-outer-11 reveal-right">
+      <img src="/images/public/posta-square-6.png" alt="" loading="lazy" aria-hidden="true">
+      <div class="card card-11"></div>
+    </div>
+
+  </section>
+
+  <section class="grid-container grid-5">
+    <div class="card-outer reveal-fade">
+    <div class="card card-12">
+      <div class="blob blob--info" aria-hidden="true"></div>
+      <div class="info-body">
+        <h3 class="info-heading">What We Offer</h3>
+        <p>Posta hires original antique cast iron post boxes for wedding days across Ireland. Each piece is lockable and secure, keeping cards safe throughout your day. They bring real weight and character to any table setting — and because guests post independently, there is no need for anyone to manage card collection on the day itself.</p>
+        <h3 class="info-heading">How It Works</h3>
+        <p>Check availability for your date and make an enquiry with your venue details. We offer full delivery and collection to your venue, or self-collection if you prefer. Delivery is free to venues in Wicklow, Kildare, Meath, and Louth — all other locations quoted on enquiry. If nothing is showing for your date, get in touch anyway — we may be able to source a piece.</p>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  </div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/js/public/index.js" defer></script>
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends "public/layout.njk" %}
+
+{% block title %}The Collection — Posta{% endblock %}
+
+{% block meta %}
+<meta name="description" content="Browse cast iron post boxes available to hire for your wedding day. Check availability for your date and enquire directly.">
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="/css/public/collection.css">
+{% endblock %}
+
+{% block content %}
+
+<div class="col-wrapper">
+
+  <section class="col-header">
+    <div class="blob blob--col-header" aria-hidden="true"></div>
+    <div class="col-header-body">
+      <p class="col-kicker">Wedding &ensp;&middot;&ensp; Rentals</p>
+      <h1 class="col-title">The Collection</h1>
+      <p class="col-subtitle">Cast iron post boxes, available to hire for your wedding day. Each piece is original, lockable, and delivered to your venue.</p>
+    </div>
+  </section>
+
+  <div class="avail-strip" id="avail-strip" role="search" aria-label="Check availability for a date">
+    <div class="avail-strip-inner">
+      <label for="avail-date" class="avail-strip-label">Checking for</label>
+      <input type="date" id="avail-date" class="avail-strip-input" aria-label="Your wedding date">
+      <button type="button" class="avail-strip-clear" id="avail-clear" aria-label="Clear date" hidden>Clear</button>
+      <span class="avail-strip-status" id="avail-status" aria-live="polite" aria-atomic="true"></span>
+    </div>
+  </div>
+
+  {% if products.length %}
+
+  <div class="col-products" id="col-products">
+
+    {% for product in products %}
+
+    <article
+      class="col-item reveal-fade"
+      data-product-id="{{ product.id }}"
+      aria-label="{{ product.name }}"
+    >
+
+      <div class="col-item-image">
+        <img
+          src="{{ product.images[0].url if product.images[0] else '/images/public/produt-fallback.jpeg' }}"
+          alt="{{ product.images[0].altText if product.images[0] else product.name }}"
+          loading="{% if loop.first %}eager{% else %}lazy{% endif %}"
+          {% if loop.first %}fetchpriority="high"{% endif %}
+        >
+        <div class="col-item-overlay" aria-hidden="true"></div>
+        <span class="col-item-unavail-label" aria-hidden="true">Unavailable</span>
+      </div>
+
+      <div class="col-item-body">
+        <div class="col-item-content">
+          <h2 class="col-item-name">{{ product.name }}</h2>
+          <p class="col-item-desc">{{ product.description }}</p>
+          {% if product.isCustomisable and product.customisationOverview %}
+            <p class="col-item-custom">{{ product.customisationOverview }}</p>
+          {% endif %}
+          <a href="/enquiry" class="col-item-cta btn btn-outline-light">
+            Enquire about this piece
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+
+    </article>
+
+    {% endfor %}
+
+  </div>
+
+  {% else %}
+
+  <div class="col-empty">
+    <p class="col-empty-text">The collection is being updated. Please check back soon or <a href="/enquiry">get in touch directly</a>.</p>
+  </div>
+
+  {% endif %}
+
+  <section class="col-cta">
+    <p class="col-cta-label">Wedding &ensp;&middot;&ensp; Hire</p>
+    <h2 class="col-cta-title">Ready for your day?</h2>
+    <p class="col-cta-sub">Tell us your date and venue. We reply within 24 hours.</p>
+    <a href="/enquiry" class="btn btn-outline-light btn-lg">
+      Make an enquiry
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </section>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/js/public/collection.js" defer></script>
+{% endblock %}

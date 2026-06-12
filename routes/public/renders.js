@@ -2,7 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
-const prisma = require('../lib/prisma');
+const prisma = require('../../lib/prisma');
 
 router.use(async (req, res, next) => {
   try {
@@ -13,14 +13,20 @@ router.use(async (req, res, next) => {
   next();
 });
 
-router.get('/home-preview', async (req, res) => {
+router.get('/', (req, res) => {
+  res.render('public/pages/index.njk');
+});
+
+router.get('/collection', async (req, res) => {
   const products = await prisma.product.findMany({
     where: { isActive: true },
-    include: { images: { where: { isPrimary: true }, take: 1 } },
+    include: {
+      images: { where: { isPrimary: true }, take: 1 },
+    },
     orderBy: { displayOrder: 'asc' },
-    take: 3,
   });
-  res.render('public/home.njk', { products });
+
+  res.render('public/pages/collection.njk', { products });
 });
 
 module.exports = router;

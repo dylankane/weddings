@@ -9,9 +9,10 @@ const PgSession = require('connect-pg-simple')(session);
 const rateLimit = require('express-rate-limit');
 const path = require('path');
 
-const adminRoutes  = require('./routes/admin');
-const publicRoutes = require('./routes/public');
-const apiRoutes    = require('./routes/api');
+const publicRenders = require('./routes/public/renders');
+const publicApi     = require('./routes/public/api');
+const adminRenders  = require('./routes/admin/renders');
+const adminApi      = require('./routes/admin/api');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -101,13 +102,12 @@ app.use((req, res, next) => {
 // ─── Routes ───────────────────────────────────────────────────────────────────
 
 // Public site
-app.use('/', publicRoutes);
-
-// Public API
-app.use('/api', apiRoutes);
+app.use('/', publicRenders);
+app.use('/api', publicApi);
 
 // Admin backend
-app.use('/admin', adminRoutes);
+app.use('/admin', adminRenders);
+app.use('/admin', adminApi);
 
 // ─── Error Handling ───────────────────────────────────────────────────────────
 
