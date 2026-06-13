@@ -90,7 +90,7 @@
       } else if (available.length === 0) {
         statusEl.textContent = 'No pieces available for this date';
       } else {
-        statusEl.textContent = available.length + ' of ' + all.length + ' available';
+        statusEl.textContent = available.length + ' available';
       }
 
       const formatted = formatDate(dateStr);

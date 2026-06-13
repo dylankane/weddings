@@ -1,0 +1,220 @@
+/* -- Page wrapper ------------------------------------------ */
+.con-wrapper {
+  display: flex;
+  flex-direction: column;
+  background: var(--off-white);
+}
+
+/* -- Header ------------------------------------------------ */
+.con-header {
+  position: relative;
+  background: var(--off-white);
+  padding: 8rem 6rem 5rem;
+  overflow: hidden;
+}
+
+.con-header-body {
+  position: relative;
+  z-index: 1;
+}
+
+.con-kicker {
+  font-size: var(--font-xxxs);
+  font-weight: 400;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 2rem;
+}
+
+.con-title {
+  font-size: var(--font-xl);
+  letter-spacing: 0.06em;
+  color: var(--dark);
+  margin-bottom: 1.5rem;
+}
+
+.con-subtitle {
+  font-size: var(--font-xs);
+  line-height: 1.8;
+  color: var(--grey);
+  max-width: 44ch;
+}
+
+/* -- Body -------------------------------------------------- */
+.con-body {
+  background: var(--off-white);
+  padding: 4rem 6rem 8rem;
+  border-top: 1px solid var(--muted-dark);
+}
+
+/* -- Grid -------------------------------------------------- */
+.con-grid {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 6rem;
+}
+
+/* -- Form layout ------------------------------------------- */
+.con-form {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+
+/* -- Submit row -------------------------------------------- */
+.form-submit-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 1rem;
+}
+
+/* -- Success ----------------------------------------------- */
+.con-success {
+  padding: 3rem 0;
+}
+
+.con-success-title {
+  font-size: var(--font-xl);
+  letter-spacing: 0.06em;
+  color: var(--dark);
+  margin-bottom: 1.5rem;
+}
+
+.con-success-body {
+  font-size: var(--font-xs);
+  line-height: 1.8;
+  color: var(--grey);
+}
+
+/* -- Contact list ------------------------------------------ */
+.con-contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.con-contact-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.con-contact-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.con-contact-icon {
+  width: 1.2rem;
+  height: 1.2rem;
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+.con-contact-value {
+  font-size: var(--font-xs);
+  font-weight: 300;
+  letter-spacing: 0.03em;
+  color: var(--grey);
+  transition: color var(--t-fast);
+}
+
+.con-contact-item:hover .con-contact-value {
+  color: var(--dark);
+}
+
+.con-copy-btn {
+  flex-shrink: 0;
+  color: var(--light-grey);
+  padding: 0.25rem;
+  transition: color var(--t-fast);
+}
+
+.con-copy-btn:hover {
+  color: var(--grey);
+}
+
+.con-copy-btn--copied {
+  color: var(--accent);
+}
+
+.con-copy-icon {
+  width: 0.75rem;
+  height: 0.75rem;
+  display: block;
+}
+
+/* -- Info column ------------------------------------------- */
+.con-info-col {
+  padding-top: 0.5rem;
+}
+
+.con-details .info-heading {
+  font-size: var(--font-xxxs);
+  font-family: var(--f-body);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.25rem;
+  margin-top: 3rem;
+}
+
+.con-details h3:first-child {
+  margin-top: 0;
+}
+
+.con-details p {
+  font-size: var(--font-xs);
+  line-height: 1.9;
+  color: var(--grey);
+  text-indent: 2em;
+}
+
+.con-details p a {
+  color: var(--accent);
+  transition: color var(--t-fast);
+}
+
+.con-details p a:hover {
+  color: var(--dark);
+}
+
+/* -- Responsive -------------------------------------------- */
+@media (max-width: 1100px) {
+  .con-grid {
+    grid-template-columns: 1fr;
+    gap: 4rem;
+  }
+
+  .con-info-col {
+    order: -1;
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .con-header {
+    padding: 7rem 3rem 4rem;
+  }
+
+  .con-body {
+    padding: 3rem 3rem 6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .con-header {
+    padding: 6rem 2rem 3rem;
+  }
+
+  .con-body {
+    padding: 2.5rem 2rem 5rem;
+  }
+}

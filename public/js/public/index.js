@@ -12,32 +12,56 @@
     });
   }
 
-  // ── Delivery panel toggle ─────────────────────────────────────
-  const toggle   = document.getElementById('delivery-toggle');
-  const panel    = document.getElementById('delivery-panel');
-  const closeBtn = panel ? panel.querySelector('.delivery-close') : null;
-
-  function openPanel() {
-    panel.classList.add('is-open');
-    toggle.setAttribute('aria-expanded', 'true');
+  // ── Panel helpers ─────────────────────────────────────────────
+  function openPanel(panelEl, toggleEl, otherPanelEl, otherToggleEl) {
+    if (otherPanelEl && otherPanelEl.classList.contains('is-open')) {
+      otherPanelEl.classList.remove('is-open');
+      if (otherToggleEl) otherToggleEl.setAttribute('aria-expanded', 'false');
+    }
+    panelEl.classList.add('is-open');
+    toggleEl.setAttribute('aria-expanded', 'true');
     requestAnimationFrame(() => {
-      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      panelEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     });
   }
 
-  function closePanel() {
-    panel.classList.remove('is-open');
-    toggle.setAttribute('aria-expanded', 'false');
+  function closePanel(panelEl, toggleEl) {
+    panelEl.classList.remove('is-open');
+    toggleEl.setAttribute('aria-expanded', 'false');
   }
 
-  if (toggle && panel) {
-    toggle.addEventListener('click', () => {
-      panel.classList.contains('is-open') ? closePanel() : openPanel();
+  // ── Delivery panel ───────────────────────────────────────────
+  const deliveryToggle = document.getElementById('delivery-toggle');
+  const deliveryPanel  = document.getElementById('delivery-panel');
+  const deliveryClose  = deliveryPanel ? deliveryPanel.querySelector('.delivery-close') : null;
+
+  // ── Custom cards panel ───────────────────────────────────────
+  const ccToggle = document.getElementById('custom-cards-toggle');
+  const ccPanel  = document.getElementById('custom-cards-panel');
+  const ccClose  = ccPanel ? ccPanel.querySelector('.custom-cards-close') : null;
+
+  if (deliveryToggle && deliveryPanel) {
+    deliveryToggle.addEventListener('click', () => {
+      deliveryPanel.classList.contains('is-open')
+        ? closePanel(deliveryPanel, deliveryToggle)
+        : openPanel(deliveryPanel, deliveryToggle, ccPanel, ccToggle);
     });
   }
 
-  if (closeBtn) {
-    closeBtn.addEventListener('click', closePanel);
+  if (deliveryClose) {
+    deliveryClose.addEventListener('click', () => closePanel(deliveryPanel, deliveryToggle));
+  }
+
+  if (ccToggle && ccPanel) {
+    ccToggle.addEventListener('click', () => {
+      ccPanel.classList.contains('is-open')
+        ? closePanel(ccPanel, ccToggle)
+        : openPanel(ccPanel, ccToggle, deliveryPanel, deliveryToggle);
+    });
+  }
+
+  if (ccClose) {
+    ccClose.addEventListener('click', () => closePanel(ccPanel, ccToggle));
   }
 
 })();

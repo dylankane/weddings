@@ -66,6 +66,12 @@ nunjucksEnv.addFilter('currency', (value) => {
   return `€${Number(value).toFixed(2)}`;
 });
 
+// WhatsApp filter — strips non-digits for wa.me URLs e.g. "+353 87 123 4567" → "353871234567"
+nunjucksEnv.addFilter('whatsapp', (value) => {
+  if (!value) return '';
+  return String(value).replace(/\D/g, '');
+});
+
 app.set('view engine', 'njk');
 
 // ─── Middleware ────────────────────────────────────────────────────────────────

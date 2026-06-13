@@ -4,15 +4,14 @@
 
   // ── Animation config ──────────────────────────────────────
   const DIST = 150;
-  const DUR = { slow: 1500, base: 1800, fast: 1500 };
+  const DUR = { slow: 1400, base: 1600, fast: 1800 };
   const EASE = 'cubic-bezier(0.42, 0, 0.58, 1)';
-  const EASE_FADE = 'cubic-bezier(0.42, 0, 0.58, 1)';
+  const EASE_FADE = 'cubic-bezier(0.25, 0, 0.4, 1)';
 
   const KEYFRAMES = {
     'reveal-left':   [{ opacity: 0, transform: `translateX(-${DIST}px)` }, { opacity: 1, transform: 'none' }],
     'reveal-right':  [{ opacity: 0, transform: `translateX(${DIST}px)` },  { opacity: 1, transform: 'none' }],
     'reveal-bottom': [{ opacity: 0, transform: `translateY(${DIST}px)` },  { opacity: 1, transform: 'none' }],
-    'reveal-fade':   [{ opacity: 0 }, { opacity: 1 }],
     'fade-slow':     [{ opacity: 0 }, { opacity: 1 }],
     'fade-fast':     [{ opacity: 0 }, { opacity: 1 }],
   };
@@ -29,7 +28,7 @@
         duration: DUR.slow,
         easing: EASE_FADE,
         fill: 'forwards',
-        delay: 300,
+        delay: 800,
       });
     }
 
@@ -38,13 +37,13 @@
         duration: DUR.fast,
         easing: EASE_FADE,
         fill: 'forwards',
-        delay: 800,
+        delay: 300,
       });
     }
   }
 
   // ── Scroll reveals ────────────────────────────────────────
-  const SCROLL_CLASSES = ['reveal-left', 'reveal-right', 'reveal-bottom', 'reveal-fade'];
+  const SCROLL_CLASSES = ['reveal-left', 'reveal-right', 'reveal-bottom'];
   const scrollEls = document.querySelectorAll(SCROLL_CLASSES.map(c => `.${c}`).join(', '));
 
   if (scrollEls.length && !reduced) {
@@ -55,14 +54,30 @@
         if (!cls) return;
         e.target.animate(KEYFRAMES[cls], {
           duration: DUR.base,
-          easing: cls === 'reveal-fade' ? EASE_FADE : EASE,
+          easing: EASE,
           fill: 'forwards'
         });
         observer.unobserve(e.target);
       });
-    }, { threshold: 0.1, rootMargin: '0px 0px -25% 0px' });
+    }, { threshold: 0.1, rootMargin: '0px 0px -20% 0px' });
 
-    scrollEls.forEach(el => observer.observe(el));
+    scrollEls.forEach(el => {
+      const rect = el.getBoundingClientRect();
+      const inViewport = rect.top < window.innerHeight && rect.bottom > 0;
+      if (inViewport) {
+        const cls = SCROLL_CLASSES.find(c => el.classList.contains(c));
+        if (cls) {
+          el.animate(KEYFRAMES[cls], {
+            duration: DUR.base,
+            easing: EASE,
+            fill: 'forwards',
+            delay: 200,
+          });
+        }
+      } else {
+        observer.observe(el);
+      }
+    });
   }
 
 })();

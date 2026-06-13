@@ -18,7 +18,7 @@
 
     <div class="card-outer fade-slow">
       <div class="card card-1">
-        <p class="hero-kicker">Wedding &ensp;&middot;&ensp; Rentals</p>
+        <p class="hero-kicker">Posta &ensp;&middot;&ensp; Welcome</p>
         <h1 class="hero-title" id="title">
           The Post Box<br>
           To<br>
@@ -47,7 +47,6 @@
     <div class="card-outer card-outer-3 reveal-left">
       <img src="/images/public/posta-night-land.png" alt="" loading="lazy" aria-hidden="true">
       <div class="card card-3">
-        <span class="card-num">01</span>
         <h2 class="card-title">The Collection</h2>
         <p class="card-desc">Cast iron post boxes available to hire. Each piece unique.</p>
         <a href="/collection" class="card-link btn btn-text-light">
@@ -60,12 +59,11 @@
     <div class="card-outer card-outer-4 reveal-right">
       <div class="card card-4">
         <div>
-          <span class="card-num">02</span>
           <h2 class="card-title">Availability</h2>
           <p class="card-desc">Check which pieces are free for your date.</p>
           <div class="avail-mock" aria-hidden="true">
-            <label class="avail-mock-label">Your wedding date</label>
-            <input class="avail-mock-field" type="date" tabindex="-1">
+            <label class="form-label">Your wedding date</label>
+            <input class="avail-mock-field form-input" type="date" tabindex="-1">
           </div>
         </div>
         <a href="/collection" class="card-link btn btn-text-dark">
@@ -78,7 +76,6 @@
     <div class="card-outer card-outer-5 reveal-right">
       <div class="card card-5">
         <div>
-          <span class="card-num">03</span>
           <h2 class="card-title">Enquire</h2>
           <p class="card-desc">Tell us your date and venue. We reply within 24 hours.</p>
         </div>
@@ -112,7 +109,7 @@
           <h2 class="card-title-sm">Just Ask</h2>
           <p class="card-desc">Not sure, just get in touch. Need more info on delivery, price, dates or anything else?</p>
         </div>
-        <a href="/about" class="card-link btn btn-text-dark">
+        <a href="/contact" class="card-link btn btn-text-dark">
           Contact us
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
@@ -125,18 +122,18 @@
           <h2 class="card-title-sm">Personal Touch</h2>
           <p class="card-desc">Create you own card for the font with anything you wish or we can print something for you</p>
         </div>
-        <a href="/custom-cards" class="card-link btn btn-text-dark">
-          View custom cards
+        <button type="button" id="custom-cards-toggle" class="card-link btn btn-text-dark" aria-expanded="false" aria-controls="custom-cards-panel">
+          Custom cards
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
+        </button>
       </div>
     </div>
 
   </section>
 
-  <section class="grid-container grid-6 delivery-panel" id="delivery-panel" aria-label="Delivery information">
+  <section class="grid-container grid-expand delivery-panel" id="delivery-panel" aria-label="Delivery information">
     <div class="card-outer">
-      <div class="card card-13">
+      <div class="card card-exp-1">
         <div class="blob blob--delivery" aria-hidden="true"></div>
         <div class="delivery-body">
           <h3 class="info-heading">How It Works</h3>
@@ -147,6 +144,36 @@
           <p>We deliver to venues across Ireland. Delivery is free to venues in Wicklow, Kildare, Meath, and Louth. All other locations are quoted on enquiry — just include your venue details and we'll confirm the cost upfront.</p>
         </div>
         <button type="button" class="delivery-close btn btn-text-dark" aria-label="Close delivery information">
+          Close
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid-container grid-expand custom-cards-panel" id="custom-cards-panel" aria-label="Custom card personalisation">
+    <div class="card-outer">
+      <div class="card card-exp-2">
+        <div class="blob blob--custom-cards" aria-hidden="true"></div>
+        <div class="custom-cards-grid">
+          <div class="custom-cards-body">
+            <h3 class="info-heading">Bring Your Own</h3>
+            <p>We'll give you the exact card dimensions — a standard slot that fits cards printed at home or through any print service. Design whatever you like, print it, and slide it in before your guests arrive. No special materials or sizes required.</p>
+            <h3 class="info-heading">We'll Do It For You</h3>
+            <p>Prefer to leave the printing to us? For a small additional fee we'll design a custom card and have it printed and delivered with the box. Just include any wording, names, or colour preferences when you enquire — we'll take care of the rest and confirm everything before printing.</p>
+          </div>
+          <div class="custom-cards-imgs">
+            <div class="custom-cards-img">
+              <img src="/images/public/posta-square-6.png" alt="Post box with custom card" loading="lazy">
+              <div class="custom-cards-img-overlay" aria-hidden="true"></div>
+            </div>
+            <div class="custom-cards-img">
+              <img src="/images/public/posta-lock.jpeg" alt="Post box card slot detail" loading="lazy">
+              <div class="custom-cards-img-overlay" aria-hidden="true"></div>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="custom-cards-close btn btn-text-dark" aria-label="Close custom cards information">
           Close
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
         </button>
@@ -174,7 +201,7 @@
   </section>
 
   <section class="grid-container grid-5">
-    <div class="card-outer reveal-fade">
+    <div class="card-outer">
     <div class="card card-12">
       <div class="blob blob--info" aria-hidden="true"></div>
       <div class="info-body">

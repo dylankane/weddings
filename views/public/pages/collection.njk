@@ -15,9 +15,9 @@
 <div class="col-wrapper">
 
   <section class="col-header">
-    <div class="blob blob--col-header" aria-hidden="true"></div>
-    <div class="col-header-body">
-      <p class="col-kicker">Wedding &ensp;&middot;&ensp; Rentals</p>
+    <div class="blob blob--col-header fade-fast" aria-hidden="true"></div>
+    <div class="col-header-body fade-slow">
+      <p class="col-kicker">Posta &ensp;&middot;&ensp; Products</p>
       <h1 class="col-title">The Collection</h1>
       <p class="col-subtitle">Cast iron post boxes, available to hire for your wedding day. Each piece is original, lockable, and delivered to your venue.</p>
     </div>
@@ -38,8 +38,11 @@
 
     {% for product in products %}
 
+    {%- set galleryUrls -%}{%- for img in product.images -%}{{ img.url }}{%- if not loop.last -%}|{%- endif -%}{%- endfor -%}{%- endset -%}
+    {%- set galleryAlts -%}{%- for img in product.images -%}{{ img.altText or '' }}{%- if not loop.last -%}|{%- endif -%}{%- endfor -%}{%- endset -%}
+
     <article
-      class="col-item reveal-fade"
+      class="col-item reveal-left"
       data-product-id="{{ product.id }}"
       aria-label="{{ product.name }}"
     >
@@ -53,6 +56,16 @@
         >
         <div class="col-item-overlay" aria-hidden="true"></div>
         <span class="col-item-unavail-label" aria-hidden="true">Unavailable</span>
+        <button
+          class="lb-trigger"
+          data-images="{{ galleryUrls or '/images/public/produt-fallback.jpeg' }}"
+          data-alts="{{ galleryAlts }}"
+          data-name="{{ product.name }}"
+          aria-label="View photos of {{ product.name }}"
+          type="button"
+        >
+          <svg class="lb-trigger-icon" aria-hidden="true"><use href="#icon-expand"/></svg>
+        </button>
       </div>
 
       <div class="col-item-body">
@@ -62,7 +75,7 @@
           {% if product.isCustomisable and product.customisationOverview %}
             <p class="col-item-custom">{{ product.customisationOverview }}</p>
           {% endif %}
-          <a href="/enquiry" class="col-item-cta btn btn-outline-light">
+          <a href="/enquiry" class="btn btn-text-light btn-sm">
             Enquire about this piece
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </a>
@@ -84,19 +97,40 @@
   {% endif %}
 
   <section class="col-cta">
-    <p class="col-cta-label">Wedding &ensp;&middot;&ensp; Hire</p>
-    <h2 class="col-cta-title">Ready for your day?</h2>
-    <p class="col-cta-sub">Tell us your date and venue. We reply within 24 hours.</p>
-    <a href="/enquiry" class="btn btn-outline-light btn-lg">
-      Make an enquiry
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-    </a>
+    <div class="blob blob--col-cta" aria-hidden="true"></div>
+    <div class="col-cta-content">
+      <h2 class="col-title col-title-dark">Ready for your day?</h2>
+      <p class="col-subtitle subtitle-light">Tell us your date and venue. We reply within 24 hours.</p>
+      <a href="/enquiry" class="btn btn-outline-dark btn-sm">
+        Make an enquiry
+      </a>
+    </div>
   </section>
 
+</div>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Image gallery" hidden>
+  <button class="lb-backdrop" id="lb-backdrop" aria-label="Close gallery" tabindex="-1"></button>
+  <button class="lb-close" id="lb-close" aria-label="Close gallery">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </button>
+  <div class="lb-inner">
+    <button class="lb-nav lb-prev" id="lb-prev" aria-label="Previous image">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div class="lb-media">
+      <img class="lb-img" id="lb-img" src="" alt="">
+      <div class="lb-dots" id="lb-dots" aria-hidden="true"></div>
+    </div>
+    <button class="lb-nav lb-next" id="lb-next" aria-label="Next image">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
 </div>
 
 {% endblock %}
 
 {% block scripts %}
-<script src="/js/public/collection.js" defer></script>
+<script src="/js/public/availability.js" defer></script>
+<script src="/js/public/lightbox.js" defer></script>
 {% endblock %}

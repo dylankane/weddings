@@ -70,8 +70,8 @@
   position: absolute;
   inset: 0;
   padding: 0;
-  backdrop-filter: grayscale(70%) brightness(0.8) contrast(1.2);
-  background: radial-gradient(ellipse 55% 65% at 55% 65%, rgba(139, 94, 42, 0.16) 0%, transparent 60%);
+  backdrop-filter: var(--filter-hero);
+  background: var(--gradient-hero);
   mix-blend-mode: screen;
 }
 
@@ -90,23 +90,24 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
-  filter: grayscale(85%) brightness(0.5) contrast(1.1);
-  transition: transform 4s ease, filter 0.4s ease;
+  transition: transform 4s ease;
 }
 
 .card-outer-3:hover img {
   transform: scale(1.04);
-  filter: grayscale(85%) brightness(0.68) contrast(1.1);
 }
 
 .card-3 {
   position: absolute;
   inset: 0;
   justify-content: flex-end;
-  background: linear-gradient(to top,
-      rgba(9, 9, 11, 0.95) 0%,
-      rgba(9, 9, 11, 0.45) 45%,
-      transparent 75%);
+  backdrop-filter: var(--filter-editorial);
+  background: var(--gradient-text-overlay);
+  transition: backdrop-filter var(--t-base);
+}
+
+.card-outer-3:hover .card-3 {
+  backdrop-filter: var(--filter-editorial-hover);
 }
 
 .card-outer-4 {
@@ -115,7 +116,7 @@
 }
 
 .card-4 {
-  background: var(--white);
+  background: var(--off-white);
   color: var(--black);
   justify-content: space-between;
 }
@@ -193,7 +194,8 @@
   position: absolute;
   inset: 0;
   padding: 0;
-  backdrop-filter: grayscale(85%) brightness(0.5) contrast(1.1);
+  backdrop-filter: var(--filter-editorial);
+  transition: backdrop-filter var(--t-base);
 }
 
 .card-outer-9:hover img,
@@ -205,7 +207,7 @@
 .card-outer-9:hover .card-9,
 .card-outer-10:hover .card-10,
 .card-outer-11:hover .card-11 {
-  backdrop-filter: grayscale(85%) brightness(0.68) contrast(1.1);
+  backdrop-filter: var(--filter-editorial-hover);
 }
 
 .card-12 {
@@ -257,10 +259,6 @@
 }
 
 /* -- Card parts -------------------------------------------- */
-.card-num {
-  display: none;
-}
-
 .card-title {
   font-size: var(--font-l);
   margin-bottom: 1.25rem;
@@ -287,28 +285,6 @@
   margin-top: 2rem;
 }
 
-.avail-mock-label {
-  display: block;
-  font-size: var(--font-xxxxs);
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--grey);
-  margin-bottom: 0.625rem;
-}
-
-.avail-mock-field {
-  width: 100%;
-  padding: 0.85em 1em;
-  border: 1px solid rgba(9, 9, 11, 0.18);
-  background: transparent;
-  font-family: inherit;
-  font-size: var(--font-xs);
-  font-weight: 300;
-  letter-spacing: 0.04em;
-  color: var(--black);
-  appearance: none;
-}
 
 /* -- Info section ------------------------------------------ */
 .info-body {
@@ -346,8 +322,8 @@
   transform: rotate(90deg);
 }
 
-/* -- Delivery panel ---------------------------------------- */
-.grid-6 {
+/* -- Expanding panels -------------------------------------- */
+.grid-expand {
   grid-template-columns: 1fr;
 }
 
@@ -361,12 +337,11 @@
   max-height: 800px;
 }
 
-.card-13 {
+.card-exp-1 {
   background: var(--off-white);
   color: var(--black);
   position: relative;
   overflow: hidden;
-  padding: 5rem;
 }
 
 .delivery-body {
@@ -389,3 +364,91 @@
   z-index: 2;
 }
 
+/* -- Custom cards toggle arrow ----------------------------- */
+#custom-cards-toggle svg {
+  transition: transform var(--t-base);
+}
+
+#custom-cards-toggle[aria-expanded="true"] svg {
+  transform: rotate(90deg);
+}
+
+/* -- Custom cards panel ------------------------------------ */
+.custom-cards-panel {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.75s var(--ease-out);
+}
+
+.custom-cards-panel.is-open {
+  max-height: 900px;
+}
+
+.card-exp-2 {
+  background: var(--off-white);
+  color: var(--black);
+  position: relative;
+  overflow: hidden;
+}
+
+.custom-cards-grid {
+  display: flex;
+  gap: 3rem;
+  position: relative;
+  z-index: 1;
+  justify-content: space-around;
+}
+
+.custom-cards-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 68ch;
+}
+
+.custom-cards-body .info-heading:first-child {
+  margin-top: 0;
+}
+
+.custom-cards-body p {
+  font-size: var(--font-xs);
+  line-height: 1.9;
+  color: var(--grey);
+  text-indent: 2em;
+}
+
+.custom-cards-imgs {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.custom-cards-img {
+  width: 200px;
+  height: 200px;
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.custom-cards-img img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.custom-cards-img-overlay {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: var(--filter-editorial);
+}
+
+.custom-cards-close {
+  position: absolute;
+  top: 2.5rem;
+  right: 2.5rem;
+  z-index: 2;
+}

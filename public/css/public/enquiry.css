@@ -1,0 +1,221 @@
+/* -- Page wrapper ------------------------------------------ */
+.enq-wrapper {
+  display: flex;
+  flex-direction: column;
+  background: var(--off-white);
+}
+
+/* -- Header ------------------------------------------------ */
+.enq-header {
+  position: relative;
+  background: var(--off-white);
+  padding: 8rem 6rem 5rem;
+  overflow: hidden;
+}
+
+.enq-header-body {
+  position: relative;
+  z-index: 1;
+}
+
+.enq-kicker {
+  font-size: var(--font-xxxs);
+  font-weight: 400;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 2rem;
+}
+
+.enq-title {
+  font-size: var(--font-xl);
+  letter-spacing: 0.06em;
+  color: var(--dark);
+  margin-bottom: 1.5rem;
+}
+
+.enq-subtitle {
+  font-size: var(--font-xs);
+  line-height: 1.8;
+  color: var(--grey);
+  max-width: 44ch;
+}
+
+/* -- Body -------------------------------------------------- */
+.enq-body {
+  background: var(--off-white);
+  padding: 4rem 6rem 8rem;
+  border-top: 1px solid var(--muted-dark);
+}
+
+/* -- Grid -------------------------------------------------- */
+.enq-grid {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 6rem;
+}
+
+/* -- Form layout ------------------------------------------- */
+.enq-form {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.enq-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+}
+
+/* -- Submit row -------------------------------------------- */
+.form-submit-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 1rem;
+}
+
+/* -- Radio group ------------------------------------------- */
+.enq-radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3rem;
+  margin-top: 0.75rem;
+}
+
+.enq-radio-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding-bottom: 0.5em;
+  cursor: pointer;
+  user-select: none;
+}
+
+.enq-radio-item::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--muted-dark);
+}
+
+.enq-radio-item::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--accent);
+  transition: width var(--t-base) var(--ease-out);
+  z-index: 1;
+}
+
+.enq-radio-item:has(input[type="checkbox"]:checked)::before {
+  width: 100%;
+}
+
+.enq-radio-item input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.enq-radio-text {
+  font-family: var(--f-body);
+  font-size: var(--font-xs);
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  color: var(--light-grey);
+  transition: color var(--t-base);
+}
+
+.enq-radio-item:has(input[type="checkbox"]:checked) .enq-radio-text {
+  color: var(--dark);
+}
+
+.enq-radio-item:hover:not(:has(input[type="checkbox"]:checked)) .enq-radio-text {
+  color: var(--grey);
+}
+
+
+/* -- Success ----------------------------------------------- */
+.enq-success {
+  padding: 3rem 0;
+}
+
+.enq-success-kicker {
+  font-size: var(--font-xxxs);
+  font-weight: 400;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 2rem;
+}
+
+.enq-success-title {
+  font-size: var(--font-xl);
+  letter-spacing: 0.06em;
+  color: var(--dark);
+  margin-bottom: 1.5rem;
+}
+
+.enq-success-body {
+  font-size: var(--font-xs);
+  line-height: 1.8;
+  color: var(--grey);
+  margin-bottom: 3rem;
+}
+
+.enq-success-recap {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  border-top: 1px solid var(--muted-dark);
+  padding-top: 2.5rem;
+}
+
+.enq-success-recap-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.enq-success-recap-value {
+  font-size: var(--font-xs);
+  color: var(--dark);
+  letter-spacing: 0.03em;
+}
+
+/* -- Info column ------------------------------------------- */
+.enq-info-col {
+  padding-top: 0.5rem;
+}
+
+.enq-info .info-heading {
+  font-size: var(--font-xxxs);
+  font-family: var(--f-body);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.25rem;
+  margin-top: 3rem;
+}
+
+.enq-info h3:first-child {
+  margin-top: 0;
+}
+
+.enq-info p {
+  font-size: var(--font-xs);
+  line-height: 1.9;
+  color: var(--grey);
+  text-indent: 2em;
+}

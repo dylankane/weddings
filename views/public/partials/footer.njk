@@ -15,15 +15,38 @@
     </div>
     <div class="footer-col">
       <span class="footer-col-label">Contact</span>
-      <ul class="footer-links" role="list">
-        {% if companySettings and companySettings.contactPhone %}
-          <li><a href="tel:{{ companySettings.contactPhone }}">{{ companySettings.contactPhone }}</a></li>
+      {% if companySettings %}
+      <div class="footer-contact-list">
+        {% if companySettings.contactEmail %}
+        <div class="footer-contact-row">
+          <a class="footer-contact-item" href="mailto:{{ companySettings.contactEmail }}">
+            <svg class="footer-contact-icon" aria-hidden="true"><use href="#icon-email"/></svg>
+            <span class="footer-contact-value">{{ companySettings.contactEmail }}</span>
+          </a>
+          <button class="footer-copy-btn" type="button" aria-label="Copy email address" data-copy="{{ companySettings.contactEmail }}">
+            <svg class="footer-copy-icon" aria-hidden="true"><use href="#icon-copy"/></svg>
+          </button>
+        </div>
         {% endif %}
-        {% if companySettings and companySettings.contactEmail %}
-          <li><a href="mailto:{{ companySettings.contactEmail }}">{{ companySettings.contactEmail }}</a></li>
+        {% if companySettings.contactPhone %}
+        <div class="footer-contact-row">
+          <a class="footer-contact-item" href="tel:{{ companySettings.contactPhone }}">
+            <svg class="footer-contact-icon" aria-hidden="true"><use href="#icon-phone"/></svg>
+            <span class="footer-contact-value">{{ companySettings.contactPhone }}</span>
+          </a>
+          <button class="footer-copy-btn" type="button" aria-label="Copy phone number" data-copy="{{ companySettings.contactPhone }}">
+            <svg class="footer-copy-icon" aria-hidden="true"><use href="#icon-copy"/></svg>
+          </button>
+        </div>
         {% endif %}
-        <li><a href="/legal">Terms &amp; Conditions</a></li>
-      </ul>
+        {% if companySettings.contactPhone %}
+        <a class="footer-contact-item" href="https://wa.me/{{ companySettings.contactPhone | whatsapp }}" target="_blank" rel="noopener noreferrer">
+          <svg class="footer-contact-icon" aria-hidden="true"><use href="#icon-whatsapp"/></svg>
+          <span class="footer-contact-value">WhatsApp</span>
+        </a>
+        {% endif %}
+      </div>
+      {% endif %}
     </div>
   </div>
   <div class="footer-base">

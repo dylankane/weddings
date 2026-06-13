@@ -21,12 +21,26 @@ router.get('/collection', async (req, res) => {
   const products = await prisma.product.findMany({
     where: { isActive: true },
     include: {
-      images: { where: { isPrimary: true }, take: 1 },
+      images: { orderBy: { displayOrder: 'asc' }, take: 3 },
     },
     orderBy: { displayOrder: 'asc' },
   });
 
   res.render('public/pages/collection.njk', { products });
+});
+
+router.get('/contact', (req, res) => {
+  res.render('public/pages/contact.njk');
+});
+
+router.get('/enquiry', async (req, res) => {
+  const products = await prisma.product.findMany({
+    where: { isActive: true },
+    select: { id: true, name: true, slug: true },
+    orderBy: { displayOrder: 'asc' },
+  });
+
+  res.render('public/pages/enquiry.njk', { products });
 });
 
 module.exports = router;

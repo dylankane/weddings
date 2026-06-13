@@ -1,0 +1,118 @@
+{% extends "public/layout.njk" %}
+{% set navCtaLabel = 'Enquire' %}
+{% set navCtaHref = '/enquiry' %}
+
+{% block title %}Contact — Posta{% endblock %}
+
+{% block meta %}
+<meta name="description" content="Get in touch with Posta. Questions about hire, delivery, or availability — we reply within 24 hours.">
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="/css/public/contact.css">
+{% endblock %}
+
+{% block content %}
+
+<div class="con-wrapper">
+
+  <section class="con-header">
+    <div class="blob blob--contact-header fade-fast" aria-hidden="true"></div>
+    <div class="con-header-body fade-slow">
+      <p class="con-kicker">Posta &ensp;&middot;&ensp; Contact</p>
+      <h1 class="con-title">Get in Touch</h1>
+      <p class="con-subtitle">Questions about hire, delivery, or availability. We reply within 24 hours.</p>
+    </div>
+  </section>
+
+  <section class="con-body">
+
+    <div class="con-grid">
+
+      <div class="con-form-col">
+
+        <form class="con-form" id="con-form" novalidate aria-label="Contact form">
+
+          <div class="form-field">
+            <label class="form-label" for="con-name">Full name</label>
+            <input class="form-input" type="text" id="con-name" name="name" autocomplete="name" required>
+            <span class="form-error" id="con-name-error" role="alert" aria-live="polite"></span>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="con-email">Email address</label>
+            <input class="form-input" type="email" id="con-email" name="email" autocomplete="email" required>
+            <span class="form-error" id="con-email-error" role="alert" aria-live="polite"></span>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="con-message">Message</label>
+            <textarea class="form-textarea" id="con-message" name="message" rows="5" required></textarea>
+            <span class="form-error" id="con-message-error" role="alert" aria-live="polite"></span>
+          </div>
+
+          <div class="form-submit-row">
+            <span class="form-error" id="con-form-error" role="alert" aria-live="polite"></span>
+            <button type="submit" class="btn btn-outline-accent-light btn-sm" id="con-submit">
+              Send message
+            </button>
+          </div>
+
+        </form>
+
+        <div class="con-success" id="con-success" hidden>
+          <h2 class="con-success-title">Thank you, <span id="con-success-name"></span></h2>
+          <p class="con-success-body">Your message has been received. We'll be in touch at <span id="con-success-email"></span> within 24 hours.</p>
+        </div>
+
+      </div>
+
+      <div class="con-info-col">
+
+        <div class="con-details">
+          <h3 class="info-heading">Contact</h3>
+          {% if companySettings %}
+          <div class="con-contact-list">
+            <div class="con-contact-row">
+              <a class="con-contact-item" href="mailto:{{ companySettings.contactEmail }}">
+                <svg class="con-contact-icon" aria-hidden="true"><use href="#icon-email"/></svg>
+                <span class="con-contact-value">{{ companySettings.contactEmail }}</span>
+              </a>
+              <button class="con-copy-btn" type="button" aria-label="Copy email address" data-copy="{{ companySettings.contactEmail }}">
+                <svg class="con-copy-icon" aria-hidden="true"><use href="#icon-copy"/></svg>
+              </button>
+            </div>
+            <div class="con-contact-row">
+              <a class="con-contact-item" href="tel:{{ companySettings.contactPhone }}">
+                <svg class="con-contact-icon" aria-hidden="true"><use href="#icon-phone"/></svg>
+                <span class="con-contact-value">{{ companySettings.contactPhone }}</span>
+              </a>
+              <button class="con-copy-btn" type="button" aria-label="Copy phone number" data-copy="{{ companySettings.contactPhone }}">
+                <svg class="con-copy-icon" aria-hidden="true"><use href="#icon-copy"/></svg>
+              </button>
+            </div>
+            <a class="con-contact-item" href="https://wa.me/{{ companySettings.contactPhone | whatsapp }}" target="_blank" rel="noopener noreferrer">
+              <svg class="con-contact-icon" aria-hidden="true"><use href="#icon-whatsapp"/></svg>
+              <span class="con-contact-value">WhatsApp</span>
+            </a>
+          </div>
+          {% endif %}
+          <h3 class="info-heading">Hours</h3>
+          <p>We respond to all enquiries within 24 hours. For urgent queries on a wedding day, please call directly.</p>
+          <h3 class="info-heading">About</h3>
+          <p>Posta hires original antique cast iron post boxes for wedding days across Ireland. Each piece is lockable, secure, and delivered directly to your venue. We started with a single post box and a belief that the details matter — the weight of iron, the turn of a key, the character of something genuinely old.</p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/js/public/contact.js" defer></script>
+{% endblock %}

@@ -1,0 +1,144 @@
+{% extends "public/layout.njk" %}
+{% set navCtaLabel = 'Home' %}
+{% set navCtaHref = '/' %}
+
+{% block title %}Enquire — Posta{% endblock %}
+
+{% block meta %}
+<meta name="description" content="Enquire about hiring a cast iron post box for your wedding day. We reply within 24 hours.">
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="/css/public/enquiry.css">
+{% endblock %}
+
+{% block content %}
+
+<div class="enq-wrapper">
+
+  <section class="enq-header">
+    <div class="blob blob--enq-header fade-fast" aria-hidden="true"></div>
+    <div class="enq-header-body fade-slow">
+      <p class="enq-kicker">Posta &ensp;&middot;&ensp; Enquire</p>
+      <h1 class="enq-title">Make an Enquiry</h1>
+      <p class="enq-subtitle">Tell us your date and venue. We reply within 24 hours.</p>
+    </div>
+  </section>
+
+  <section class="enq-body">
+
+    <div class="enq-grid">
+
+      <div class="enq-form-col">
+
+        <form class="enq-form" id="enq-form" novalidate aria-label="Wedding hire enquiry form">
+
+          <div class="enq-row">
+            <div class="form-field">
+              <label class="form-label" for="enq-name">Full name</label>
+              <input class="form-input" type="text" id="enq-name" name="name" autocomplete="name" required>
+              <span class="form-error" id="enq-name-error" role="alert" aria-live="polite"></span>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="enq-email">Email address</label>
+              <input class="form-input" type="email" id="enq-email" name="email" autocomplete="email" required>
+              <span class="form-error" id="enq-email-error" role="alert" aria-live="polite"></span>
+            </div>
+          </div>
+
+          <div class="enq-row">
+            <div class="form-field">
+              <label class="form-label" for="enq-phone">Phone number</label>
+              <input class="form-input" type="tel" id="enq-phone" name="phone" autocomplete="tel">
+              <span class="form-error" id="enq-phone-error" role="alert" aria-live="polite"></span>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="enq-date">Wedding date</label>
+              <input class="form-input" type="date" id="enq-date" name="weddingDate" required>
+              <span class="form-error" id="enq-date-error" role="alert" aria-live="polite"></span>
+            </div>
+          </div>
+
+          <div class="enq-row">
+            <div class="form-field">
+              <label class="form-label" for="enq-venue">Venue name</label>
+              <input class="form-input" type="text" id="enq-venue" name="venueName" required>
+              <span class="form-error" id="enq-venue-error" role="alert" aria-live="polite"></span>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="enq-county">County</label>
+              <input class="form-input" type="text" id="enq-county" name="venueCounty" required>
+              <span class="form-error" id="enq-county-error" role="alert" aria-live="polite"></span>
+            </div>
+          </div>
+
+          <div class="form-field form-field--full">
+            <span class="form-label" id="enq-product-label">Piece of interest</span>
+            <div class="enq-radio-group" role="radiogroup" aria-labelledby="enq-product-label">
+              {% for product in products %}
+              <label class="enq-radio-item">
+                <input type="checkbox" name="productSlug" value="{{ product.slug }}">
+                <span class="enq-radio-text">{{ product.name }}</span>
+              </label>
+              {% endfor %}
+            </div>
+            <span class="form-error" id="enq-product-error" role="alert" aria-live="polite"></span>
+          </div>
+
+          <div class="form-field form-field--full">
+            <label class="form-label" for="enq-notes">Anything else we should know</label>
+            <textarea class="form-textarea" id="enq-notes" name="notes" rows="4"></textarea>
+          </div>
+
+          <div class="form-submit-row">
+            <span class="form-error" id="enq-form-error" role="alert" aria-live="polite"></span>
+            <button type="submit" class="btn btn-outline-accent-light btn-sm" id="enq-submit">
+              Send enquiry
+            </button>
+          </div>
+
+        </form>
+
+        <div class="enq-success" id="enq-success" hidden>
+          <h2 class="enq-success-title">Thank you, <span id="enq-success-name"></span></h2>
+          <p class="enq-success-body">We'll be in touch at <span id="enq-success-email"></span> within 24 hours.</p>
+          <div class="enq-success-recap">
+            <div class="enq-success-recap-item">
+              <span class="form-label">Wedding date</span>
+              <span class="enq-success-recap-value" id="enq-success-date"></span>
+            </div>
+            <div class="enq-success-recap-item">
+              <span class="form-label">Venue</span>
+              <span class="enq-success-recap-value" id="enq-success-venue"></span>
+            </div>
+            <div class="enq-success-recap-item">
+              <span class="form-label">Piece</span>
+              <span class="enq-success-recap-value" id="enq-success-pieces"></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="enq-info-col">
+        <div class="enq-info">
+          <h3 class="info-heading">What happens next</h3>
+          <p>Once we receive your enquiry we'll check availability for your date and come back to you within 24 hours. If the piece you're interested in is already booked, we'll let you know and explore what options we have.</p>
+          <h3 class="info-heading">Pricing</h3>
+          <p>Hire pricing is confirmed at the time of enquiry. Delivery is included free to venues in Wicklow, Kildare, Meath, and Louth. All other locations are quoted based on your venue address.</p>
+          <h3 class="info-heading">Booking</h3>
+          <p>We'll send a quote once we've confirmed availability. A deposit is required to secure your date. Full payment is due two weeks before your wedding day.</p>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/js/public/enquiry.js" defer></script>
+{% endblock %}
