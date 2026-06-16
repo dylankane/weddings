@@ -22,9 +22,7 @@ model User {
 
   auditLogs              AuditLog[]
   apiUsageLogs           ApiUsageLog[]
-  bookingsCreated        Booking[]       @relation("BookingCreatedBy")
-  quotesCreated          Quote[]
-  invoicesCreated        Invoice[]
+  jobsCreated            Job[]           @relation("JobCreatedBy")
   companySettingsUpdates CompanySettings[]
 
   @@map("users")
@@ -87,12 +85,12 @@ enum ApiTrigger {
 // ─── Email & Settings ──────────────────────────────────────────────────────────
 
 model EmailTemplate {
-  id           Int                @id @default(autoincrement())
+  id           Int               @id @default(autoincrement())
   name         String
-  triggerEvent EmailTriggerEvent  @unique @map("trigger_event")
+  triggerEvent EmailTriggerEvent @unique @map("trigger_event")
   subject      String
   description  String
-  isActive     Boolean            @default(true) @map("is_active")
+  isActive     Boolean           @default(true) @map("is_active")
 
   @@map("email_templates")
   @@schema("rental")
@@ -108,24 +106,24 @@ enum EmailTriggerEvent {
 }
 
 model CompanySettings {
-  id               Int      @id @default(autoincrement())
-  companyName      String   @map("company_name")
-  tagline          String?
-  logoLightSmallUrl String? @map("logo_light_small_url")
-  logoLightLargeUrl String? @map("logo_light_large_url")
-  logoDarkSmallUrl  String? @map("logo_dark_small_url")
-  logoDarkLargeUrl  String? @map("logo_dark_large_url")
-  contactEmail     String   @map("contact_email")
-  contactPhone     String   @map("contact_phone")
-  contactAddress   String   @map("contact_address")
-  socialLinks      Json?    @map("social_links")
-  metaTitle        String?  @map("meta_title")
-  metaDescription  String?  @map("meta_description")
-  deliveryInfoText String?  @map("delivery_info_text")
-  businessLat      Decimal? @map("business_lat")
-  businessLng      Decimal? @map("business_lng")
-  updatedAt        DateTime @updatedAt @map("updated_at")
-  updatedById      Int?     @map("updated_by_id")
+  id                Int      @id @default(autoincrement())
+  companyName       String   @map("company_name")
+  tagline           String?
+  logoLightSmallUrl String?  @map("logo_light_small_url")
+  logoLightLargeUrl String?  @map("logo_light_large_url")
+  logoDarkSmallUrl  String?  @map("logo_dark_small_url")
+  logoDarkLargeUrl  String?  @map("logo_dark_large_url")
+  contactEmail      String   @map("contact_email")
+  contactPhone      String   @map("contact_phone")
+  contactAddress    String   @map("contact_address")
+  socialLinks       Json?    @map("social_links")
+  metaTitle         String?  @map("meta_title")
+  metaDescription   String?  @map("meta_description")
+  deliveryInfoText  String?  @map("delivery_info_text")
+  businessLat       Decimal? @map("business_lat")
+  businessLng       Decimal? @map("business_lng")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+  updatedById       Int?     @map("updated_by_id")
 
   updatedBy User? @relation(fields: [updatedById], references: [id])
 
@@ -144,8 +142,7 @@ model Customer {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  enquiries Enquiry[]
-  bookings  Booking[]
+  jobs Job[]
 
   @@map("customers")
   @@schema("rental")
@@ -168,8 +165,8 @@ model Product {
 
   images               ProductImage[]
   customisationOptions ProductCustomisationOption[]
-  enquiryItems         EnquiryItem[]
-  bookingItems         BookingItem[]
+  jobItems             JobItem[]
+  blockedDates         JobItemDate[]
 
   @@map("products")
   @@schema("rental")
@@ -202,8 +199,8 @@ model ProductCustomisationOption {
   displayOrder Int                     @default(0) @map("display_order")
   isActive     Boolean                 @default(true) @map("is_active")
 
-  product                  Product                  @relation(fields: [productId], references: [id])
-  bookingItemCustomisations BookingItemCustomisation[]
+  product               Product               @relation(fields: [productId], references: [id])
+  jobItemCustomisations JobItemCustomisation[]
 
   @@map("product_customisation_options")
   @@schema("rental")
@@ -217,98 +214,35 @@ enum CustomisationOptionType {
   @@schema("rental")
 }
 
-// ─── Enquiries ─────────────────────────────────────────────────────────────────
+// ─── Jobs ──────────────────────────────────────────────────────────────────────
 
-model Enquiry {
-  id            Int           @id @default(autoincrement())
-  customerId    Int?          @map("customer_id")
-  source        EnquirySource
-  status        EnquiryStatus @default(NEW)
-  hireStartDate DateTime?     @map("hire_start_date") @db.Date
-  hireEndDate   DateTime?     @map("hire_end_date") @db.Date
-  venueName     String?       @map("venue_name")
-  venueAddress  String?       @map("venue_address")
-  venueEircode  String?       @map("venue_eircode")
-  venueCounty   String?       @map("venue_county")
-  notes         String?
-  createdAt     DateTime      @default(now()) @map("created_at")
-  updatedAt     DateTime      @updatedAt @map("updated_at")
+model Job {
+  id          Int       @id @default(autoincrement())
+  customerId  Int       @map("customer_id")
+  status      JobStatus @default(ENQUIRY)
+  source      JobSource
+  jobStart    DateTime? @map("job_start") @db.Date
+  jobEnd      DateTime? @map("job_end") @db.Date
+  notes       String?
+  createdById Int       @map("created_by_id")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
 
-  customer Customer?    @relation(fields: [customerId], references: [id])
-  items    EnquiryItem[]
-  bookings Booking[]
-  quotes   Quote[]
+  customer  Customer  @relation(fields: [customerId], references: [id])
+  createdBy User      @relation("JobCreatedBy", fields: [createdById], references: [id])
+  items        JobItem[]
+  blockedDates JobItemDate[]
+  delivery     Delivery?
+  pricing      Pricing?
+  quote        Quote?
+  invoice      Invoice?
 
-  @@map("enquiries")
+  @@map("jobs")
   @@schema("rental")
 }
 
-enum EnquirySource {
-  CUSTOMER_FORM
-  MANAGER_CREATED
-
-  @@schema("rental")
-}
-
-enum EnquiryStatus {
-  NEW
-  PENDING
-  CONVERTED
-  ARCHIVED
-
-  @@schema("rental")
-}
-
-model EnquiryItem {
-  id                 Int     @id @default(autoincrement())
-  enquiryId          Int     @map("enquiry_id")
-  productId          Int     @map("product_id")
-  quantity           Int
-  customisationNotes String? @map("customisation_notes")
-
-  enquiry Enquiry @relation(fields: [enquiryId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
-
-  @@map("enquiry_items")
-  @@schema("rental")
-}
-
-// ─── Bookings ──────────────────────────────────────────────────────────────────
-
-model Booking {
-  id                   Int             @id @default(autoincrement())
-  enquiryId            Int?            @map("enquiry_id")
-  customerId           Int             @map("customer_id")
-  status               BookingStatus   @default(PROVISIONAL)
-  provisionalExpiresAt DateTime?       @map("provisional_expires_at")
-  hireStartDatetime    DateTime        @map("hire_start_datetime")
-  hireEndDatetime      DateTime        @map("hire_end_datetime")
-  fulfillmentType      FulfillmentType @map("fulfillment_type")
-  deliveryAddress      String?         @map("delivery_address")
-  deliveryDatetime     DateTime?       @map("delivery_datetime")
-  collectionDatetime   DateTime?       @map("collection_datetime")
-  deliveryZoneId       Int?            @map("delivery_zone_id")
-  deliveryCost         Decimal?        @map("delivery_cost") @db.Decimal(10, 2)
-  itemsDelivered       Boolean         @default(false) @map("items_delivered")
-  itemsCollected       Boolean         @default(false) @map("items_collected")
-  notes                String?
-  createdById          Int             @map("created_by_id")
-  createdAt            DateTime        @default(now()) @map("created_at")
-  updatedAt            DateTime        @updatedAt @map("updated_at")
-
-  enquiry      Enquiry?      @relation(fields: [enquiryId], references: [id])
-  customer     Customer      @relation(fields: [customerId], references: [id])
-  deliveryZone DeliveryZone? @relation(fields: [deliveryZoneId], references: [id])
-  createdBy    User          @relation("BookingCreatedBy", fields: [createdById], references: [id])
-  items        BookingItem[]
-  invoices     Invoice[]
-
-  @@map("bookings")
-  @@schema("rental")
-}
-
-enum BookingStatus {
-  PROVISIONAL
+enum JobStatus {
+  ENQUIRY
   CONFIRMED
   COMPLETED
   CANCELLED
@@ -316,108 +250,137 @@ enum BookingStatus {
   @@schema("rental")
 }
 
-enum FulfillmentType {
-  CUSTOMER_COLLECTS
-  STAFF_DELIVERS
+enum JobSource {
+  CUSTOMER_FORM
+  MANAGER_CREATED
 
   @@schema("rental")
 }
 
-model BookingItem {
-  id          Int      @id @default(autoincrement())
-  bookingId   Int      @map("booking_id")
-  productId   Int      @map("product_id")
-  quantity    Int
-  quotedPrice Decimal? @map("quoted_price") @db.Decimal(10, 2)
+model JobItem {
+  id        Int      @id @default(autoincrement())
+  jobId     Int      @map("job_id")
+  productId Int      @map("product_id")
+  unitPrice Decimal? @map("unit_price") @db.Decimal(10, 2)
+  notes     String?
 
-  booking        Booking                  @relation(fields: [bookingId], references: [id])
-  product        Product                  @relation(fields: [productId], references: [id])
-  customisations BookingItemCustomisation[]
+  job            Job                   @relation(fields: [jobId], references: [id])
+  product        Product               @relation(fields: [productId], references: [id])
+  customisations JobItemCustomisation[]
+  blockedDates   JobItemDate[]
 
-  @@map("booking_items")
+  @@map("job_items")
   @@schema("rental")
 }
 
-model BookingItemCustomisation {
-  id                    Int      @id @default(autoincrement())
-  bookingItemId         Int      @map("booking_item_id")
-  customisationOptionId Int      @map("customisation_option_id")
+model JobItemCustomisation {
+  id                    Int     @id @default(autoincrement())
+  jobItemId             Int     @map("job_item_id")
+  customisationOptionId Int?    @map("customisation_option_id")
   value                 String
-  agreedCost            Decimal? @map("agreed_cost") @db.Decimal(10, 2)
   notes                 String?
 
-  bookingItem         BookingItem                @relation(fields: [bookingItemId], references: [id])
-  customisationOption ProductCustomisationOption @relation(fields: [customisationOptionId], references: [id])
+  jobItem             JobItem                     @relation(fields: [jobItemId], references: [id])
+  customisationOption ProductCustomisationOption? @relation(fields: [customisationOptionId], references: [id])
 
-  @@map("booking_item_customisations")
+  @@map("job_item_customisations")
+  @@schema("rental")
+}
+
+model JobItemDate {
+  id        Int      @id @default(autoincrement())
+  jobId     Int      @map("job_id")
+  jobItemId Int      @map("job_item_id")
+  productId Int      @map("product_id")
+  date      DateTime @db.Date
+
+  job     Job     @relation(fields: [jobId], references: [id])
+  jobItem JobItem @relation(fields: [jobItemId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("job_item_dates")
+  @@schema("rental")
+}
+
+// ─── Delivery ──────────────────────────────────────────────────────────────────
+
+model Delivery {
+  id             Int            @id @default(autoincrement())
+  jobId          Int            @unique @map("job_id")
+  outboundMethod DeliveryMethod @map("outbound_method")
+  returnMethod   DeliveryMethod @map("return_method")
+  venueName      String?        @map("venue_name")
+  venueAddress   String?        @map("venue_address")
+  venueEircode   String?        @map("venue_eircode")
+  venueCounty    String?        @map("venue_county")
+  lat            Decimal?
+  lng            Decimal?
+  notes          String?
+  outboundAt     DateTime?      @map("outbound_at")
+  returnAt       DateTime?      @map("return_at")
+
+  job Job @relation(fields: [jobId], references: [id])
+
+  @@map("deliveries")
+  @@schema("rental")
+}
+
+enum DeliveryMethod {
+  STAFF
+  CUSTOMER
+
+  @@schema("rental")
+}
+
+// ─── Pricing ───────────────────────────────────────────────────────────────────
+
+model Pricing {
+  id             Int      @id @default(autoincrement())
+  jobId          Int      @unique @map("job_id")
+  rentalCost     Decimal  @map("rental_cost") @db.Decimal(10, 2)
+  deliveryCost   Decimal  @map("delivery_cost") @db.Decimal(10, 2)
+  totalCost      Decimal  @map("total_cost") @db.Decimal(10, 2)
+  deliveryZoneId Int?     @map("delivery_zone_id")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  job          Job           @relation(fields: [jobId], references: [id])
+  deliveryZone DeliveryZone? @relation(fields: [deliveryZoneId], references: [id])
+
+  @@map("pricing")
   @@schema("rental")
 }
 
 // ─── Quotes ────────────────────────────────────────────────────────────────────
 
 model Quote {
-  id          Int         @id @default(autoincrement())
-  enquiryId   Int         @map("enquiry_id")
-  reference   String      @unique
-  status      QuoteStatus @default(DRAFT)
-  expiresAt   DateTime    @map("expires_at") @db.Date
-  notes       String?
-  sentAt      DateTime?   @map("sent_at")
-  sentTo      String?     @map("sent_to")
-  createdById Int         @map("created_by_id")
-  createdAt   DateTime    @default(now()) @map("created_at")
-  updatedAt   DateTime    @updatedAt @map("updated_at")
+  id        Int       @id @default(autoincrement())
+  jobId     Int       @unique @map("job_id")
+  pdfUrl    String    @map("pdf_url")
+  sentAt    DateTime? @map("sent_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
 
-  enquiry   Enquiry     @relation(fields: [enquiryId], references: [id])
-  createdBy User        @relation(fields: [createdById], references: [id])
-  items     QuoteItem[]
+  job Job @relation(fields: [jobId], references: [id])
 
   @@map("quotes")
-  @@schema("rental")
-}
-
-enum QuoteStatus {
-  DRAFT
-  SENT
-  ACCEPTED
-  REJECTED
-  EXPIRED
-
-  @@schema("rental")
-}
-
-model QuoteItem {
-  id          Int     @id @default(autoincrement())
-  quoteId     Int     @map("quote_id")
-  description String
-  quantity    Int
-  unitPrice   Decimal @map("unit_price") @db.Decimal(10, 2)
-  lineTotal   Decimal @map("line_total") @db.Decimal(10, 2)
-
-  quote Quote @relation(fields: [quoteId], references: [id])
-
-  @@map("quote_items")
   @@schema("rental")
 }
 
 // ─── Invoices ──────────────────────────────────────────────────────────────────
 
 model Invoice {
-  id          Int           @id @default(autoincrement())
-  bookingId   Int           @map("booking_id")
-  reference   String        @unique
-  status      InvoiceStatus @default(DRAFT)
-  dueDate     DateTime      @map("due_date") @db.Date
-  notes       String?
-  sentAt      DateTime?     @map("sent_at")
-  sentTo      String?       @map("sent_to")
-  createdById Int           @map("created_by_id")
-  createdAt   DateTime      @default(now()) @map("created_at")
-  updatedAt   DateTime      @updatedAt @map("updated_at")
+  id        Int           @id @default(autoincrement())
+  jobId     Int           @unique @map("job_id")
+  reference String        @unique
+  status    InvoiceStatus @default(DRAFT)
+  dueDate   DateTime?     @map("due_date") @db.Date
+  pdfUrl    String?       @map("pdf_url")
+  sentAt    DateTime?     @map("sent_at")
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
 
-  booking   Booking       @relation(fields: [bookingId], references: [id])
-  createdBy User          @relation(fields: [createdById], references: [id])
-  items     InvoiceItem[]
+  job Job @relation(fields: [jobId], references: [id])
 
   @@map("invoices")
   @@schema("rental")
@@ -429,20 +392,6 @@ enum InvoiceStatus {
   PAID
   OVERDUE
 
-  @@schema("rental")
-}
-
-model InvoiceItem {
-  id          Int     @id @default(autoincrement())
-  invoiceId   Int     @map("invoice_id")
-  description String
-  quantity    Int
-  unitPrice   Decimal @map("unit_price") @db.Decimal(10, 2)
-  lineTotal   Decimal @map("line_total") @db.Decimal(10, 2)
-
-  invoice Invoice @relation(fields: [invoiceId], references: [id])
-
-  @@map("invoice_items")
   @@schema("rental")
 }
 
@@ -461,7 +410,7 @@ model DeliveryZone {
   centerLng     Decimal? @map("center_lng")
   radiusKm      Decimal? @map("radius_km")
 
-  bookings Booking[]
+  pricings Pricing[]
 
   @@map("delivery_zones")
   @@schema("rental")

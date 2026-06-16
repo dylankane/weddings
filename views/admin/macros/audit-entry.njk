@@ -1,8 +1,0 @@
-{% macro auditEntry(log) %}
-  <li>
-    {{ log.action | replace('_', ' ') }}
-    by {{ log.user.displayName }}
-    — {{ log.createdAt | timeAgo }}
-    {% if log.metadata %} — {{ log.metadata | dump }}{% endif %}
-  </li>
-{% endmacro %}
