@@ -118,16 +118,14 @@ app.use('/admin', adminApi);
 // ─── Error Handling ───────────────────────────────────────────────────────────
 
 app.use((req, res) => {
-  res.status(404).render('errors/404.njk', { title: 'Page Not Found' });
+  res.status(404).send('404 — Page not found');
 });
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
   const status = err.status || 500;
-  res.status(status).render('errors/500.njk', {
-    title: 'Server Error',
-    message: process.env.NODE_ENV === 'development' ? err.message : null,
-  });
+  const message = process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong';
+  res.status(status).send(message);
 });
 
 // ─── Start ────────────────────────────────────────────────────────────────────

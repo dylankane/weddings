@@ -1,0 +1,162 @@
+{% extends "admin/layout.njk" %}
+{% from "admin/macros/breadcrumb.njk" import breadcrumb %}
+
+{% block styles %}
+<link rel="stylesheet" href="/css/admin/dashboard.css">
+{% endblock %}
+
+{% block content %}
+
+{# ─── Page Header ──────────────────────────────────────────────── #}
+
+<header class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-greeting">{{ greeting }}, {{ sessionUser.displayName if sessionUser else 'there' }}.</h1>
+    {{ breadcrumb([{ label: 'Dashboard' }]) }}
+  </div>
+  <p class="page-date">{{ formattedDate }}</p>
+</header>
+
+{# ─── New Enquiries ────────────────────────────────────────────── #}
+
+<section class="dash-section" aria-labelledby="enquiries-title">
+  <div class="data-card">
+    <div class="card-head">
+      <h2 class="card-title" id="enquiries-title">New Enquiries</h2>
+      <span class="card-count">{{ enquiries | length }}</span>
+    </div>
+
+    {% if enquiries | length %}
+    <div class="table-wrap">
+      <table class="data-table" aria-label="New enquiries">
+        <thead>
+          <tr>
+            <th scope="col">Customer</th>
+            <th scope="col">Product</th>
+            <th scope="col">Wedding Date</th>
+            <th scope="col">Source</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for job in enquiries %}
+          <tr class="data-row" data-href="/admin/jobs?id={{ job.id }}">
+            <td>
+              <span class="dot dot--enquiry" aria-hidden="true"></span>
+              {{ job.customer.name }}
+            </td>
+            <td>
+              {% if job.items and job.items.length %}
+                {{ job.items[0].product.name }}
+              {% else %}
+                <span style="color: var(--c-text-3)">—</span>
+              {% endif %}
+            </td>
+            <td class="mono">
+              {{ job.jobStart | dateFormat('short') if job.jobStart else '—' }}
+            </td>
+            <td>
+              <span class="src-tag">
+                {{ 'Website' if job.source === 'CUSTOMER_FORM' else 'Manager' }}
+              </span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty">No new enquiries</div>
+    {% endif %}
+  </div>
+</section>
+
+{# ─── Confirmed Bookings ───────────────────────────────────────── #}
+
+<section class="dash-section" aria-labelledby="confirmed-title">
+  <div class="data-card">
+    <div class="card-head">
+      <h2 class="card-title" id="confirmed-title">Confirmed Bookings</h2>
+      <span class="card-count">{{ confirmedJobs | length }}</span>
+    </div>
+
+    {% if confirmedJobs | length %}
+    <div class="table-wrap">
+      <table class="data-table" aria-label="Confirmed bookings">
+        <thead>
+          <tr>
+            <th scope="col">Customer</th>
+            <th scope="col">Venue</th>
+            <th scope="col">Wedding Date</th>
+            <th scope="col">Invoice</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for job in confirmedJobs %}
+          <tr class="data-row" data-href="/admin/jobs?id={{ job.id }}">
+            <td>
+              <span class="dot dot--confirmed" aria-hidden="true"></span>
+              {{ job.customer.name }}
+            </td>
+            <td>
+              {{ job.delivery.venueName if job.delivery and job.delivery.venueName else '—' }}
+            </td>
+            <td class="mono">
+              {{ job.jobStart | dateFormat('short') if job.jobStart else '—' }}
+            </td>
+            <td>
+              {% if job.invoice %}
+                {% if job.invoice.status === 'PAID' %}
+                  <span class="inv inv--paid">Paid</span>
+                {% elif job.invoice.status === 'SENT' %}
+                  <span class="inv inv--sent">Sent</span>
+                {% elif job.invoice.status === 'OVERDUE' %}
+                  <span class="inv inv--overdue">Overdue</span>
+                {% else %}
+                  <span class="inv inv--draft">Draft</span>
+                {% endif %}
+              {% else %}
+                <span class="inv inv--none">—</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty">No confirmed bookings</div>
+    {% endif %}
+  </div>
+</section>
+
+{# ─── Two-Week Calendar ────────────────────────────────────────── #}
+
+<section class="dash-section" aria-labelledby="calendar-title">
+  <div class="data-card">
+    <div class="card-head">
+      <h2 class="card-title" id="calendar-title">Next Two Weeks</h2>
+    </div>
+
+    <div class="cal-wrap">
+      <div class="cal-grid" role="grid" aria-label="Two week calendar">
+        {% for day in calendarDays %}
+        <div class="cal-day{{ ' cal-day--today' if day.isToday }}" role="gridcell">
+          <span class="cal-day-name">{{ day.dayName }}</span>
+          <span class="cal-day-num">
+            {{ day.dayNum }}{% if day.isFirstOfMonth %} {{ day.monthName }}{% endif %}
+          </span>
+          {% for job in day.jobs %}
+            <a
+              href="/admin/jobs?id={{ job.id }}"
+              class="cal-event{{ ' cal-event--enquiry' if job.status === 'ENQUIRY' }}"
+              title="{{ job.customer.name }}"
+            >{{ job.customer.name }}</a>
+          {% endfor %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

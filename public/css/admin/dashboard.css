@@ -1,0 +1,249 @@
+/* ─────────────────────────────────────────────────────────────────
+   POSTA ADMIN — Dashboard
+───────────────────────────────────────────────────────────────── */
+
+/* ─── Page Header ───────────────────────────────────────────── */
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-6);
+  margin-bottom: var(--sp-8);
+}
+
+.page-greeting {
+  font-size: var(--sz-xl);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.page-date {
+  font-size: var(--sz-xxs);
+  color: var(--text-2);
+  flex-shrink: 0;
+  padding-top: 0.35rem;
+  text-align: right;
+}
+
+/* ─── Dashboard Section ─────────────────────────────────────── */
+
+.dash-section {
+  margin-bottom: var(--sp-8);
+}
+
+/* ─── Data Card ─────────────────────────────────────────────── */
+
+.data-card {
+  border: 1px solid var(--border);
+  /* border-radius: var(--r-lg); */
+  overflow: hidden;
+}
+
+.card-head {
+  background: var(--off-white);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-2) var(--sp-5);
+  border-bottom: 1px solid var(--border);
+}
+
+.card-title {
+  font-size: var(--sz-s);
+  font-weight: 00;
+  color: var(--text);
+}
+
+.card-count {
+  font-family: var(--font-mono);
+  font-size: var(--sz-xxs);
+  font-weight: 500;
+  color: var(--text-2);
+  background: var(--bg-active);
+  padding: 2px 9px;
+  border-radius: 10px;
+}
+
+/* ─── Data Table ────────────────────────────────────────────── */
+
+.table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--sz-s);
+  min-width: 480px;
+}
+
+.data-table thead th {
+  text-align: left;
+  font-size: var(--sz-xxs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-2);
+  padding: var(--sp-2) var(--sp-5);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.data-table tbody td {
+  padding: 10px var(--sp-5);
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table tbody tr {
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease);
+}
+
+.data-table tbody tr:hover {
+  background: var(--bg-hover);
+}
+
+/* ─── Status Dot ────────────────────────────────────────────── */
+
+.dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 7px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.dot--enquiry   { background: var(--enquiry); }
+.dot--confirmed { background: var(--confirmed); }
+.dot--completed { background: var(--completed); }
+.dot--cancelled { background: var(--cancelled); }
+
+/* ─── Source Tag ────────────────────────────────────────────── */
+
+.src-tag {
+  display: inline-block;
+  font-size: var(--sz-xxs);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  padding: 2px 8px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+}
+
+/* ─── Invoice Status ────────────────────────────────────────── */
+
+.inv {
+  font-family: var(--font-mono);
+  font-size: var(--sz-xxs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.inv--paid    { color: var(--confirmed); }
+.inv--sent    { color: var(--enquiry); }
+.inv--draft   { color: var(--text-2); }
+.inv--overdue { color: var(--cancelled); }
+.inv--none    { color: var(--text-3); }
+
+/* ─── Empty State ───────────────────────────────────────────── */
+
+.empty {
+  padding: var(--sp-10) var(--sp-5);
+  text-align: center;
+  color: var(--text-2);
+  font-size: var(--sz-xs);
+}
+
+/* ─── Calendar ──────────────────────────────────────────────── */
+
+.cal-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(90px, 1fr));
+  min-width: 630px;
+}
+
+.cal-day {
+  padding: var(--sp-3);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  min-height: 88px;
+}
+
+/* Remove right border on every 7th cell (end of week) */
+.cal-day:nth-child(7n) {
+  border-right: none;
+}
+
+/* Remove bottom border on last 7 cells (second week) */
+.cal-day:nth-child(n + 8) {
+  border-bottom: none;
+}
+
+.cal-day-name {
+  display: block;
+  font-size: var(--sz-xxs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-2);
+}
+
+.cal-day-num {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--sz-xs);
+  color: var(--text);
+  margin-top: 2px;
+}
+
+.cal-day--today .cal-day-num {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.cal-day--today {
+  background: #f0f5ff;
+}
+
+.cal-event {
+  display: block;
+  margin-top: var(--sp-1);
+  padding: 2px 6px;
+  border-radius: var(--r-sm);
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--confirmed);
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity var(--dur-fast) var(--ease);
+}
+
+.cal-event:hover {
+  opacity: 0.82;
+}
+
+.cal-event--enquiry {
+  background: var(--enquiry);
+}
