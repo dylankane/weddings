@@ -1,0 +1,12 @@
+{% macro status_badge(status, modifier='') %}
+  {%- set labels = {
+    'ENQUIRY':   'Enquiry',
+    'CONFIRMED': 'Confirmed',
+    'COMPLETED': 'Completed',
+    'CANCELLED': 'Cancelled'
+  } -%}
+  <span class="status-badge status-badge--{{ status | lower }}{{ ' ' + modifier if modifier }}">
+    <span class="dot dot--{{ status | lower }}" aria-hidden="true"></span>
+    {{ labels[status] if labels[status] else status }}
+  </span>
+{% endmacro %}

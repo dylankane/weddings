@@ -7,25 +7,55 @@
 
 {% block content %}
 
-{# ─── Page Header ──────────────────────────────────────────────── #}
+{# ─── Page Bar ────────────────────────────────────────────────── #}
 
-<header class="page-header">
-  <div class="page-header-left">
-    <h1 class="page-greeting">{{ greeting }}, {{ sessionUser.displayName if sessionUser else 'there' }}.</h1>
-    {{ breadcrumb([{ label: 'Dashboard' }]) }}
+<div class="page-bar">
+  {{ breadcrumb([{ label: 'Home' }]) }}
+  <div class="page-bar-right">
+    <p class="page-date">{{ formattedDate }}</p>
   </div>
-  <p class="page-date">{{ formattedDate }}</p>
-</header>
+</div>
+
+
+<h1 class="page-greeting">{{ greeting }}, {{ sessionUser.displayName if sessionUser else 'there' }}.</h1>
+
+{# ─── Sections ────────────────────────────────────────────────── #}
+
+<div class="content-container">
+
+{# ─── Two-Week Calendar ────────────────────────────────────────── #}
+
+<section class="dash-section" aria-labelledby="calendar-title">
+  <div class="data-card">
+    <div class="cal-wrap">
+      <div class="cal-grid" role="grid" aria-label="Two week calendar">
+        {% for day in calendarDays %}
+        <div class="cal-day{{ ' cal-day--today' if day.isToday }}" role="gridcell">
+          <span class="cal-day-name">{{ day.dayName }}</span>
+          <span class="cal-day-num">
+            {{ day.dayNum }}{% if day.isFirstOfMonth %} {{ day.monthName }}{% endif %}
+          </span>
+          {% for job in day.jobs %}
+            <a
+              href="/admin/jobs?id={{ job.id }}"
+              class="cal-event{{ ' cal-event--enquiry' if job.status === 'ENQUIRY' }}"
+              title="{{ job.customer.name }}"
+            >{{ job.customer.name }}</a>
+          {% endfor %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
 
 {# ─── New Enquiries ────────────────────────────────────────────── #}
 
 <section class="dash-section" aria-labelledby="enquiries-title">
+  <div class="card-head">
+    <h2 class="card-title" id="enquiries-title">New Enquiries</h2>
+  </div>
   <div class="data-card">
-    <div class="card-head">
-      <h2 class="card-title" id="enquiries-title">New Enquiries</h2>
-      <span class="card-count">{{ enquiries | length }}</span>
-    </div>
-
     {% if enquiries | length %}
     <div class="table-wrap">
       <table class="data-table" aria-label="New enquiries">
@@ -51,13 +81,14 @@
                 <span style="color: var(--c-text-3)">—</span>
               {% endif %}
             </td>
-            <td class="mono">
-              {{ job.jobStart | dateFormat('short') if job.jobStart else '—' }}
+            <td>
+              <span class="date-main">{{ job.jobStart | dateFormat('short') if job.jobStart else '—' }}</span>
+              {% if job.jobEnd %}
+                <span class="date-sub">{{ job.jobEnd | dateFormat('short') }}</span>
+              {% endif %}
             </td>
             <td>
-              <span class="src-tag">
-                {{ 'Website' if job.source === 'CUSTOMER_FORM' else 'Manager' }}
-              </span>
+              {{ 'Website' if job.source === 'CUSTOMER_FORM' else 'Manager' }}
             </td>
           </tr>
           {% endfor %}
@@ -73,12 +104,10 @@
 {# ─── Confirmed Bookings ───────────────────────────────────────── #}
 
 <section class="dash-section" aria-labelledby="confirmed-title">
+  <div class="card-head">
+    <h2 class="card-title" id="confirmed-title">Confirmed Bookings</h2>
+  </div>
   <div class="data-card">
-    <div class="card-head">
-      <h2 class="card-title" id="confirmed-title">Confirmed Bookings</h2>
-      <span class="card-count">{{ confirmedJobs | length }}</span>
-    </div>
-
     {% if confirmedJobs | length %}
     <div class="table-wrap">
       <table class="data-table" aria-label="Confirmed bookings">
@@ -87,7 +116,8 @@
             <th scope="col">Customer</th>
             <th scope="col">Venue</th>
             <th scope="col">Wedding Date</th>
-            <th scope="col">Invoice</th>
+            <th scope="col">Delivery</th>
+            <th scope="col">Price</th>
           </tr>
         </thead>
         <tbody>
@@ -100,23 +130,24 @@
             <td>
               {{ job.delivery.venueName if job.delivery and job.delivery.venueName else '—' }}
             </td>
-            <td class="mono">
-              {{ job.jobStart | dateFormat('short') if job.jobStart else '—' }}
+            <td>
+              <span class="date-main">{{ job.jobStart | dateFormat('short') if job.jobStart else '—' }}</span>
+              {% if job.jobEnd %}
+                <span class="date-sub">{{ job.jobEnd | dateFormat('short') }}</span>
+              {% endif %}
             </td>
             <td>
-              {% if job.invoice %}
-                {% if job.invoice.status === 'PAID' %}
-                  <span class="inv inv--paid">Paid</span>
-                {% elif job.invoice.status === 'SENT' %}
-                  <span class="inv inv--sent">Sent</span>
-                {% elif job.invoice.status === 'OVERDUE' %}
-                  <span class="inv inv--overdue">Overdue</span>
-                {% else %}
-                  <span class="inv inv--draft">Draft</span>
+              {% if job.delivery %}
+                <span class="date-main">{{ 'Staff' if job.delivery.outboundMethod === 'STAFF' else 'Customer' }}</span>
+                {% if job.delivery.outboundMethod !== job.delivery.returnMethod %}
+                  <span class="date-sub">{{ 'Staff' if job.delivery.returnMethod === 'STAFF' else 'Customer' }}</span>
                 {% endif %}
               {% else %}
-                <span class="inv inv--none">—</span>
+                —
               {% endif %}
+            </td>
+            <td>
+              {{ job.pricing.totalCost | currency if job.pricing else '—' }}
             </td>
           </tr>
           {% endfor %}
@@ -129,34 +160,6 @@
   </div>
 </section>
 
-{# ─── Two-Week Calendar ────────────────────────────────────────── #}
-
-<section class="dash-section" aria-labelledby="calendar-title">
-  <div class="data-card">
-    <div class="card-head">
-      <h2 class="card-title" id="calendar-title">Next Two Weeks</h2>
-    </div>
-
-    <div class="cal-wrap">
-      <div class="cal-grid" role="grid" aria-label="Two week calendar">
-        {% for day in calendarDays %}
-        <div class="cal-day{{ ' cal-day--today' if day.isToday }}" role="gridcell">
-          <span class="cal-day-name">{{ day.dayName }}</span>
-          <span class="cal-day-num">
-            {{ day.dayNum }}{% if day.isFirstOfMonth %} {{ day.monthName }}{% endif %}
-          </span>
-          {% for job in day.jobs %}
-            <a
-              href="/admin/jobs?id={{ job.id }}"
-              class="cal-event{{ ' cal-event--enquiry' if job.status === 'ENQUIRY' }}"
-              title="{{ job.customer.name }}"
-            >{{ job.customer.name }}</a>
-          {% endfor %}
-        </div>
-        {% endfor %}
-      </div>
-    </div>
-  </div>
-</section>
+</div>
 
 {% endblock %}

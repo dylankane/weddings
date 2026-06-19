@@ -1,0 +1,72 @@
+{% extends "admin/layout.njk" %}
+{% from "admin/macros/breadcrumb.njk" import breadcrumb %}
+{% from "admin/macros/form-dropdown.njk" import form_dropdown %}
+
+{% block styles %}
+<link rel="stylesheet" href="/css/admin/jobs.css">
+{% endblock %}
+
+{% block content %}
+
+{# ─── Page Bar ────────────────────────────────────────────────── #}
+
+<div class="page-bar">
+  {{ breadcrumb([
+    { label: 'Home', url: '/admin' },
+    { label: 'Jobs', url: '/admin/jobs' },
+    { label: 'New Job' }
+  ]) }}
+</div>
+
+
+{# ─── Header ──────────────────────────────────────────────────── #}
+
+<div class="job-header">
+  <h1 class="job-name">New Job</h1>
+</div>
+
+
+{# ─── Form ────────────────────────────────────────────────────── #}
+
+<form action="/admin/jobs" method="POST">
+  <div class="content-container">
+
+    {# ── Details ── #}
+    <section class="form-section is-editing" aria-labelledby="new-section-details-title">
+      <div class="form-section-head">
+        <h2 class="form-section-title" id="new-section-details-title">Details</h2>
+      </div>
+      <div class="form-section-form">
+        {% include "admin/jobs/partials/_form-details.njk" %}
+      </div>
+    </section>
+
+    {# ── Delivery ── #}
+    <section class="form-section is-editing" aria-labelledby="new-section-delivery-title">
+      <div class="form-section-head">
+        <h2 class="form-section-title" id="new-section-delivery-title">Delivery</h2>
+      </div>
+      <div class="form-section-form">
+        {% include "admin/jobs/partials/_form-delivery.njk" %}
+      </div>
+    </section>
+
+    {# ── Pricing ── #}
+    <section class="form-section is-editing" aria-labelledby="new-section-pricing-title">
+      <div class="form-section-head">
+        <h2 class="form-section-title" id="new-section-pricing-title">Pricing</h2>
+      </div>
+      <div class="form-section-form">
+        {% include "admin/jobs/partials/_form-pricing.njk" %}
+      </div>
+    </section>
+
+  </div>
+
+  <div class="section-actions" style="margin-top: 2rem;">
+    <button type="button" class="btn btn-cancel" onclick="location.href='/admin/jobs'">Cancel</button>
+    <button type="submit" class="btn btn-save">Save</button>
+  </div>
+</form>
+
+{% endblock %}

@@ -2,170 +2,24 @@
    POSTA ADMIN — Dashboard
 ───────────────────────────────────────────────────────────────── */
 
-/* ─── Page Header ───────────────────────────────────────────── */
-
-.page-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--sp-6);
-  margin-bottom: var(--sp-8);
-}
-
-.page-greeting {
-  font-size: var(--sz-xl);
-  font-weight: 700;
-  line-height: 1.15;
-  color: var(--text);
-  letter-spacing: -0.02em;
-}
 
 .page-date {
-  font-size: var(--sz-xxs);
+  font-size: var(--font-xxs);
   color: var(--text-2);
   flex-shrink: 0;
-  padding-top: 0.35rem;
-  text-align: right;
 }
 
 /* ─── Dashboard Section ─────────────────────────────────────── */
 
 .dash-section {
-  margin-bottom: var(--sp-8);
+  margin-bottom: 2rem;
 }
 
-/* ─── Data Card ─────────────────────────────────────────────── */
+/* ─── Dashboard Tables ──────────────────────────────────────── */
 
-.data-card {
-  border: 1px solid var(--border);
-  /* border-radius: var(--r-lg); */
-  overflow: hidden;
-}
-
-.card-head {
-  background: var(--off-white);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--sp-2) var(--sp-5);
-  border-bottom: 1px solid var(--border);
-}
-
-.card-title {
-  font-size: var(--sz-s);
-  font-weight: 00;
-  color: var(--text);
-}
-
-.card-count {
-  font-family: var(--font-mono);
-  font-size: var(--sz-xxs);
-  font-weight: 500;
-  color: var(--text-2);
-  background: var(--bg-active);
-  padding: 2px 9px;
-  border-radius: 10px;
-}
-
-/* ─── Data Table ────────────────────────────────────────────── */
-
-.table-wrap {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: var(--sz-s);
-  min-width: 480px;
-}
-
-.data-table thead th {
-  text-align: left;
-  font-size: var(--sz-xxs);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: var(--text-2);
-  padding: var(--sp-2) var(--sp-5);
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-}
-
-.data-table tbody td {
-  padding: 10px var(--sp-5);
-  border-bottom: 1px solid var(--border);
-  vertical-align: middle;
-  white-space: nowrap;
-}
-
-.data-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.data-table tbody tr {
-  cursor: pointer;
-  transition: background var(--dur-fast) var(--ease);
-}
-
-.data-table tbody tr:hover {
-  background: var(--bg-hover);
-}
-
-/* ─── Status Dot ────────────────────────────────────────────── */
-
-.dot {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  margin-right: 7px;
-  vertical-align: middle;
-  flex-shrink: 0;
-}
-
-.dot--enquiry   { background: var(--enquiry); }
-.dot--confirmed { background: var(--confirmed); }
-.dot--completed { background: var(--completed); }
-.dot--cancelled { background: var(--cancelled); }
-
-/* ─── Source Tag ────────────────────────────────────────────── */
-
-.src-tag {
-  display: inline-block;
-  font-size: var(--sz-xxs);
-  font-weight: 500;
-  letter-spacing: 0.03em;
-  padding: 2px 8px;
-  border-radius: var(--r-sm);
-  border: 1px solid var(--border);
-  color: var(--text-2);
-}
-
-/* ─── Invoice Status ────────────────────────────────────────── */
-
-.inv {
-  font-family: var(--font-mono);
-  font-size: var(--sz-xxs);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.inv--paid    { color: var(--confirmed); }
-.inv--sent    { color: var(--enquiry); }
-.inv--draft   { color: var(--text-2); }
-.inv--overdue { color: var(--cancelled); }
-.inv--none    { color: var(--text-3); }
-
-/* ─── Empty State ───────────────────────────────────────────── */
-
-.empty {
-  padding: var(--sp-10) var(--sp-5);
-  text-align: center;
-  color: var(--text-2);
-  font-size: var(--sz-xs);
+.dash-section .table-wrap {
+  max-height: 14rem;
+  overflow-y: auto;
 }
 
 /* ─── Calendar ──────────────────────────────────────────────── */
@@ -174,6 +28,12 @@
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.cal-wrap::-webkit-scrollbar {
+  display: none;
 }
 
 .cal-grid {
@@ -183,7 +43,7 @@
 }
 
 .cal-day {
-  padding: var(--sp-3);
+  padding: 0.75rem;
   border-right: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
   min-height: 88px;
@@ -201,7 +61,7 @@
 
 .cal-day-name {
   display: block;
-  font-size: var(--sz-xxs);
+  font-size: var(--font-xxs);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.07em;
@@ -211,25 +71,25 @@
 .cal-day-num {
   display: block;
   font-family: var(--font-mono);
-  font-size: var(--sz-xs);
+  font-size: var(--font-xs);
   color: var(--text);
   margin-top: 2px;
 }
 
 .cal-day--today .cal-day-num {
-  color: var(--accent);
+  color: var(--highlight);
   font-weight: 600;
 }
 
 .cal-day--today {
-  background: #f0f5ff;
+  background: var(--bg-highlight);
 }
 
 .cal-event {
   display: block;
-  margin-top: var(--sp-1);
+  margin-top: 0.25rem;
   padding: 2px 6px;
-  border-radius: var(--r-sm);
+  border-radius: var(--radius-sm);
   font-size: 11px;
   font-weight: 500;
   background: var(--confirmed);
@@ -247,3 +107,4 @@
 .cal-event--enquiry {
   background: var(--enquiry);
 }
+

@@ -1,0 +1,136 @@
+{% extends "admin/layout.njk" %}
+{% from "admin/macros/breadcrumb.njk" import breadcrumb %}
+{% from "admin/macros/status-badge.njk" import status_badge %}
+
+{% block styles %}
+<link rel="stylesheet" href="/css/admin/jobs.css">
+{% endblock %}
+
+{% block content %}
+
+{% set activeLabel = 'All' %}
+{% if activeStatus === 'ENQUIRY' %}{% set activeLabel = 'Enquiries' %}
+{% elif activeStatus === 'CONFIRMED' %}{% set activeLabel = 'Confirmed' %}
+{% elif activeStatus === 'COMPLETED' %}{% set activeLabel = 'Completed' %}
+{% elif activeStatus === 'CANCELLED' %}{% set activeLabel = 'Cancelled' %}
+{% endif %}
+
+{# ─── Page Bar ────────────────────────────────────────────────── #}
+
+<div class="page-bar">
+  {{ breadcrumb([{ label: 'Home', url: '/admin' }, { label: 'Jobs' }]) }}
+  <div class="page-bar-right">
+    <a href="/admin/jobs/new" class="btn btn-pill--accent fw-heavy" aria-label="New job" title="New job">
+      <svg class="btn-svg" aria-hidden="true"><use href="#icon-add"/></svg>
+      <span>New</span>
+    </a>
+  </div>
+</div>
+
+<h1 class="page-greeting">All Jobs</h1>
+
+{# ─── Mobile Filter Bar ───────────────────────────────────────── #}
+
+<div class="filter-mobile-bar">
+  <button type="button" class="btn js-filter-drawer-open" aria-label="Filter jobs" aria-expanded="false">
+    {% if activeStatus %}
+      {{ status_badge(activeStatus, 'status-badge--plain') }}
+    {% else %}
+      <span class="status-badge status-badge--plain">
+        <span class="dot" style="background: var(--text-3)" aria-hidden="true"></span>
+        All jobs
+      </span>
+    {% endif %}
+    <svg class="btn-left-extra" aria-hidden="true"><use href="#icon-chevron-down"/></svg>
+  </button>
+</div>
+
+{# ─── Filter Tabs ─────────────────────────────────────────────── #}
+
+<nav class="filter-tabs" aria-label="Filter jobs by status">
+  <a href="/admin/jobs"
+    class="filter-tab {{ 'is-active' if not activeStatus }}"
+    aria-current="{{ 'page' if not activeStatus }}">
+    All
+    <span class="filter-tab-count">{{ (counts.ENQUIRY or 0) + (counts.CONFIRMED or 0) + (counts.COMPLETED or 0) + (counts.CANCELLED or 0) }}</span>
+  </a>
+  <a href="/admin/jobs?status=ENQUIRY"
+    class="filter-tab {{ 'is-active' if activeStatus === 'ENQUIRY' }}"
+    aria-current="{{ 'page' if activeStatus === 'ENQUIRY' }}">
+    Enquiries
+    <span class="filter-tab-count">{{ counts.ENQUIRY or 0 }}</span>
+  </a>
+  <a href="/admin/jobs?status=CONFIRMED"
+    class="filter-tab {{ 'is-active' if activeStatus === 'CONFIRMED' }}"
+    aria-current="{{ 'page' if activeStatus === 'CONFIRMED' }}">
+    Confirmed
+    <span class="filter-tab-count">{{ counts.CONFIRMED or 0 }}</span>
+  </a>
+  <a href="/admin/jobs?status=COMPLETED"
+    class="filter-tab {{ 'is-active' if activeStatus === 'COMPLETED' }}"
+    aria-current="{{ 'page' if activeStatus === 'COMPLETED' }}">
+    Completed
+    <span class="filter-tab-count">{{ counts.COMPLETED or 0 }}</span>
+  </a>
+  <a href="/admin/jobs?status=CANCELLED"
+    class="filter-tab {{ 'is-active' if activeStatus === 'CANCELLED' }}"
+    aria-current="{{ 'page' if activeStatus === 'CANCELLED' }}">
+    Cancelled
+    <span class="filter-tab-count">{{ counts.CANCELLED or 0 }}</span>
+  </a>
+</nav>
+
+{# ─── Table ───────────────────────────────────────────────────── #}
+
+<div class="data-card">
+  {% if jobs | length %}
+  <div class="table-wrap">
+    <table class="data-table" aria-label="Jobs">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Customer</th>
+          <th scope="col">Event Date</th>
+          <th scope="col">Status</th>
+          <th scope="col">Delivery</th>
+          <th scope="col">Invoice</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for job in jobs %}
+        <tr class="data-row" data-href="/admin/jobs/{{ job.id }}">
+          <td class="mono">{{ job.id }}</td>
+          <td>{{ job.customer.name }}</td>
+          <td>
+            {{ job.jobStart | dateFormat('short') if job.jobStart else '—' }}
+          </td>
+          <td>{{ status_badge(job.status, 'status-badge--plain') }}</td>
+          <td>
+            {% if job.delivery %}
+              {{ 'Staff' if job.delivery.outboundMethod === 'STAFF' else 'Customer' }}
+            {% else %}
+              <span style="color: var(--text-3)">—</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if job.invoice %}
+              <span class="inv inv--{{ job.invoice.status | lower }}">
+                {{ job.invoice.status | capitalize }}
+              </span>
+            {% else %}
+              <span class="inv inv--none">—</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">
+    No jobs{{ ' with status ' + activeStatus | lower if activeStatus else '' }}
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

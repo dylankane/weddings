@@ -1,0 +1,49 @@
+{# Customer & job details — included in both detail.njk and new.njk #}
+{% from "admin/macros/form-dropdown.njk" import form_dropdown %}
+
+<div class="form-row">
+  <div class="form-group">
+    <label class="form-label" for="customerName">Customer name</label>
+    <input class="form-input" type="text" id="customerName" name="customerName"
+      value="{{ job.customer.name }}" required autocomplete="name">
+  </div>
+  <div class="form-group">
+    <label class="form-label" for="customerEmail">Email</label>
+    <input class="form-input" type="email" id="customerEmail" name="customerEmail"
+      value="{{ job.customer.email }}" required autocomplete="email">
+  </div>
+</div>
+
+<div class="form-row">
+  <div class="form-group">
+    <label class="form-label" for="customerPhone">Phone</label>
+    <input class="form-input" type="tel" id="customerPhone" name="customerPhone"
+      value="{{ job.customer.phone or '' }}" autocomplete="tel">
+  </div>
+  <div class="form-group form-group--locked">
+    <label class="form-label" for="source">Source</label>
+    {{ form_dropdown(name="source", value=job.source, id="source", options=[
+      { value: "CUSTOMER_FORM",   label: "Website form" },
+      { value: "MANAGER_CREATED", label: "Manager created" }
+    ]) }}
+    <svg class="form-lock-icon" aria-hidden="true"><use href="#icon-password"/></svg>
+  </div>
+</div>
+
+<div class="form-row">
+  <div class="form-group">
+    <label class="form-label" for="jobStart">Event start date</label>
+    <input class="form-input" type="date" id="jobStart" name="jobStart"
+      value="{{ job.jobStart | dateFormat('input') if job.jobStart else '' }}">
+  </div>
+  <div class="form-group">
+    <label class="form-label" for="jobEnd">Event end date</label>
+    <input class="form-input" type="date" id="jobEnd" name="jobEnd"
+      value="{{ job.jobEnd | dateFormat('input') if job.jobEnd else '' }}">
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="form-label" for="notes">Notes</label>
+  <textarea class="form-textarea" id="notes" name="notes">{{ job.notes or '' }}</textarea>
+</div>

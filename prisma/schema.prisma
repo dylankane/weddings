@@ -157,7 +157,6 @@ model Product {
   description           String
   stockQuantity         Int      @map("stock_quantity")
   isCustomisable        Boolean  @default(false) @map("is_customisable")
-  customisationOverview String?  @map("customisation_overview")
   isActive              Boolean  @default(true) @map("is_active")
   displayOrder          Int      @default(0) @map("display_order")
   createdAt             DateTime @default(now()) @map("created_at")
@@ -192,7 +191,7 @@ model ProductCustomisationOption {
   productId    Int                     @map("product_id")
   name         String
   description  String?
-  type         CustomisationOptionType
+  type         CustomisationOptionType?
   options      Json?
   basePrice    Decimal?                @map("base_price") @db.Decimal(10, 2)
   isRequired   Boolean                 @default(false) @map("is_required")
@@ -261,8 +260,9 @@ model JobItem {
   id        Int      @id @default(autoincrement())
   jobId     Int      @map("job_id")
   productId Int      @map("product_id")
-  unitPrice Decimal? @map("unit_price") @db.Decimal(10, 2)
-  notes     String?
+  unitPrice             Decimal? @map("unit_price") @db.Decimal(10, 2)
+  notes                 String?
+  customisationCheck    Boolean? @map("customisation_check")
 
   job            Job                   @relation(fields: [jobId], references: [id])
   product        Product               @relation(fields: [productId], references: [id])

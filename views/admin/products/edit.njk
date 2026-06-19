@@ -1,0 +1,238 @@
+{% extends "admin/layout.njk" %}
+{% from "admin/macros/breadcrumb.njk" import breadcrumb %}
+
+{% block styles %}
+<link rel="stylesheet" href="/css/admin/products.css">
+{% endblock %}
+
+{% block content %}
+
+{# ─── Page Bar ────────────────────────────────────────────────── #}
+
+<div class="page-bar">
+  {{ breadcrumb([
+    { label: 'Home', url: '/admin' },
+    { label: 'Products', url: '/admin/products' },
+    { label: product.name }
+  ]) }}
+</div>
+
+{# ─── Header ──────────────────────────────────────────────────── #}
+
+<div class="product-header">
+  <h1 class="product-title">{{ product.name }}</h1>
+</div>
+
+{# ─── Form ────────────────────────────────────────────────────── #}
+
+<form action="/admin/products/{{ product.id }}" method="POST" enctype="multipart/form-data">
+
+  <div class="content-container">
+
+    {# ── Details ── #}
+    <section class="form-section is-editing" aria-labelledby="edit-details-title">
+      <div class="form-section-head">
+        <h2 class="form-section-title" id="edit-details-title">Details</h2>
+        <label class="toggle-switch" aria-label="Active">
+          <input type="checkbox" name="isActive"{{ ' checked' if product.isActive }}>
+          <span class="toggle-track"></span>
+          <span class="toggle-label">Active</span>
+        </label>
+      </div>
+      <div class="form-section-form">
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="name">Product name</label>
+            <input class="form-input" type="text" id="name" name="name"
+                   value="{{ product.name }}" required autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="slug">Slug</label>
+            <input class="form-input" type="text" id="slug" name="slug"
+                   value="{{ product.slug }}" required autocomplete="off">
+            <span class="form-hint">URL-friendly, e.g. cast-iron-postbox</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="description">Description</label>
+          <textarea class="form-textarea" id="description" name="description"
+                    required>{{ product.description }}</textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="stockQuantity">Stock quantity</label>
+            <input class="form-input" type="number" id="stockQuantity" name="stockQuantity"
+                   value="{{ product.stockQuantity }}" min="0" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="displayOrder">Display order</label>
+            <input class="form-input" type="number" id="displayOrder" name="displayOrder"
+                   value="{{ product.displayOrder }}" min="0">
+            <span class="form-hint">Lower numbers appear first</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    {# ── Images ── #}
+    <section class="form-section is-editing" aria-labelledby="edit-images-title">
+      <div class="form-section-head">
+        <h2 class="form-section-title" id="edit-images-title">Images</h2>
+      </div>
+      <div class="form-section-form">
+
+        <div class="img-card-list" id="image-list">
+          {% for img in product.images %}
+          <div class="img-card" data-type="existing">
+            <input type="hidden" name="cardType[]" value="existing">
+            <input type="hidden" name="cardId[]" value="{{ img.id }}">
+            <div class="img-card-preview">
+              <img class="img-card-thumb" src="{{ img.url }}" alt="{{ img.altText or '' }}" loading="lazy">
+            </div>
+            <div class="img-card-body">
+              <div class="form-group">
+                <label class="form-label">Alt text</label>
+                <input class="form-input" type="text" name="cardAlt[]" value="{{ img.altText or '' }}">
+              </div>
+              <div class="img-card-actions">
+                <span class="img-card-cover">COVER IMAGE</span>
+                <div class="img-card-right">
+                  <div class="img-card-order">
+                    <button type="button" class="btn js-img-up" aria-label="Move up">
+                      <svg class="btn-svg" aria-hidden="true"><use href="#icon-chevron-up"/></svg>
+                    </button>
+                    <button type="button" class="btn js-img-down" aria-label="Move down">
+                      <svg class="btn-svg" aria-hidden="true"><use href="#icon-chevron-down"/></svg>
+                    </button>
+                  </div>
+                  <button type="button" class="btn btn-remove js-img-remove">
+                    <svg class="btn-svg" aria-hidden="true"><use href="#icon-delete"/></svg>
+                    Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div id="image-delete-list"></div>
+
+        <div class="img-drop-zone" id="img-drop-zone" role="button" tabindex="0" aria-label="Upload images">
+          <input type="file" id="img-file-input" accept="image/*" multiple style="display:none">
+          <svg class="btn-svg img-drop-icon" aria-hidden="true"><use href="#icon-upload"/></svg>
+          <p class="img-drop-text">Drop images here or <button type="button" class="img-drop-browse">browse</button></p>
+        </div>
+
+      </div>
+    </section>
+
+    {# ── Options ── #}
+    <section class="form-section is-editing" aria-labelledby="edit-options-title">
+      <div class="form-section-head">
+        <h2 class="form-section-title" id="edit-options-title">Customisation options</h2>
+        <label class="toggle-switch" aria-label="Accepts customisations">
+          <input type="checkbox" name="isCustomisable"{{ ' checked' if product.isCustomisable }}>
+          <span class="toggle-track"></span>
+          <span class="toggle-label">Accepts customisations</span>
+        </label>
+      </div>
+      <div class="form-section-form">
+
+        <div class="opt-list" id="option-list">
+          {% for opt in product.customisationOptions %}
+            <div class="opt-row">
+              <input type="hidden" name="optionId[]" value="{{ opt.id }}">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Name</label>
+                  <input class="form-input" type="text" name="optionName[]" value="{{ opt.name }}">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Base price</label>
+                  <input class="form-input" type="number" name="optionPrice[]"
+                         step="0.01" min="0" placeholder="0.00"
+                         value="{{ opt.basePrice or '' }}">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea class="form-textarea" name="optionDesc[]">{{ opt.description or '' }}</textarea>
+              </div>
+              <div class="opt-row-foot">
+                <input type="hidden" name="optionActive[]" value="{{ '1' if opt.isActive else '0' }}">
+                <label class="form-checkbox">
+                  <input type="checkbox" class="js-opt-active"{{ ' checked' if opt.isActive }}>
+                  Active
+                </label>
+                <button type="button" class="btn btn-remove js-remove-opt">
+                <svg class="btn-svg" aria-hidden="true"><use href="#icon-delete"/></svg>
+                Remove</button>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div id="option-delete-list"></div>
+
+        <div>
+          <button type="button" class="btn" id="add-option-btn">
+            <svg class="btn-svg" aria-hidden="true"><use href="#icon-add"/></svg>
+            Add option
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+
+  <div class="section-actions" style="margin-top: 2rem;">
+    <button type="button" class="btn btn-cancel" onclick="location.href='/admin/products'">Cancel</button>
+    <button type="submit" class="btn btn-save">Save</button>
+  </div>
+
+</form>
+
+{# ─── Row Templates ───────────────────────────────────────────── #}
+
+<template id="opt-row-template">
+  <div class="opt-row">
+    <input type="hidden" name="optionId[]" value="">
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Name</label>
+        <input class="form-input" type="text" name="optionName[]">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Base price</label>
+        <input class="form-input" type="number" name="optionPrice[]"
+               step="0.01" min="0" placeholder="0.00">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea class="form-textarea" name="optionDesc[]"></textarea>
+    </div>
+    <div class="opt-row-foot">
+      <input type="hidden" name="optionActive[]" value="1">
+      <label class="form-checkbox">
+        <input type="checkbox" class="js-opt-active" checked>
+        Active
+      </label>
+      <button type="button" class="btn btn-remove js-remove-opt">
+      <svg class="btn-svg" aria-hidden="true"><use href="#icon-delete"/></svg>
+      Remove</button>
+    </div>
+  </div>
+</template>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/js/admin/products.js"></script>
+{% endblock %}

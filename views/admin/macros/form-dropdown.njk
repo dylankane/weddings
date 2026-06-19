@@ -1,0 +1,22 @@
+{% macro form_dropdown(name, value, options, id='', autosubmit=false) %}
+<div class="form-dropdown" data-dropdown{% if autosubmit %} data-autosubmit{% endif %}>
+  <input type="hidden" name="{{ name }}" value="{{ value }}">
+  <button type="button" class="form-dropdown-trigger js-dropdown-trigger"{% if id %} id="{{ id }}"{% endif %} aria-haspopup="listbox" aria-expanded="false">
+    <span class="form-dropdown-value">
+      {%- for opt in options -%}
+        {%- if opt.value === value %}{{ opt.label }}{%- endif -%}
+      {%- endfor -%}
+    </span>
+    <svg class="form-dropdown-chevron" aria-hidden="true"><use href="#icon-chevron-down"/></svg>
+  </button>
+  <ul class="form-dropdown-list" role="listbox">
+    {% for opt in options %}
+    <li class="form-dropdown-option{{ ' is-selected' if opt.value === value }}"
+        role="option"
+        aria-selected="{{ 'true' if opt.value === value else 'false' }}"
+        tabindex="-1"
+        data-value="{{ opt.value }}">{{ opt.label }}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endmacro %}

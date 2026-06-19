@@ -1,0 +1,144 @@
+{% extends "admin/layout.njk" %}
+{% from "admin/macros/breadcrumb.njk" import breadcrumb %}
+
+{% block styles %}
+<link rel="stylesheet" href="/css/admin/products.css">
+{% endblock %}
+
+{% block content %}
+
+{# ─── Page Bar ────────────────────────────────────────────────── #}
+
+<div class="page-bar">
+  {{ breadcrumb([
+    { label: 'Home', url: '/admin' },
+    { label: 'Products' }
+  ]) }}
+  <div class="page-bar-right">
+    <a href="/admin/products/new" class="btn btn-pill--accent fw-heavy">
+      <svg class="btn-svg" aria-hidden="true"><use href="#icon-add"/></svg>
+      New product
+    </a>
+  </div>
+</div>
+
+<h1 class="page-greeting">All Products</h1>
+
+{# ─── Error ───────────────────────────────────────────────────── #}
+
+{% if error == 'in-use' %}
+<p class="product-error">This product is used in existing jobs and cannot be deleted.</p>
+{% endif %}
+
+{# ─── Product List ────────────────────────────────────────────── #}
+
+<div class="data-card">
+
+  {% if products.length %}
+    {% for product in products %}
+
+      {# Resolve primary image #}
+      {% set primaryImg = null %}
+      {% for img in product.images %}
+        {% if img.isPrimary and not primaryImg %}{% set primaryImg = img %}{% endif %}
+      {% endfor %}
+      {% if not primaryImg and product.images.length %}
+        {% set primaryImg = product.images[0] %}
+      {% endif %}
+
+      {# ── Row ── #}
+      <div class="product-row js-product-row"
+           aria-expanded="false"
+           aria-controls="pd-{{ product.id }}">
+        {% if primaryImg %}
+          <img class="product-row-thumb"
+               src="{{ primaryImg.url }}"
+               alt="{{ primaryImg.altText or product.name }}"
+               loading="lazy">
+        {% else %}
+          <div class="product-row-thumb product-row-thumb--empty" aria-hidden="true"></div>
+        {% endif %}
+        <div class="product-row-info">
+          <div class="product-row-name">{{ product.name }}</div>
+          <div class="product-row-meta">
+            Stock {{ product.stockQuantity }}{% if product.isCustomisable %} · Customisable{% endif %}
+          </div>
+        </div>
+        <div class="product-row-right">
+          <label class="toggle-switch js-product-active" data-id="{{ product.id }}" aria-label="Toggle active">
+            <input type="checkbox" {{ 'checked' if product.isActive }}>
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+      </div>
+
+      {# ── Detail Panel ── #}
+      <div class="product-detail" id="pd-{{ product.id }}" aria-hidden="true">
+
+        {% if product.images.length %}
+          <div class="product-detail-images">
+            {% for img in product.images %}
+              <img class="product-detail-thumb js-lightbox-thumb"
+                   src="{{ img.url }}"
+                   alt="{{ img.altText or product.name }}"
+                   loading="lazy">
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <p class="product-detail-desc">{{ product.description }}</p>
+
+        <div class="product-detail-meta">
+          Stock {{ product.stockQuantity }}
+          {% if product.isActive %} · Active{% else %} · Inactive{% endif %}
+          {% if product.isCustomisable %} · Customisable{% endif %}
+        </div>
+
+        {% if product.isCustomisable and product.customisationOptions.length %}
+          <div class="product-options">
+            <p class="product-options-label">Customisation options</p>
+            {% for opt in product.customisationOptions %}
+              <div class="product-option-row">
+                <span class="product-option-name">{{ opt.name }}</span>
+                <span class="product-option-tag">
+                  {%- if opt.type === 'BOOLEAN' %}Yes/No
+                  {%- elif opt.type === 'SELECT' %}Select
+                  {%- else %}Text{%- endif -%}
+                </span>
+                {% if opt.isRequired %}<span class="product-option-tag">Required</span>{% endif %}
+                {% if opt.basePrice %}<span class="product-option-tag mono">€{{ opt.basePrice }}</span>{% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="product-detail-actions">
+          <form action="/admin/products/{{ product.id }}/delete" method="POST" class="js-delete-form">
+            <button type="submit" class="btn btn-delete">Delete</button>
+          </form>
+          <button type="button" class="btn btn-save" onclick="location.href='/admin/products/{{ product.id }}/edit'">Edit</button>
+        </div>
+
+      </div>
+
+    {% endfor %}
+  {% else %}
+    <div class="empty">No products yet</div>
+  {% endif %}
+
+</div>
+
+{# ─── Lightbox ────────────────────────────────────────────────── #}
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image preview" aria-hidden="true">
+  <button class="btn lightbox-close" id="lightbox-close" aria-label="Close">
+    <svg class="btn-svg" aria-hidden="true"><use href="#icon-close"/></svg>
+  </button>
+  <img class="lightbox-img" id="lightbox-img" src="" alt="">
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/js/admin/products.js"></script>
+{% endblock %}

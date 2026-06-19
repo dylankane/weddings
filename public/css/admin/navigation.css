@@ -1,0 +1,272 @@
+/* ─────────────────────────────────────────────────────────────────
+   POSTA ADMIN — Navigation
+   Sidebar (desktop) + Bottom nav, Drawer, Search (mobile)
+───────────────────────────────────────────────────────────────── */
+
+/* ─── Sidebar (desktop) ─────────────────────────────────────── */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  height: 100dvh;
+  background: var(--off-white);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  z-index: var(--z-sidebar);
+  overflow-y: auto;
+}
+
+.sidebar-header {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  gap: 0.5rem;
+}
+
+.sidebar-header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebar-header-link {
+  font-size: var(--font-l);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.5rem;
+  color: var(--accent);
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-nav {
+  display: flex;
+  flex: 1;
+  gap: 0.5rem;
+  padding: 0 0.75rem 1rem;
+  flex-direction: column;
+}
+
+
+.nav-group-label {
+  font-size: var(--font-xxs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-2);
+  padding: 0.75rem 0.75rem 0.25rem;
+}
+
+.sidebar-footer {
+  padding: 0.75rem 1rem 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.sidebar-user {
+  font-size: var(--font-xs);
+  color: var(--text-2);
+}
+
+.sidebar-search {
+  overflow: hidden;
+  max-height: 0;
+  padding: 0 0.75rem;
+  border-bottom: 1px solid transparent;
+  transition: max-height 200ms ease, padding 200ms ease, border-color 200ms ease;
+}
+
+.sidebar-search.is-open {
+  max-height: 10rem;
+  padding-bottom: 0.75rem;
+  border-bottom-color: var(--border);
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-family: var(--font-sans);
+  font-size: var(--font-s);
+  color: var(--text);
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  border-color: var(--text);
+}
+
+.search-results {
+  margin-top: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  overflow: hidden;
+  font-size: var(--font-s);
+}
+
+.search-empty {
+  padding: 1rem 0.75rem;
+  color: var(--text-2);
+  text-align: center;
+  font-size: var(--font-xs);
+}
+
+/* ─── Bottom Nav (mobile) ───────────────────────────────────── */
+
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--bottom-nav-h);
+  background: var(--white);
+  border-top: 1px solid var(--border);
+  align-items: center;
+  justify-content: space-around;
+  z-index: var(--z-bottom-nav);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+
+/* ─── Mobile Drawer ─────────────────────────────────────────── */
+
+.nav-drawer {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-drawer);
+}
+
+.nav-drawer.is-open {
+  display: block;
+}
+
+.drawer-backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--overlay);
+}
+
+.drawer-panel {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--white);
+  border-top: 1px solid var(--border);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding-bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom));
+  transform: translateY(100%);
+  transition: transform var(--dur-base) var(--ease);
+}
+
+.nav-drawer.is-open .drawer-panel {
+  transform: translateY(0);
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0.5rem 1rem;
+}
+
+.drawer-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  color: var(--text-2);
+  transition: background var(--dur-fast) var(--ease);
+}
+
+.drawer-close:hover {
+  background: var(--bg-active);
+}
+
+.drawer-nav {
+  display: flex;
+  flex-direction: column;
+  padding: 0 1rem;
+}
+
+.drawer-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0.5rem 0;
+}
+
+.drawer-footer {
+  padding: 0.75rem 1rem;
+  font-size: var(--font-xs);
+  color: var(--text-2);
+}
+
+/* ─── Search Overlay (mobile) ──────────────────────────────── */
+
+.search-overlay {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-drawer);
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease, visibility 150ms ease;
+}
+
+.search-overlay.is-open {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.search-overlay-bg {
+  position: absolute;
+  inset: 0;
+  background: var(--overlay);
+}
+
+.search-overlay-panel {
+  position: relative;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem 1rem;
+  z-index: 1;
+  transform: translateY(-0.5rem);
+  transition: transform 150ms ease;
+}
+
+.search-overlay.is-open .search-overlay-panel {
+  transform: translateY(0);
+}
+
+.search-overlay-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ─── Responsive ────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+
+  .bottom-nav {
+    display: flex;
+  }
+
+}

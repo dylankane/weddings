@@ -39,6 +39,12 @@ nunjucksEnv.addFilter('dateFormat', (value, format) => {
   if (format === 'datetime') {
     return date.toLocaleString('en-IE', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
   }
+  if (format === 'input') {
+    return date.toISOString().split('T')[0];
+  }
+  if (format === 'datetime-input') {
+    return date.toISOString().slice(0, 16);
+  }
   return date.toLocaleDateString('en-IE', { day: 'numeric', month: 'long', year: 'numeric' });
 });
 

@@ -1,16 +1,37 @@
 {% macro breadcrumb(items) %}
 <nav class="breadcrumb" aria-label="Breadcrumb">
-  {% for item in items %}
-    {% if not loop.last %}
-      {% if item.url %}
-        <a href="{{ item.url }}" class="breadcrumb-item">{{ item.label }}</a>
+
+  {# Desktop: full chain #}
+  <div class="breadcrumb-chain">
+    {% for item in items %}
+      {% if not loop.last %}
+        {% if item.url %}
+          <a href="{{ item.url }}" class="breadcrumb-item">{{ item.label }}</a>
+        {% else %}
+          <span class="breadcrumb-item">{{ item.label }}</span>
+        {% endif %}
+        <span class="breadcrumb-sep" aria-hidden="true">&gt;</span>
       {% else %}
-        <span class="breadcrumb-item">{{ item.label }}</span>
+        <span class="breadcrumb-item breadcrumb-current" aria-current="page">{{ item.label }}</span>
       {% endif %}
-      <span class="breadcrumb-sep" aria-hidden="true">/</span>
+    {% endfor %}
+  </div>
+
+  {# Mobile: brand on root, back link on all other pages #}
+  {% if items | length <= 1 %}
+    <span class="breadcrumb-mobile-brand">POSTA</span>
+  {% else %}
+    {% set parentIdx = items | length - 2 %}
+    {% set parent = items[parentIdx] %}
+    {% if parent.url %}
+      <a href="{{ parent.url }}" class="breadcrumb-mobile-back" aria-label="Back to {{ parent.label }}">
+        <svg class="breadcrumb-back-icon" aria-hidden="true"><use href="#icon-chevron-left"/></svg>
+        {{ parent.label }}
+      </a>
     {% else %}
-      <span class="breadcrumb-item breadcrumb-current" aria-current="page">{{ item.label }}</span>
+      <span class="breadcrumb-mobile-back">{{ parent.label }}</span>
     {% endif %}
-  {% endfor %}
+  {% endif %}
+
 </nav>
 {% endmacro %}

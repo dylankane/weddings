@@ -1,0 +1,277 @@
+{% extends "admin/layout.njk" %}
+{% from "admin/macros/breadcrumb.njk" import breadcrumb %}
+{% from "admin/macros/status-badge.njk" import status_badge %}
+{% from "admin/macros/form-dropdown.njk" import form_dropdown %}
+
+{% block styles %}
+<link rel="stylesheet" href="/css/admin/jobs.css">
+{% endblock %}
+
+{% block content %}
+
+{# ─── Page Bar ────────────────────────────────────────────────── #}
+
+<div class="page-bar">
+  {{ breadcrumb([
+    { label: 'Home', url: '/admin' },
+    { label: 'Jobs', url: '/admin/jobs' },
+    { label: job.customer.name }
+  ]) }}
+  <nav class="page-bar-right" aria-label="Navigate jobs">
+    {% if prevJob %}
+      <a href="/admin/jobs/{{ prevJob.id }}" class="btn" title="Previous job" aria-label="Previous job">
+        <svg class="btn-svg" aria-hidden="true"><use href="#icon-chevron-left"/></svg>
+      </a>
+    {% else %}
+      <span class="btn btn--disabled" aria-hidden="true">
+        <svg class="btn-svg"><use href="#icon-chevron-left"/></svg>
+      </span>
+    {% endif %}
+    {% if nextJob %}
+      <a href="/admin/jobs/{{ nextJob.id }}" class="btn" title="Next job" aria-label="Next job">
+        <svg class="btn-svg" aria-hidden="true"><use href="#icon-chevron-right"/></svg>
+      </a>
+    {% else %}
+      <span class="btn btn--disabled" aria-hidden="true">
+        <svg class="btn-svg"><use href="#icon-chevron-right"/></svg>
+      </span>
+    {% endif %}
+  </nav>
+</div>
+
+
+{# ─── Header ──────────────────────────────────────────────────── #}
+
+<div class="job-header">
+  <span class="job-ref">Job #{{ job.id }}</span>
+  <div class="job-title-row">
+    <h1 class="job-name">{{ job.customer.name }}</h1>
+    <form action="/admin/jobs/{{ job.id }}/status" method="POST">
+      <div class="form-dropdown" data-dropdown data-autosubmit>
+        <input type="hidden" name="status" value="{{ job.status }}">
+        <button type="button" class="btn js-dropdown-trigger" aria-haspopup="listbox" aria-expanded="false">
+          <span class="status-badge status-badge--{{ job.status | lower }}">
+            <span class="dot dot--{{ job.status | lower }}"></span>
+            <span class="form-dropdown-value">
+              {%- if job.status === 'ENQUIRY' %}Enquiry
+              {%- elif job.status === 'CONFIRMED' %}Confirmed
+              {%- elif job.status === 'COMPLETED' %}Completed
+              {%- elif job.status === 'CANCELLED' %}Cancelled
+              {%- endif -%}
+            </span>
+          </span>
+          <svg class="btn-left-extra" aria-hidden="true"><use href="#icon-chevron-down"/></svg>
+        </button>
+        <ul class="form-dropdown-list" role="listbox">
+          <li class="form-dropdown-option{{ ' is-selected' if job.status === 'ENQUIRY' }}" role="option" aria-selected="{{ 'true' if job.status === 'ENQUIRY' else 'false' }}" tabindex="-1" data-value="ENQUIRY">Enquiry</li>
+          <li class="form-dropdown-option{{ ' is-selected' if job.status === 'CONFIRMED' }}" role="option" aria-selected="{{ 'true' if job.status === 'CONFIRMED' else 'false' }}" tabindex="-1" data-value="CONFIRMED">Confirmed</li>
+          <li class="form-dropdown-option{{ ' is-selected' if job.status === 'COMPLETED' }}" role="option" aria-selected="{{ 'true' if job.status === 'COMPLETED' else 'false' }}" tabindex="-1" data-value="COMPLETED">Completed</li>
+          <li class="form-dropdown-option{{ ' is-selected' if job.status === 'CANCELLED' }}" role="option" aria-selected="{{ 'true' if job.status === 'CANCELLED' else 'false' }}" tabindex="-1" data-value="CANCELLED">Cancelled</li>
+        </ul>
+      </div>
+    </form>
+  </div>
+
+  <div class="job-recap">
+    {% if job.jobStart %}
+      <div class="recap-item">{{ job.jobStart | dateFormat('short') }}{% if job.jobEnd %} → {{ job.jobEnd | dateFormat('short') }}{% endif %}</div>
+    {% endif %}
+    {% if job.delivery and job.delivery.venueName %}
+      <div class="recap-item">{{ job.delivery.venueName }}</div>
+    {% endif %}
+    {% if job.delivery and job.delivery.venueCounty %}
+      <div class="recap-item">{{ job.delivery.venueCounty }}</div>
+    {% endif %}
+    {% if job.pricing and job.pricing.totalCost %}
+      <div class="recap-item">{{ job.pricing.totalCost | currency }}</div>
+    {% endif %}
+  </div>
+</div>
+
+
+{# ─── Sections ────────────────────────────────────────────────── #}
+
+<div class="content-container">
+
+  {# ── Details ── #}
+  <section class="form-section" aria-labelledby="section-details-title">
+    <div class="form-section-head">
+      <h2 class="form-section-title" id="section-details-title">Details</h2>
+      <label class="toggle-switch" aria-label="Edit details">
+        <input type="checkbox" class="js-section-toggle">
+        <span class="toggle-track"></span>
+        <span class="toggle-label">Edit</span>
+      </label>
+    </div>
+
+    <div class="form-section-view">
+      <div class="form-row">
+        <div class="form-group">
+          <span class="field-label">Customer name</span>
+          <span class="field-value">{{ job.customer.name }}</span>
+        </div>
+        <div class="form-group">
+          <span class="field-label">Email</span>
+          <span class="field-value">{{ job.customer.email }}</span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <span class="field-label">Phone</span>
+          <span class="field-value{{ ' field-value--empty' if not job.customer.phone }}">{{ job.customer.phone or '—' }}</span>
+        </div>
+        <div class="form-group">
+          <span class="field-label">Source</span>
+          <span class="field-value">{{ 'Website form' if job.source === 'CUSTOMER_FORM' else 'Manager created' }}</span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <span class="field-label">Event start date</span>
+          <span class="field-value{{ ' field-value--empty' if not job.jobStart }}">{{ job.jobStart | dateFormat('short') if job.jobStart else '—' }}</span>
+        </div>
+        <div class="form-group">
+          <span class="field-label">Event end date</span>
+          <span class="field-value{{ ' field-value--empty' if not job.jobEnd }}">{{ job.jobEnd | dateFormat('short') if job.jobEnd else '—' }}</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <span class="field-label">Notes</span>
+        <span class="field-value{{ ' field-value--empty' if not job.notes }}">{{ job.notes or '—' }}</span>
+      </div>
+    </div>
+
+    <form class="form-section-form" action="/admin/jobs/{{ job.id }}/details" method="POST">
+      {% include "admin/jobs/partials/_form-details.njk" %}
+      <div class="section-actions">
+        <button type="button" class="btn btn-cancel js-section-cancel">Cancel</button>
+        <button type="submit" class="btn btn-save">Save</button>
+      </div>
+    </form>
+  </section>
+
+  {# ── Delivery ── #}
+  <section class="form-section" aria-labelledby="section-delivery-title">
+    <div class="form-section-head">
+      <h2 class="form-section-title" id="section-delivery-title">Delivery</h2>
+      <label class="toggle-switch" aria-label="Edit delivery">
+        <input type="checkbox" class="js-section-toggle">
+        <span class="toggle-track"></span>
+        <span class="toggle-label">Edit</span>
+      </label>
+    </div>
+
+    <div class="form-section-view">
+      <div class="form-row">
+        <div class="form-group">
+          <span class="field-label">Outbound method</span>
+          <span class="field-value{{ ' field-value--empty' if not job.delivery }}">
+            {%- if job.delivery -%}
+              {{ 'Staff delivery' if job.delivery.outboundMethod === 'STAFF' else 'Customer collection' }}
+            {%- else -%}—{%- endif -%}
+          </span>
+        </div>
+        <div class="form-group">
+          <span class="field-label">Return method</span>
+          <span class="field-value{{ ' field-value--empty' if not job.delivery }}">
+            {%- if job.delivery -%}
+              {{ 'Staff collection' if job.delivery.returnMethod === 'STAFF' else 'Customer return' }}
+            {%- else -%}—{%- endif -%}
+          </span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <span class="field-label">Venue name</span>
+          <span class="field-value{{ ' field-value--empty' if not (job.delivery and job.delivery.venueName) }}">{{ job.delivery.venueName if job.delivery and job.delivery.venueName else '—' }}</span>
+        </div>
+        <div class="form-group">
+          <span class="field-label">County</span>
+          <span class="field-value{{ ' field-value--empty' if not (job.delivery and job.delivery.venueCounty) }}">{{ job.delivery.venueCounty if job.delivery and job.delivery.venueCounty else '—' }}</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <span class="field-label">Venue address</span>
+        <span class="field-value{{ ' field-value--empty' if not (job.delivery and job.delivery.venueAddress) }}">{{ job.delivery.venueAddress if job.delivery and job.delivery.venueAddress else '—' }}</span>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <span class="field-label">Eircode</span>
+          <span class="field-value mono{{ ' field-value--empty' if not (job.delivery and job.delivery.venueEircode) }}">{{ job.delivery.venueEircode if job.delivery and job.delivery.venueEircode else '—' }}</span>
+        </div>
+        <div class="form-group">
+          <span class="field-label">Delivery date &amp; time</span>
+          <span class="field-value{{ ' field-value--empty' if not (job.delivery and job.delivery.outboundAt) }}">{{ job.delivery.outboundAt | dateFormat('datetime') if job.delivery and job.delivery.outboundAt else '—' }}</span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <span class="field-label">Collection date &amp; time</span>
+          <span class="field-value{{ ' field-value--empty' if not (job.delivery and job.delivery.returnAt) }}">{{ job.delivery.returnAt | dateFormat('datetime') if job.delivery and job.delivery.returnAt else '—' }}</span>
+        </div>
+        <div class="form-group">
+          <span class="field-label">Delivery notes</span>
+          <span class="field-value{{ ' field-value--empty' if not (job.delivery and job.delivery.notes) }}">{{ job.delivery.notes if job.delivery and job.delivery.notes else '—' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <form class="form-section-form" action="/admin/jobs/{{ job.id }}/delivery" method="POST">
+      {% include "admin/jobs/partials/_form-delivery.njk" %}
+      <div class="section-actions">
+        <button type="button" class="btn btn-cancel js-section-cancel">Cancel</button>
+        <button type="submit" class="btn btn-save">Save</button>
+      </div>
+    </form>
+  </section>
+
+  {# ── Pricing ── #}
+  <section class="form-section" aria-labelledby="section-pricing-title">
+    <div class="form-section-head">
+      <h2 class="form-section-title" id="section-pricing-title">Pricing</h2>
+      <label class="toggle-switch" aria-label="Edit pricing">
+        <input type="checkbox" class="js-section-toggle">
+        <span class="toggle-track"></span>
+        <span class="toggle-label">Edit</span>
+      </label>
+    </div>
+
+    <div class="form-section-view">
+      <div class="form-row">
+        <div class="form-group">
+          <span class="field-label">Delivery zone</span>
+          <span class="field-value{{ ' field-value--empty' if not (job.pricing and job.pricing.deliveryZone) }}">
+            {%- if job.pricing and job.pricing.deliveryZone -%}
+              {{ job.pricing.deliveryZone.name }}{% if job.pricing.deliveryZone.price %} — {{ job.pricing.deliveryZone.price | currency }}{% endif %}
+            {%- else -%}—{%- endif -%}
+          </span>
+        </div>
+        <div class="form-group">
+          <span class="field-label">Rental cost</span>
+          <span class="field-value mono{{ ' field-value--empty' if not job.pricing }}">{{ job.pricing.rentalCost | currency if job.pricing else '—' }}</span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <span class="field-label">Delivery cost</span>
+          <span class="field-value mono{{ ' field-value--empty' if not job.pricing }}">{{ job.pricing.deliveryCost | currency if job.pricing else '—' }}</span>
+        </div>
+        <div class="form-group">
+          <span class="field-label">Total</span>
+          <span class="field-value mono{{ ' field-value--empty' if not job.pricing }}">{{ job.pricing.totalCost | currency if job.pricing else '—' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <form class="form-section-form" action="/admin/jobs/{{ job.id }}/pricing" method="POST">
+      {% include "admin/jobs/partials/_form-pricing.njk" %}
+      <div class="section-actions">
+        <button type="button" class="btn btn-cancel js-section-cancel">Cancel</button>
+        <button type="submit" class="btn btn-save">Save</button>
+      </div>
+    </form>
+  </section>
+
+</div>
+
+{% endblock %}
