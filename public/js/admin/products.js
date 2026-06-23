@@ -6,27 +6,26 @@
 
 // ─── Inline Detail Panels ────────────────────────────────────────
 
-let openDetail = null;
+let openSection = null;
 
 document.querySelectorAll('.js-product-row').forEach(row => {
-  row.addEventListener('click', () => {
-    const detail = row.nextElementSibling;
-    if (!detail || !detail.classList.contains('product-detail')) return;
+  const trigger = row.querySelector('.js-detail-trigger');
+  if (!trigger) return;
 
-    const isOpen = detail.classList.contains('is-open');
+  trigger.addEventListener('click', () => {
+    const section = row.querySelector('.js-product-section');
+    if (!section) return;
 
-    if (openDetail && openDetail !== detail) {
-      openDetail.classList.remove('is-open');
-      openDetail.setAttribute('aria-hidden', 'true');
-      openDetail.previousElementSibling.classList.remove('is-open');
-      openDetail.previousElementSibling.setAttribute('aria-expanded', 'false');
+    const isOpen = section.classList.contains('is-open');
+
+    if (openSection && openSection !== section) {
+      openSection.classList.remove('is-open');
+      openSection.closest('.js-product-row').setAttribute('aria-expanded', 'false');
     }
 
-    detail.classList.toggle('is-open', !isOpen);
-    detail.setAttribute('aria-hidden', isOpen ? 'true' : 'false');
-    row.classList.toggle('is-open', !isOpen);
+    section.classList.toggle('is-open', !isOpen);
     row.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
-    openDetail = !isOpen ? detail : null;
+    openSection = !isOpen ? section : null;
   });
 });
 
@@ -41,6 +40,41 @@ document.querySelectorAll('.js-product-active').forEach(label => {
 
     try {
       const res  = await fetch(`/admin/products/${id}/toggle-active`, { method: 'POST' });
+      const data = await res.json();
+      this.checked = data.isActive;
+    } catch {
+      this.checked = !checked;
+    }
+  });
+});
+
+// ─── Inline Customisable Toggle ──────────────────────────────────
+
+document.querySelectorAll('.js-product-customisable').forEach(label => {
+  label.querySelector('input').addEventListener('change', async function () {
+    const id      = label.dataset.id;
+    const checked = this.checked;
+
+    try {
+      const res  = await fetch(`/admin/products/${id}/toggle-customisable`, { method: 'POST' });
+      const data = await res.json();
+      this.checked = data.isCustomisable;
+    } catch {
+      this.checked = !checked;
+    }
+  });
+});
+
+// ─── Inline Option Active Toggle ─────────────────────────────────
+
+document.querySelectorAll('.js-opt-toggle').forEach(label => {
+  label.querySelector('input').addEventListener('change', async function () {
+    const optId  = label.dataset.optId;
+    const prodId = label.dataset.productId;
+    const checked = this.checked;
+
+    try {
+      const res  = await fetch(`/admin/products/${prodId}/options/${optId}/toggle-active`, { method: 'POST' });
       const data = await res.json();
       this.checked = data.isActive;
     } catch {

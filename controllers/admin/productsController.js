@@ -56,6 +56,7 @@ async function newProduct(req, res, next) {
         name: '', slug: '', description: '',
         stockQuantity: 1, displayOrder: 0,
         isActive: true, isCustomisable: false,
+        pricePerEvent: null, pricePerDay: null,
         images: [], customisationOptions: [],
       },
     });
@@ -96,13 +97,15 @@ async function create(req, res, next) {
   try {
     const product = await prisma.product.create({
       data: {
-        name:                  b.name,
-        slug:                  b.slug,
-        description:           b.description,
-        stockQuantity:         parseInt(b.stockQuantity, 10)  || 0,
-        displayOrder:          parseInt(b.displayOrder, 10)   || 0,
-        isActive:              b.isActive      === 'on',
-        isCustomisable:        b.isCustomisable === 'on',
+        name:          b.name,
+        slug:          b.slug,
+        description:   b.description,
+        stockQuantity: parseInt(b.stockQuantity, 10) || 0,
+        displayOrder:  parseInt(b.displayOrder, 10)  || 0,
+        isActive:      b.isActive      === 'on',
+        isCustomisable: b.isCustomisable === 'on',
+        pricePerEvent: b.pricePerEvent ? parseFloat(b.pricePerEvent) : null,
+        pricePerDay:   b.pricePerDay   ? parseFloat(b.pricePerDay)   : null,
       },
     });
 
@@ -145,13 +148,15 @@ async function update(req, res, next) {
     await prisma.product.update({
       where: { id },
       data: {
-        name:                  b.name,
-        slug:                  b.slug,
-        description:           b.description,
-        stockQuantity:         parseInt(b.stockQuantity, 10)  || 0,
-        displayOrder:          parseInt(b.displayOrder, 10)   || 0,
-        isActive:              b.isActive      === 'on',
-        isCustomisable:        b.isCustomisable === 'on',
+        name:          b.name,
+        slug:          b.slug,
+        description:   b.description,
+        stockQuantity: parseInt(b.stockQuantity, 10) || 0,
+        displayOrder:  parseInt(b.displayOrder, 10)  || 0,
+        isActive:      b.isActive      === 'on',
+        isCustomisable: b.isCustomisable === 'on',
+        pricePerEvent: b.pricePerEvent ? parseFloat(b.pricePerEvent) : null,
+        pricePerDay:   b.pricePerDay   ? parseFloat(b.pricePerDay)   : null,
       },
     });
 
@@ -258,6 +263,50 @@ async function toggleActive(req, res, next) {
   }
 }
 
+// ─── Toggle Customisable ──────────────────────────────────────────────────────
+
+async function toggleCustomisable(req, res, next) {
+  const id = parseInt(req.params.id, 10);
+  if (isNaN(id)) return next({ status: 404 });
+
+  try {
+    const product = await prisma.product.findUnique({ where: { id }, select: { isCustomisable: true } });
+    if (!product) return next({ status: 404 });
+
+    const updated = await prisma.product.update({
+      where: { id },
+      data:  { isCustomisable: !product.isCustomisable },
+      select: { isCustomisable: true },
+    });
+
+    return res.json({ isCustomisable: updated.isCustomisable });
+  } catch (err) {
+    next(err);
+  }
+}
+
+// ─── Toggle Option Active ─────────────────────────────────────────────────────
+
+async function toggleOptionActive(req, res, next) {
+  const optId = parseInt(req.params.optionId, 10);
+  if (isNaN(optId)) return next({ status: 404 });
+
+  try {
+    const opt = await prisma.productCustomisationOption.findUnique({ where: { id: optId }, select: { isActive: true } });
+    if (!opt) return next({ status: 404 });
+
+    const updated = await prisma.productCustomisationOption.update({
+      where: { id: optId },
+      data:  { isActive: !opt.isActive },
+      select: { isActive: true },
+    });
+
+    return res.json({ isActive: updated.isActive });
+  } catch (err) {
+    next(err);
+  }
+}
+
 // ─── Delete ───────────────────────────────────────────────────────────────────
 
 async function deleteProduct(req, res, next) {
@@ -283,4 +332,4 @@ async function deleteProduct(req, res, next) {
   }
 }
 
-module.exports = { list, newProduct, editProduct, create, update, toggleActive, deleteProduct };
+module.exports = { list, newProduct, editProduct, create, update, toggleActive, toggleCustomisable, toggleOptionActive, deleteProduct };

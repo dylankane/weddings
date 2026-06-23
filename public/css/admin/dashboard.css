@@ -12,12 +12,15 @@
 /* ─── Dashboard Section ─────────────────────────────────────── */
 
 .dash-section {
+}
+
+.dash-section--home {
   margin-bottom: 2rem;
 }
 
 /* ─── Dashboard Tables ──────────────────────────────────────── */
 
-.dash-section .table-wrap {
+.dash-section--home .table-wrap {
   max-height: 14rem;
   overflow-y: auto;
 }

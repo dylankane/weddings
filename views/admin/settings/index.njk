@@ -1,0 +1,608 @@
+{% extends "admin/layout.njk" %}
+{% from "admin/macros/breadcrumb.njk" import breadcrumb %}
+
+{% block styles %}
+<link rel="stylesheet" href="/css/admin/settings.css">
+{% endblock %}
+
+{% block content %}
+
+{# ─── Page Bar ────────────────────────────────────────────────── #}
+
+<div class="page-bar">
+  {{ breadcrumb([
+    { label: 'Home', url: '/admin' },
+    { label: 'Settings' }
+  ]) }}
+</div>
+
+{# ─── Tab Bar ─────────────────────────────────────────────────── #}
+
+<nav class="settings-tab-bar" role="tablist" aria-label="Settings sections">
+  <button class="settings-tab" role="tab" data-tab="company" aria-selected="false" aria-controls="panel-company">Company</button>
+  <button class="settings-tab" role="tab" data-tab="delivery-zones" aria-selected="false" aria-controls="panel-delivery-zones">Delivery Zones</button>
+  <button class="settings-tab" role="tab" data-tab="email-templates" aria-selected="false" aria-controls="panel-email-templates">Email Templates</button>
+  <button class="settings-tab" role="tab" data-tab="profile" aria-selected="false" aria-controls="panel-profile">Profile</button>
+</nav>
+
+{# ─── Company Settings Panel ───────────────────────────────────── #}
+
+<div class="settings-panel" id="panel-company" role="tabpanel">
+
+  <div class="page-greeting">Company Settings</div>
+
+  <div class="content-container">
+
+    {# ── Identity ── #}
+    <section class="form-section" aria-labelledby="section-identity-title">
+      <div class="form-section-head">
+        <h2 class="form-section-title" id="section-identity-title">Identity</h2>
+        <label class="toggle-switch" aria-label="Edit identity">
+          <input type="checkbox" class="js-section-toggle">
+          <span class="toggle-track"></span>
+          <span class="toggle-label">Edit</span>
+        </label>
+      </div>
+
+      <div class="form-section-view">
+        <div class="form-row">
+          <div class="form-group">
+            <span class="field-label">Company name</span>
+            <span class="field-value{{ ' field-value--empty' if not (settings and settings.companyName) }}">{{ settings.companyName if settings and settings.companyName else '—' }}</span>
+          </div>
+          <div class="form-group">
+            <span class="field-label">Tagline</span>
+            <span class="field-value{{ ' field-value--empty' if not (settings and settings.tagline) }}">{{ settings.tagline if settings and settings.tagline else '—' }}</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <span class="field-label">Logo — light, small</span>
+            <span class="field-value{{ ' field-value--empty' if not (settings and settings.logoLightSmallUrl) }}">{{ settings.logoLightSmallUrl if settings and settings.logoLightSmallUrl else '—' }}</span>
+          </div>
+          <div class="form-group">
+            <span class="field-label">Logo — light, large</span>
+            <span class="field-value{{ ' field-value--empty' if not (settings and settings.logoLightLargeUrl) }}">{{ settings.logoLightLargeUrl if settings and settings.logoLightLargeUrl else '—' }}</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <span class="field-label">Logo — dark, small</span>
+            <span class="field-value{{ ' field-value--empty' if not (settings and settings.logoDarkSmallUrl) }}">{{ settings.logoDarkSmallUrl if settings and settings.logoDarkSmallUrl else '—' }}</span>
+          </div>
+          <div class="form-group">
+            <span class="field-label">Logo — dark, large</span>
+            <span class="field-value{{ ' field-value--empty' if not (settings and settings.logoDarkLargeUrl) }}">{{ settings.logoDarkLargeUrl if settings and settings.logoDarkLargeUrl else '—' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <form class="form-section-form" action="/admin/settings/company/identity" method="POST">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="companyName">Company name</label>
+            <input class="form-input" type="text" id="companyName" name="companyName" value="{{ settings.companyName if settings and settings.companyName else '' }}" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="tagline">Tagline</label>
+            <input class="form-input" type="text" id="tagline" name="tagline" value="{{ settings.tagline if settings and settings.tagline else '' }}">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="logoLightSmallUrl">Logo URL — light, small</label>
+            <input class="form-input" type="text" id="logoLightSmallUrl" name="logoLightSmallUrl" value="{{ settings.logoLightSmallUrl if settings and settings.logoLightSmallUrl else '' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="logoLightLargeUrl">Logo URL — light, large</label>
+            <input class="form-input" type="text" id="logoLightLargeUrl" name="logoLightLargeUrl" value="{{ settings.logoLightLargeUrl if settings and settings.logoLightLargeUrl else '' }}">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="logoDarkSmallUrl">Logo URL — dark, small</label>
+            <input class="form-input" type="text" id="logoDarkSmallUrl" name="logoDarkSmallUrl" value="{{ settings.logoDarkSmallUrl if settings and settings.logoDarkSmallUrl else '' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="logoDarkLargeUrl">Logo URL — dark, large</label>
+            <input class="form-input" type="text" id="logoDarkLargeUrl" name="logoDarkLargeUrl" value="{{ settings.logoDarkLargeUrl if settings and settings.logoDarkLargeUrl else '' }}">
+          </div>
+        </div>
+        <div class="section-actions">
+          <button type="button" class="btn btn-cancel js-section-cancel">
+            <svg class="btn-svg" aria-hidden="true"><use href="#icon-close"/></svg>
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-save">
+            <svg class="btn-svg" aria-hidden="true"><use href="#icon-save"/></svg>
+            Save
+          </button>
+        </div>
+      </form>
+    </section>
+
+    {# ── Contact ── #}
+    <section class="form-section" aria-labelledby="section-contact-title">
+      <div class="form-section-head">
+        <h2 class="form-section-title" id="section-contact-title">Contact</h2>
+        <label class="toggle-switch" aria-label="Edit contact">
+          <input type="checkbox" class="js-section-toggle">
+          <span class="toggle-track"></span>
+          <span class="toggle-label">Edit</span>
+        </label>
+      </div>
+
+      <div class="form-section-view">
+        <div class="form-row">
+          <div class="form-group">
+            <span class="field-label">Email</span>
+            <span class="field-value{{ ' field-value--empty' if not (settings and settings.contactEmail) }}">{{ settings.contactEmail if settings and settings.contactEmail else '—' }}</span>
+          </div>
+          <div class="form-group">
+            <span class="field-label">Phone</span>
+            <span class="field-value{{ ' field-value--empty' if not (settings and settings.contactPhone) }}">{{ settings.contactPhone if settings and settings.contactPhone else '—' }}</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <span class="field-label">Address</span>
+          <span class="field-value{{ ' field-value--empty' if not (settings and settings.contactAddress) }}">{{ settings.contactAddress if settings and settings.contactAddress else '—' }}</span>
+        </div>
+      </div>
+
+      <form class="form-section-form" action="/admin/settings/company/contact" method="POST">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="contactEmail">Email</label>
+            <input class="form-input" type="email" id="contactEmail" name="contactEmail" value="{{ settings.contactEmail if settings and settings.contactEmail else '' }}" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="contactPhone">Phone</label>
+            <input class="form-input" type="tel" id="contactPhone" name="contactPhone" value="{{ settings.contactPhone if settings and settings.contactPhone else '' }}" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="contactAddress">Address</label>
+          <textarea class="form-textarea" id="contactAddress" name="contactAddress" required>{{ settings.contactAddress if settings and settings.contactAddress else '' }}</textarea>
+        </div>
+        <div class="section-actions">
+          <button type="button" class="btn btn-cancel js-section-cancel">
+            <svg class="btn-svg" aria-hidden="true"><use href="#icon-close"/></svg>
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-save">
+            <svg class="btn-svg" aria-hidden="true"><use href="#icon-save"/></svg>
+            Save
+          </button>
+        </div>
+      </form>
+    </section>
+
+    {# ── Social & SEO ── #}
+    <section class="form-section" aria-labelledby="section-seo-title">
+      <div class="form-section-head">
+        <h2 class="form-section-title" id="section-seo-title">Social &amp; SEO</h2>
+        <label class="toggle-switch" aria-label="Edit social and SEO">
+          <input type="checkbox" class="js-section-toggle">
+          <span class="toggle-track"></span>
+          <span class="toggle-label">Edit</span>
+        </label>
+      </div>
+
+      <div class="form-section-view">
+        <div class="form-row">
+          <div class="form-group">
+            <span class="field-label">Meta title</span>
+            <span class="field-value{{ ' field-value--empty' if not (settings and settings.metaTitle) }}">{{ settings.metaTitle if settings and settings.metaTitle else '—' }}</span>
+          </div>
+          <div class="form-group">
+            <span class="field-label">Meta description</span>
+            <span class="field-value{{ ' field-value--empty' if not (settings and settings.metaDescription) }}">{{ settings.metaDescription if settings and settings.metaDescription else '—' }}</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <span class="field-label">Instagram</span>
+            <span class="field-value{{ ' field-value--empty' if not social.instagram }}">{{ social.instagram if social.instagram else '—' }}</span>
+          </div>
+          <div class="form-group">
+            <span class="field-label">Facebook</span>
+            <span class="field-value{{ ' field-value--empty' if not social.facebook }}">{{ social.facebook if social.facebook else '—' }}</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <span class="field-label">TikTok</span>
+            <span class="field-value{{ ' field-value--empty' if not social.tiktok }}">{{ social.tiktok if social.tiktok else '—' }}</span>
+          </div>
+          <div class="form-group">
+            <span class="field-label">Pinterest</span>
+            <span class="field-value{{ ' field-value--empty' if not social.pinterest }}">{{ social.pinterest if social.pinterest else '—' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <form class="form-section-form" action="/admin/settings/company/seo" method="POST">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="metaTitle">Meta title</label>
+            <input class="form-input" type="text" id="metaTitle" name="metaTitle" value="{{ settings.metaTitle if settings and settings.metaTitle else '' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="metaDescription">Meta description</label>
+            <textarea class="form-textarea" id="metaDescription" name="metaDescription">{{ settings.metaDescription if settings and settings.metaDescription else '' }}</textarea>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="socialInstagram">Instagram URL</label>
+            <input class="form-input" type="text" id="socialInstagram" name="socialInstagram" value="{{ social.instagram if social.instagram else '' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="socialFacebook">Facebook URL</label>
+            <input class="form-input" type="text" id="socialFacebook" name="socialFacebook" value="{{ social.facebook if social.facebook else '' }}">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="socialTiktok">TikTok URL</label>
+            <input class="form-input" type="text" id="socialTiktok" name="socialTiktok" value="{{ social.tiktok if social.tiktok else '' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="socialPinterest">Pinterest URL</label>
+            <input class="form-input" type="text" id="socialPinterest" name="socialPinterest" value="{{ social.pinterest if social.pinterest else '' }}">
+          </div>
+        </div>
+        <div class="section-actions">
+          <button type="button" class="btn btn-cancel js-section-cancel">
+            <svg class="btn-svg" aria-hidden="true"><use href="#icon-close"/></svg>
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-save">
+            <svg class="btn-svg" aria-hidden="true"><use href="#icon-save"/></svg>
+            Save
+          </button>
+        </div>
+      </form>
+    </section>
+
+    {# ── Location & Delivery ── #}
+    <section class="form-section" aria-labelledby="section-location-title">
+      <div class="form-section-head">
+        <h2 class="form-section-title" id="section-location-title">Location &amp; Delivery</h2>
+        <label class="toggle-switch" aria-label="Edit location and delivery">
+          <input type="checkbox" class="js-section-toggle">
+          <span class="toggle-track"></span>
+          <span class="toggle-label">Edit</span>
+        </label>
+      </div>
+
+      <div class="form-section-view">
+        <div class="form-row">
+          <div class="form-group">
+            <span class="field-label">Business lat</span>
+            <span class="field-value mono{{ ' field-value--empty' if not (settings and settings.businessLat) }}">{{ settings.businessLat if settings and settings.businessLat else '—' }}</span>
+          </div>
+          <div class="form-group">
+            <span class="field-label">Business lng</span>
+            <span class="field-value mono{{ ' field-value--empty' if not (settings and settings.businessLng) }}">{{ settings.businessLng if settings and settings.businessLng else '—' }}</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <span class="field-label">Delivery info text</span>
+          <span class="field-value{{ ' field-value--empty' if not (settings and settings.deliveryInfoText) }}">{{ settings.deliveryInfoText if settings and settings.deliveryInfoText else '—' }}</span>
+        </div>
+      </div>
+
+      <form class="form-section-form" action="/admin/settings/company/location" method="POST">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="businessLat">Business latitude</label>
+            <input class="form-input mono" type="number" step="any" id="businessLat" name="businessLat" value="{{ settings.businessLat if settings and settings.businessLat else '' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="businessLng">Business longitude</label>
+            <input class="form-input mono" type="number" step="any" id="businessLng" name="businessLng" value="{{ settings.businessLng if settings and settings.businessLng else '' }}">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="deliveryInfoText">Delivery info text</label>
+          <textarea class="form-textarea" id="deliveryInfoText" name="deliveryInfoText">{{ settings.deliveryInfoText if settings and settings.deliveryInfoText else '' }}</textarea>
+        </div>
+        <div class="section-actions">
+          <button type="button" class="btn btn-cancel js-section-cancel">
+            <svg class="btn-svg" aria-hidden="true"><use href="#icon-close"/></svg>
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-save">
+            <svg class="btn-svg" aria-hidden="true"><use href="#icon-save"/></svg>
+            Save
+          </button>
+        </div>
+      </form>
+    </section>
+
+  </div>
+</div>
+
+{# ─── Delivery Zones Panel ─────────────────────────────────────── #}
+
+<div class="settings-panel" id="panel-delivery-zones" role="tabpanel">
+  <div class="page-greeting">Delivery Zones</div>
+  <div class="content-container">
+    <p class="empty">Coming soon.</p>
+  </div>
+</div>
+
+{# ─── Email Templates Panel ────────────────────────────────────── #}
+
+<div class="settings-panel" id="panel-email-templates" role="tabpanel">
+
+  <div class="page-greeting">Email Templates</div>
+
+  <div class="content-container">
+
+    {# ── Email Sign-Off ── #}
+    <section class="form-section" aria-labelledby="section-signoff-title">
+      <div class="form-section-head">
+        <h2 class="form-section-title" id="section-signoff-title">Email sign-off</h2>
+        <label class="toggle-switch" aria-label="Edit email sign-off">
+          <input type="checkbox" class="js-section-toggle">
+          <span class="toggle-track"></span>
+          <span class="toggle-label">Edit</span>
+        </label>
+      </div>
+
+      <div class="form-section-view">
+        <div class="form-group">
+          <span class="field-label">Sign-off</span>
+          <span class="field-value{{ ' field-value--empty' if not (settings and settings.emailSignOff) }}">{{ settings.emailSignOff if settings and settings.emailSignOff else '—' }}</span>
+        </div>
+      </div>
+
+      <form class="form-section-form" action="/admin/settings/company/sign-off" method="POST">
+        <div class="form-group">
+          <label class="form-label" for="emailSignOff">Sign-off</label>
+          <textarea class="form-textarea" id="emailSignOff" name="emailSignOff">{{ settings.emailSignOff if settings and settings.emailSignOff else '' }}</textarea>
+        </div>
+        <div class="section-actions">
+          <button type="button" class="btn btn-cancel js-section-cancel">
+            <svg class="btn-svg" aria-hidden="true"><use href="#icon-close"/></svg>
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-save">
+            <svg class="btn-svg" aria-hidden="true"><use href="#icon-save"/></svg>
+            Save
+          </button>
+        </div>
+      </form>
+    </section>
+
+    {# ── Templates Table ── #}
+    <section class="dash-section">
+      <div class="card-head">
+        <h2 class="card-title">Templates</h2>
+      </div>
+      <div class="data-card">
+        <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Template</th>
+              <th>Subject</th>
+              <th>Active</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if templates.length %}
+              {% for template in templates %}
+              <tr class="js-template-row"
+                  data-id="{{ template.id }}"
+                  data-name="{{ template.name | escape }}"
+                  data-subject="{{ template.subject | escape }}"
+                  data-body="{{ (template.body or '') | escape }}"
+                  data-active="{{ 'true' if template.isActive else 'false' }}">
+                <td>
+                  <span class="fw-medium">{{ template.name }}</span>
+                  <span class="date-sub">{{ template.description }}</span>
+                </td>
+                <td>{{ template.subject }}</td>
+                <td>
+                  <span class="dot dot--{{ 'confirmed' if template.isActive else 'cancelled' }}"></span>
+                  {{ 'Active' if template.isActive else 'Inactive' }}
+                </td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="3" class="empty">No email templates configured yet.</td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </section>
+
+    {# ── Template Edit Panel ── #}
+    <div id="template-form-panel" hidden>
+      <section class="form-section is-editing">
+        <div class="form-section-head">
+          <h2 class="form-section-title" id="template-form-title"></h2>
+        </div>
+        <form class="form-section-form" id="template-form" method="POST" action="">
+
+          <div class="token-chips">
+            <span class="token-chips-label">Insert token:</span>
+            <button type="button" class="token-chip js-token-chip" data-token="{{ '{{customerName}}' }}">{{ '{{customerName}}' }}</button>
+            <button type="button" class="token-chip js-token-chip" data-token="{{ '{{managerName}}' }}">{{ '{{managerName}}' }}</button>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="tpl-subject">Subject</label>
+            <input class="form-input js-token-target" type="text" id="tpl-subject" name="subject">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="tpl-body">Body</label>
+            <textarea class="form-textarea js-token-target" id="tpl-body" name="body"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-checkbox">
+              <input type="checkbox" id="tpl-active" name="isActive">
+              Active
+            </label>
+          </div>
+
+          <div class="section-actions">
+            <button type="button" class="btn btn-cancel" id="js-template-cancel">
+              <svg class="btn-svg" aria-hidden="true"><use href="#icon-close"/></svg>
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-save">
+              <svg class="btn-svg" aria-hidden="true"><use href="#icon-save"/></svg>
+              Save
+            </button>
+          </div>
+
+        </form>
+      </section>
+    </div>
+
+  </div>
+</div>
+
+{# ─── Profile Panel ────────────────────────────────────────────── #}
+
+<div class="settings-panel" id="panel-profile" role="tabpanel">
+
+  <div class="page-greeting">Profile</div>
+
+  {% if profileNotice %}
+    {% if profileNotice === 'profile-saved' %}
+      <div class="settings-notice settings-notice--success">Profile updated.</div>
+    {% elif profileNotice === 'password-saved' %}
+      <div class="settings-notice settings-notice--success">Password changed successfully.</div>
+    {% elif profileNotice === 'invalid-password' %}
+      <div class="settings-notice settings-notice--error">Current password is incorrect.</div>
+    {% elif profileNotice === 'password-mismatch' %}
+      <div class="settings-notice settings-notice--error">New passwords do not match.</div>
+    {% elif profileNotice === 'password-too-short' %}
+      <div class="settings-notice settings-notice--error">New password must be at least 8 characters.</div>
+    {% endif %}
+  {% endif %}
+
+  <div class="content-container">
+
+    {# ── Profile ── #}
+    <section class="form-section" aria-labelledby="section-profile-title">
+      <div class="form-section-head">
+        <h2 class="form-section-title" id="section-profile-title">Profile</h2>
+        <label class="toggle-switch" aria-label="Edit profile">
+          <input type="checkbox" class="js-section-toggle">
+          <span class="toggle-track"></span>
+          <span class="toggle-label">Edit</span>
+        </label>
+      </div>
+
+      <div class="form-section-view">
+        <div class="form-row">
+          <div class="form-group">
+            <span class="field-label">Display name</span>
+            <span class="field-value{{ ' field-value--empty' if not (profileUser and profileUser.displayName) }}">{{ profileUser.displayName if profileUser else '—' }}</span>
+          </div>
+          <div class="form-group">
+            <span class="field-label">Email</span>
+            <span class="field-value{{ ' field-value--empty' if not (profileUser and profileUser.email) }}">{{ profileUser.email if profileUser else '—' }}</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <span class="field-label">Role</span>
+          <span class="field-value">
+            {%- if profileUser -%}
+              {%- if profileUser.role === 'SUPER_ADMIN' -%}Super admin
+              {%- elif profileUser.role === 'MANAGER' -%}Manager
+              {%- else -%}{{ profileUser.role }}{%- endif -%}
+            {%- else -%}—{%- endif -%}
+          </span>
+        </div>
+      </div>
+
+      <form class="form-section-form" action="/admin/settings/profile" method="POST">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="displayName">Display name</label>
+            <input class="form-input" type="text" id="displayName" name="displayName" value="{{ profileUser.displayName if profileUser else '' }}" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="profileEmail">Email</label>
+            <input class="form-input" type="email" id="profileEmail" name="email" value="{{ profileUser.email if profileUser else '' }}" required>
+          </div>
+        </div>
+        <div class="section-actions">
+          <button type="button" class="btn btn-cancel js-section-cancel">
+            <svg class="btn-svg" aria-hidden="true"><use href="#icon-close"/></svg>
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-save">
+            <svg class="btn-svg" aria-hidden="true"><use href="#icon-save"/></svg>
+            Save
+          </button>
+        </div>
+      </form>
+    </section>
+
+    {# ── Password ── #}
+    <section class="form-section" aria-labelledby="section-password-title">
+      <div class="form-section-head">
+        <h2 class="form-section-title" id="section-password-title">Password</h2>
+        <label class="toggle-switch" aria-label="Change password">
+          <input type="checkbox" class="js-section-toggle">
+          <span class="toggle-track"></span>
+          <span class="toggle-label">Change</span>
+        </label>
+      </div>
+
+      <div class="form-section-view">
+        <div class="form-group">
+          <span class="field-label">Password</span>
+          <span class="field-value mono">••••••••</span>
+        </div>
+      </div>
+
+      <form class="form-section-form" action="/admin/settings/password" method="POST">
+        <div class="form-group">
+          <label class="form-label" for="currentPassword">Current password</label>
+          <input class="form-input" type="password" id="currentPassword" name="currentPassword" autocomplete="current-password" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="newPassword">New password</label>
+            <input class="form-input" type="password" id="newPassword" name="newPassword" autocomplete="new-password" required minlength="8">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="confirmPassword">Confirm new password</label>
+            <input class="form-input" type="password" id="confirmPassword" name="confirmPassword" autocomplete="new-password" required minlength="8">
+          </div>
+        </div>
+        <div class="section-actions">
+          <button type="button" class="btn btn-cancel js-section-cancel">
+            <svg class="btn-svg" aria-hidden="true"><use href="#icon-close"/></svg>
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-save">
+            <svg class="btn-svg" aria-hidden="true"><use href="#icon-save"/></svg>
+            Save
+          </button>
+        </div>
+      </form>
+    </section>
+
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/js/admin/settings.js"></script>
+{% endblock %}

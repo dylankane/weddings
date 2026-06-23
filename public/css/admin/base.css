@@ -49,6 +49,8 @@
   --info-transparent: rgba(37, 172, 235, 0.1);
   --save: #2563eb;
   --save-transparent: rgba(37, 99, 235, 0.1);
+  --edit: #477ef5;
+  --edit-transparent: rgba(71, 126, 245, 0.1);
   --cancel: #dc2626;
   --cancel-transparent: rgba(220, 38, 38, 0.1);
   --warning: #d90606c9;
@@ -179,7 +181,7 @@ button,
 
 .page-content {
   margin-left: var(--sidebar-w);
-  padding: 0.75rem 5rem 2.5rem 5rem;
+  padding: 0.8rem 5rem 2.5rem 5rem;
   min-height: 100vh;
   min-height: 100dvh;
 }
@@ -303,34 +305,49 @@ button,
 .btn-save {
   padding: 0.4rem 0.6rem;
   border: 2px solid var(--save);
-  color: var(--save);
+  /* color: var(--save); */
   font-weight: 500;
 }
 
 .btn-save:hover {
-  background: var(--save-transparent);
+  background: transparent;
+  color: var(--save);
+}
+
+.btn-edit {
+  padding: 0.4rem 0.6rem;
+  border: 2px solid var(--save);
+  /* color: var(--save); */
+  font-weight: 500;
+}
+
+.btn-edit:hover {
+  background: transparent;
+  color: var(--edit);
 }
 
 .btn-cancel {
   padding: 0.4rem 0.6rem;
   border: 2px solid var(--cancel);
-  color: var(--cancel);
+  /* color: var(--cancel); */
   font-weight: 500;
 }
 
 .btn-cancel:hover {
-  background: var(--cancel-transparent);
+  background: transparent;
+  color: var(--cancel);
 }
 
 .btn-delete {
   padding: 0.4rem 0.6rem;
   border: 2px solid var(--cancel);
-  color: var(--cancel);
+  /* color: var(--cancel); */
   font-weight: 500;
 }
 
 .btn-delete:hover {
-  background: var(--cancel-transparent);
+  background: transparent;
+  color: var(--cancel);
 }
 
 .btn--muted {

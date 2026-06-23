@@ -186,9 +186,10 @@
   font-size: var(--font-xs);
 }
 
-/* .form-section {
-  border: 1px solid var(--border);
-} */
+.form-section--nested {
+  margin-top: 1.5rem;
+}
+
 
 .form-section-head {
   display: flex;
@@ -450,7 +451,10 @@
 }
 
 .form-textarea {
-  resize: vertical;
+  resize: none;
+  overflow-y: hidden;
+  min-height: 2.25rem;
+  max-height: 12rem;
 }
 
 .form-select {

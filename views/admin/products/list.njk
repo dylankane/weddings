@@ -32,9 +32,8 @@
 
 {# ─── Product List ────────────────────────────────────────────── #}
 
-<div class="data-card">
-
   {% if products.length %}
+  <div class="item-list">
     {% for product in products %}
 
       {# Resolve primary image #}
@@ -47,86 +46,110 @@
       {% endif %}
 
       {# ── Row ── #}
-      <div class="product-row js-product-row"
+      <div class="item-object js-product-row"
            aria-expanded="false"
            aria-controls="pd-{{ product.id }}">
-        {% if primaryImg %}
-          <img class="product-row-thumb"
-               src="{{ primaryImg.url }}"
-               alt="{{ primaryImg.altText or product.name }}"
-               loading="lazy">
-        {% else %}
-          <div class="product-row-thumb product-row-thumb--empty" aria-hidden="true"></div>
-        {% endif %}
-        <div class="product-row-info">
-          <div class="product-row-name">{{ product.name }}</div>
-          <div class="product-row-meta">
-            Stock {{ product.stockQuantity }}{% if product.isCustomisable %} · Customisable{% endif %}
-          </div>
-        </div>
-        <div class="product-row-right">
+        <span class="item-ref">Product #{{ product.id }}</span>
+        <div class="item-title-row">
+          <h1 class="item-name">{{ product.name }}</h1>
           <label class="toggle-switch js-product-active" data-id="{{ product.id }}" aria-label="Toggle active">
             <input type="checkbox" {{ 'checked' if product.isActive }}>
             <span class="toggle-track"></span>
+            <span class="toggle-label">Active</span>
           </label>
         </div>
-      </div>
-
-      {# ── Detail Panel ── #}
-      <div class="product-detail" id="pd-{{ product.id }}" aria-hidden="true">
-
-        {% if product.images.length %}
-          <div class="product-detail-images">
-            {% for img in product.images %}
-              <img class="product-detail-thumb js-lightbox-thumb"
-                   src="{{ img.url }}"
-                   alt="{{ img.altText or product.name }}"
-                   loading="lazy">
-            {% endfor %}
-          </div>
-        {% endif %}
-
-        <p class="product-detail-desc">{{ product.description }}</p>
-
-        <div class="product-detail-meta">
-          Stock {{ product.stockQuantity }}
-          {% if product.isActive %} · Active{% else %} · Inactive{% endif %}
-          {% if product.isCustomisable %} · Customisable{% endif %}
+        <div class="item-recap">
+          {% if product.pricePerEvent %}<div class="recap-item">{{ product.pricePerEvent | currency }} / event</div>{% endif %}
+          {% if product.pricePerDay %}<div class="recap-item">{{ product.pricePerDay | currency }} / day</div>{% endif %}
+          <div class="recap-item">Stock {{ product.stockQuantity }}</div>
+          {% if product.customisationOptions.length %}<div class="recap-item">Customisable</div>{% endif %}
         </div>
+        <section class="form-section js-product-section">
+          <div class="form-section-head js-detail-trigger">
+            <h2 class="form-section-title">Details</h2>
+            <svg class="btn-svg item-chevron" aria-hidden="true"><use href="#icon-chevron-down"/></svg>
+          </div>
 
-        {% if product.isCustomisable and product.customisationOptions.length %}
-          <div class="product-options">
-            <p class="product-options-label">Customisation options</p>
-            {% for opt in product.customisationOptions %}
-              <div class="product-option-row">
-                <span class="product-option-name">{{ opt.name }}</span>
-                <span class="product-option-tag">
-                  {%- if opt.type === 'BOOLEAN' %}Yes/No
-                  {%- elif opt.type === 'SELECT' %}Select
-                  {%- else %}Text{%- endif -%}
-                </span>
-                {% if opt.isRequired %}<span class="product-option-tag">Required</span>{% endif %}
-                {% if opt.basePrice %}<span class="product-option-tag mono">€{{ opt.basePrice }}</span>{% endif %}
+          <div class="form-section-view">
+
+            <div class="form-group">
+              <span class="field-label">Images</span>
+              <div class="item-images">
+                {% if product.images.length %}
+                  {% for img in product.images %}
+                    <img class="item-thumb js-lightbox-thumb"
+                         src="{{ img.url }}"
+                         alt="{{ img.altText or product.name }}"
+                         loading="lazy">
+                  {% endfor %}
+                {% else %}
+                  <div class="item-thumb item-thumb--empty" aria-hidden="true"></div>
+                {% endif %}
               </div>
-            {% endfor %}
+            </div>
+
+            <div class="form-group">
+              <span class="field-label">Description</span>
+              <span class="field-value">{{ product.description }}</span>
+            </div>
+
+            {% if product.customisationOptions.length %}
+              <section class="form-section form-section--nested">
+                <div class="form-section-head">
+                  <h2 class="form-section-title">Customisations</h2>
+                  <label class="toggle-switch js-product-customisable" data-id="{{ product.id }}" aria-label="Toggle customisations">
+                    <input type="checkbox" {{ 'checked' if product.isCustomisable }}>
+                    <span class="toggle-track"></span>
+                    <span class="toggle-label">Active</span>
+                  </label>
+                </div>
+                <div class="form-section-view">
+                  {% for opt in product.customisationOptions %}
+                    <div class="form-row">
+                      <div class="form-group">
+                        <span class="field-label">Name</span>
+                        <span class="field-value">{{ opt.name }}</span>
+                      </div>
+                      {% if opt.description %}
+                      <div class="form-group">
+                        <span class="field-label">Description</span>
+                        <span class="field-value">{{ opt.description }}</span>
+                      </div>
+                      {% endif %}
+                      {% if opt.basePrice %}
+                      <div class="form-group">
+                        <span class="field-label">Price</span>
+                        <span class="field-value mono">{{ opt.basePrice | currency }}</span>
+                      </div>
+                      {% endif %}
+                    </div>
+                  {% endfor %}
+                </div>
+              </section>
+            {% endif %}
+
+            <div class="section-actions">
+              <form action="/admin/products/{{ product.id }}/delete" method="POST" class="js-delete-form">
+                <button type="submit" class="btn btn-delete">
+                  <svg class="btn-svg" aria-hidden="true"><use href="#icon-delete"/></svg>
+                  Delete
+                </button>
+              </form>
+              <button type="button" class="btn btn-save" onclick="location.href='/admin/products/{{ product.id }}/edit'">
+                <svg class="btn-svg" aria-hidden="true"><use href="#icon-edit"/></svg>
+                Edit
+              </button>
+            </div>
+
           </div>
-        {% endif %}
-
-        <div class="product-detail-actions">
-          <form action="/admin/products/{{ product.id }}/delete" method="POST" class="js-delete-form">
-            <button type="submit" class="btn btn-delete">Delete</button>
-          </form>
-          <button type="button" class="btn btn-save" onclick="location.href='/admin/products/{{ product.id }}/edit'">Edit</button>
-        </div>
-
+        </section>
       </div>
 
     {% endfor %}
+  </div>
   {% else %}
     <div class="empty">No products yet</div>
   {% endif %}
-
-</div>
 
 {# ─── Lightbox ────────────────────────────────────────────────── #}
 

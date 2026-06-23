@@ -89,6 +89,7 @@ model EmailTemplate {
   name         String
   triggerEvent EmailTriggerEvent @unique @map("trigger_event")
   subject      String
+  body         String?
   description  String
   isActive     Boolean           @default(true) @map("is_active")
 
@@ -120,6 +121,7 @@ model CompanySettings {
   metaTitle         String?  @map("meta_title")
   metaDescription   String?  @map("meta_description")
   deliveryInfoText  String?  @map("delivery_info_text")
+  emailSignOff      String?  @map("email_sign_off")
   businessLat       Decimal? @map("business_lat")
   businessLng       Decimal? @map("business_lng")
   updatedAt         DateTime @updatedAt @map("updated_at")
@@ -159,6 +161,8 @@ model Product {
   isCustomisable        Boolean  @default(false) @map("is_customisable")
   isActive              Boolean  @default(true) @map("is_active")
   displayOrder          Int      @default(0) @map("display_order")
+  pricePerEvent         Decimal? @map("price_per_event") @db.Decimal(10, 2)
+  pricePerDay           Decimal? @map("price_per_day")   @db.Decimal(10, 2)
   createdAt             DateTime @default(now()) @map("created_at")
   updatedAt             DateTime @updatedAt @map("updated_at")
 

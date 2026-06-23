@@ -63,6 +63,19 @@
 
         <div class="form-row">
           <div class="form-group">
+            <label class="form-label" for="pricePerEvent">Price per event</label>
+            <input class="form-input" type="number" id="pricePerEvent" name="pricePerEvent"
+                   step="0.01" min="0" placeholder="0.00" value="{{ product.pricePerEvent or '' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pricePerDay">Price per day</label>
+            <input class="form-input" type="number" id="pricePerDay" name="pricePerDay"
+                   step="0.01" min="0" placeholder="0.00" value="{{ product.pricePerDay or '' }}">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
             <label class="form-label" for="stockQuantity">Stock quantity</label>
             <input class="form-input" type="number" id="stockQuantity" name="stockQuantity"
                    value="{{ product.stockQuantity }}" min="0" required>
@@ -192,8 +205,14 @@
   </div>
 
   <div class="section-actions" style="margin-top: 2rem;">
-    <button type="button" class="btn btn-cancel" onclick="location.href='/admin/products'">Cancel</button>
-    <button type="submit" class="btn btn-save">Save</button>
+    <button type="button" class="btn btn-cancel" onclick="location.href='/admin/products'">
+      <svg class="btn-svg" aria-hidden="true"><use href="#icon-close"/></svg>
+      Cancel
+    </button>
+    <button type="submit" class="btn btn-save">
+      <svg class="btn-svg" aria-hidden="true"><use href="#icon-save"/></svg>
+      Save
+    </button>
   </div>
 
 </form>

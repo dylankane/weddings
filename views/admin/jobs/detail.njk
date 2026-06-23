@@ -144,8 +144,14 @@
     <form class="form-section-form" action="/admin/jobs/{{ job.id }}/details" method="POST">
       {% include "admin/jobs/partials/_form-details.njk" %}
       <div class="section-actions">
-        <button type="button" class="btn btn-cancel js-section-cancel">Cancel</button>
-        <button type="submit" class="btn btn-save">Save</button>
+        <button type="button" class="btn btn-cancel js-section-cancel">
+                <svg class="btn-svg" aria-hidden="true"><use href="#icon-close"/></svg>
+                Cancel
+              </button>
+        <button type="submit" class="btn btn-save">
+                <svg class="btn-svg" aria-hidden="true"><use href="#icon-save"/></svg>
+                Save
+              </button>
       </div>
     </form>
   </section>
@@ -219,8 +225,14 @@
     <form class="form-section-form" action="/admin/jobs/{{ job.id }}/delivery" method="POST">
       {% include "admin/jobs/partials/_form-delivery.njk" %}
       <div class="section-actions">
-        <button type="button" class="btn btn-cancel js-section-cancel">Cancel</button>
-        <button type="submit" class="btn btn-save">Save</button>
+        <button type="button" class="btn btn-cancel js-section-cancel">
+                <svg class="btn-svg" aria-hidden="true"><use href="#icon-close"/></svg>
+                Cancel
+              </button>
+        <button type="submit" class="btn btn-save">
+                <svg class="btn-svg" aria-hidden="true"><use href="#icon-save"/></svg>
+                Save
+              </button>
       </div>
     </form>
   </section>
@@ -266,8 +278,14 @@
     <form class="form-section-form" action="/admin/jobs/{{ job.id }}/pricing" method="POST">
       {% include "admin/jobs/partials/_form-pricing.njk" %}
       <div class="section-actions">
-        <button type="button" class="btn btn-cancel js-section-cancel">Cancel</button>
-        <button type="submit" class="btn btn-save">Save</button>
+        <button type="button" class="btn btn-cancel js-section-cancel">
+                <svg class="btn-svg" aria-hidden="true"><use href="#icon-close"/></svg>
+                Cancel
+              </button>
+        <button type="submit" class="btn btn-save">
+                <svg class="btn-svg" aria-hidden="true"><use href="#icon-save"/></svg>
+                Save
+              </button>
       </div>
     </form>
   </section>
