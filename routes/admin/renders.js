@@ -4,9 +4,9 @@ const express = require('express');
 const router  = express.Router();
 
 const { dashboard }                                                          = require('../../controllers/admin/dashboardController');
-const { list, detail, newJob, create, saveDetails, saveDelivery, savePricing, saveStatus } = require('../../controllers/admin/jobsController');
+const { list, detail, newJob, create, saveDetails, saveDelivery, savePricing, saveStatus, saveCalculator } = require('../../controllers/admin/jobsController');
 const { list: productList, newProduct, editProduct, create: createProduct, update: updateProduct, toggleActive, toggleCustomisable, toggleOptionActive, deleteProduct } = require('../../controllers/admin/productsController');
-const { show: settingsShow, saveIdentity, saveContact, saveSeo, saveLocation, saveSignOff, saveTemplate, saveProfile, savePassword } = require('../../controllers/admin/settingsController');
+const { show: settingsShow, saveIdentity, saveContact, saveSeo, saveLocation, saveSignOff, saveTemplate, saveProfile, savePassword, saveZone, deleteZone } = require('../../controllers/admin/settingsController');
 const productUpload = require('../../middleware/productUpload');
 
 // TODO: add requireAuth, requireRole(['SUPER_ADMIN', 'MANAGER']) once login is built
@@ -18,10 +18,11 @@ router.get('/jobs',                 list);
 router.get('/jobs/new',             newJob);
 router.get('/jobs/:id',             detail);
 router.post('/jobs',                create);
-router.post('/jobs/:id/details',    saveDetails);
-router.post('/jobs/:id/delivery',   saveDelivery);
-router.post('/jobs/:id/pricing',    savePricing);
-router.post('/jobs/:id/status',     saveStatus);
+router.post('/jobs/:id/details',     saveDetails);
+router.post('/jobs/:id/delivery',    saveDelivery);
+router.post('/jobs/:id/pricing',     savePricing);
+router.post('/jobs/:id/status',      saveStatus);
+router.post('/jobs/:id/calculator',  saveCalculator);
 
 // ─── Products ──────────────────────────────────────────────────────────────────
 router.get('/products',             productList);
@@ -42,6 +43,9 @@ router.post('/settings/company/seo',             saveSeo);
 router.post('/settings/company/location',        saveLocation);
 router.post('/settings/company/sign-off',        saveSignOff);
 router.post('/settings/templates/:id',           saveTemplate);
+router.post('/settings/zones',                   saveZone);
+router.post('/settings/zones/:id',               saveZone);
+router.post('/settings/zones/:id/delete',        deleteZone);
 router.post('/settings/profile',                 saveProfile);
 router.post('/settings/password',                savePassword);
 

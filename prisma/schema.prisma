@@ -120,8 +120,9 @@ model CompanySettings {
   socialLinks       Json?    @map("social_links")
   metaTitle         String?  @map("meta_title")
   metaDescription   String?  @map("meta_description")
-  deliveryInfoText  String?  @map("delivery_info_text")
-  emailSignOff      String?  @map("email_sign_off")
+  deliveryInfoText      String?  @map("delivery_info_text")
+  deliveryFreeZoneLabel String?  @map("delivery_free_zone_label")
+  emailSignOff          String?  @map("email_sign_off")
   businessLat       Decimal? @map("business_lat")
   businessLng       Decimal? @map("business_lng")
   updatedAt         DateTime @updatedAt @map("updated_at")
@@ -317,9 +318,14 @@ model Delivery {
   venueAddress   String?        @map("venue_address")
   venueEircode   String?        @map("venue_eircode")
   venueCounty    String?        @map("venue_county")
-  lat            Decimal?
-  lng            Decimal?
-  notes          String?
+  lat              Decimal?
+  lng              Decimal?
+  distanceKm       Decimal?       @map("distance_km")
+  durationMins     Int?           @map("duration_mins")
+  mapsUrl          String?        @map("maps_url")
+  suggestedPrice   Decimal?       @db.Decimal(10, 2) @map("suggested_price")
+  calculatorResult String?        @map("calculator_result")
+  notes            String?
   outboundAt     DateTime?      @map("outbound_at")
   returnAt       DateTime?      @map("return_at")
 
@@ -349,7 +355,7 @@ model Pricing {
   updatedAt      DateTime @updatedAt @map("updated_at")
 
   job          Job           @relation(fields: [jobId], references: [id])
-  deliveryZone DeliveryZone? @relation(fields: [deliveryZoneId], references: [id])
+  deliveryZone DeliveryZone? @relation(fields: [deliveryZoneId], references: [id], onDelete: SetNull)
 
   @@map("pricing")
   @@schema("rental")
@@ -402,27 +408,17 @@ enum InvoiceStatus {
 // ─── Delivery Zones ────────────────────────────────────────────────────────────
 
 model DeliveryZone {
-  id            Int      @id @default(autoincrement())
-  name          String
-  description   String?
-  zoneType      ZoneType @map("zone_type")
-  price         Decimal? @db.Decimal(10, 2)
-  isEnquireOnly Boolean  @default(false) @map("is_enquire_only")
-  displayOrder  Int      @default(0) @map("display_order")
-  isActive      Boolean  @default(true) @map("is_active")
-  centerLat     Decimal? @map("center_lat")
-  centerLng     Decimal? @map("center_lng")
-  radiusKm      Decimal? @map("radius_km")
+  id           Int      @id @default(autoincrement())
+  name         String
+  description  String?
+  minKm        Decimal? @map("min_km")
+  maxKm        Decimal? @map("max_km")
+  price        Decimal? @db.Decimal(10, 2)
+  displayOrder Int      @default(0) @map("display_order")
+  isActive     Boolean  @default(true) @map("is_active")
 
   pricings Pricing[]
 
   @@map("delivery_zones")
-  @@schema("rental")
-}
-
-enum ZoneType {
-  NAMED_REGION
-  RADIUS
-
   @@schema("rental")
 }

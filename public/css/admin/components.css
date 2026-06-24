@@ -241,6 +241,10 @@
   padding-top: 0.5rem;
 }
 
+.section-actions--hidden {
+  display: none;
+}
+
 /* ─── Field List (read-only display) ────────────────────────── */
 
 .field-list {
@@ -365,6 +369,11 @@
   display: block;
 }
 
+.form-dropdown-list--wide {
+  width: max-content;
+  min-width: 100%;
+}
+
 .form-dropdown-option {
   padding: 0.5rem 0.75rem;
   font-size: var(--font-s);
@@ -422,6 +431,21 @@
   color: var(--text-2);
 }
 
+.field-label--copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.field-label--copy .field-label-icon {
+  width: 14px;
+  height: 14px;
+}
+
 .form-input,
 .form-select,
 .form-textarea {
@@ -442,12 +466,6 @@
 .form-select:focus,
 .form-textarea:focus {
   border-color: var(--text);
-}
-
-.form-input[readonly] {
-  background: var(--off-white);
-  color: var(--text-2);
-  cursor: default;
 }
 
 .form-textarea {

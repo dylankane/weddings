@@ -1,30 +1,9 @@
 {# Pricing — included in detail.njk #}
 
+<input type="hidden" id="pricingZoneId" name="deliveryZoneId"
+  value="{{ job.pricing.deliveryZoneId if job.pricing else '' }}">
+
 <div class="form-row">
-  <div class="form-group">
-    <label class="form-label" for="deliveryZoneId">Delivery zone</label>
-    <div class="form-dropdown" data-dropdown>
-      <input type="hidden" name="deliveryZoneId" value="{{ job.pricing.deliveryZoneId if job.pricing else '' }}">
-      <button type="button" class="form-dropdown-trigger js-dropdown-trigger" id="deliveryZoneId" aria-haspopup="listbox" aria-expanded="false">
-        <span class="form-dropdown-value">
-          {%- if job.pricing and job.pricing.deliveryZone -%}
-            {{ job.pricing.deliveryZone.name }}{% if job.pricing.deliveryZone.price %} — {{ job.pricing.deliveryZone.price | currency }}{% endif %}
-          {%- else -%}— None —{%- endif -%}
-        </span>
-        <svg class="form-dropdown-chevron" aria-hidden="true"><use href="#icon-chevron-down"/></svg>
-      </button>
-      <ul class="form-dropdown-list" role="listbox">
-        <li class="form-dropdown-option{{ ' is-selected' if not (job.pricing and job.pricing.deliveryZoneId) }}"
-            role="option" aria-selected="{{ 'true' if not (job.pricing and job.pricing.deliveryZoneId) else 'false' }}"
-            tabindex="-1" data-value="">— None —</li>
-        {% for zone in deliveryZones %}
-        <li class="form-dropdown-option{{ ' is-selected' if job.pricing and job.pricing.deliveryZoneId === zone.id }}"
-            role="option" aria-selected="{{ 'true' if job.pricing and job.pricing.deliveryZoneId === zone.id else 'false' }}"
-            tabindex="-1" data-value="{{ zone.id }}">{{ zone.name }}{% if zone.price %} — {{ zone.price | currency }}{% endif %}</li>
-        {% endfor %}
-      </ul>
-    </div>
-  </div>
   <div class="form-group">
     <label class="form-label" for="rentalCost">Rental cost</label>
     <input class="form-input" type="number" id="rentalCost" name="rentalCost"
@@ -32,9 +11,6 @@
       value="{{ job.pricing.rentalCost if job.pricing else '' }}"
       placeholder="0.00">
   </div>
-</div>
-
-<div class="form-row">
   <div class="form-group">
     <label class="form-label" for="deliveryCost">Delivery cost</label>
     <input class="form-input" type="number" id="deliveryCost" name="deliveryCost"
@@ -42,12 +18,13 @@
       value="{{ job.pricing.deliveryCost if job.pricing else '' }}"
       placeholder="0.00">
   </div>
-  <div class="form-group">
-    <label class="form-label" for="totalCost">Total</label>
-    <input class="form-input" type="number" id="totalCost" name="totalCost"
-      step="0.01" min="0" readonly
-      value="{{ job.pricing.totalCost if job.pricing else '' }}"
-      placeholder="0.00">
-    <span class="form-hint">Calculated on save (rental + delivery)</span>
-  </div>
+</div>
+
+<div class="form-group">
+  <label class="form-label" for="totalCost">Total</label>
+  <input class="form-input" type="number" id="totalCost" name="totalCost"
+    step="0.01" min="0" readonly
+    value="{{ job.pricing.totalCost if job.pricing else '' }}"
+    placeholder="0.00">
+  <span class="form-hint">Calculated on save (rental + delivery)</span>
 </div>

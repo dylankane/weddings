@@ -20,6 +20,19 @@
 
 <div class="form-row">
   <div class="form-group">
+    <label class="form-label" for="outboundAt">Delivery date &amp; time</label>
+    <input class="form-input" type="datetime-local" id="outboundAt" name="outboundAt"
+      value="{{ job.delivery.outboundAt | dateFormat('datetime-input') if job.delivery and job.delivery.outboundAt else '' }}">
+  </div>
+  <div class="form-group">
+    <label class="form-label" for="returnAt">Collection date &amp; time</label>
+    <input class="form-input" type="datetime-local" id="returnAt" name="returnAt"
+      value="{{ job.delivery.returnAt | dateFormat('datetime-input') if job.delivery and job.delivery.returnAt else '' }}">
+  </div>
+</div>
+
+<div class="form-row">
+  <div class="form-group">
     <label class="form-label" for="venueName">Venue name</label>
     <input class="form-input" type="text" id="venueName" name="venueName"
       value="{{ job.delivery.venueName if job.delivery and job.delivery.venueName else '' }}">
@@ -45,21 +58,14 @@
       style="text-transform: uppercase;">
   </div>
   <div class="form-group">
-    <label class="form-label" for="outboundAt">Delivery date &amp; time</label>
-    <input class="form-input" type="datetime-local" id="outboundAt" name="outboundAt"
-      value="{{ job.delivery.outboundAt | dateFormat('datetime-input') if job.delivery and job.delivery.outboundAt else '' }}">
-  </div>
-</div>
-
-<div class="form-row">
-  <div class="form-group">
-    <label class="form-label" for="returnAt">Collection date &amp; time</label>
-    <input class="form-input" type="datetime-local" id="returnAt" name="returnAt"
-      value="{{ job.delivery.returnAt | dateFormat('datetime-input') if job.delivery and job.delivery.returnAt else '' }}">
-  </div>
-  <div class="form-group">
     <label class="form-label" for="deliveryNotes">Delivery notes</label>
     <input class="form-input" type="text" id="deliveryNotes" name="deliveryNotes"
       value="{{ job.delivery.notes if job.delivery and job.delivery.notes else '' }}">
   </div>
 </div>
+
+<input type="hidden" id="deliveryLat" name="lat"
+  value="{{ job.delivery.lat if job.delivery and job.delivery.lat else '' }}">
+<input type="hidden" id="deliveryLng" name="lng"
+  value="{{ job.delivery.lng if job.delivery and job.delivery.lng else '' }}">
+

@@ -293,6 +293,63 @@ async function savePricing(req, res, next) {
   }
 }
 
+// ─── Save Calculator ──────────────────────────────────────────────────────────
+
+async function saveCalculator(req, res, next) {
+  const id = parseInt(req.params.id, 10);
+  const {
+    venueName, venueCounty, venueAddress, venueEircode,
+    lat, lng, distanceKm, durationMins,
+    mapsUrl, suggestedPrice, calculatorResult,
+    deliveryCost, deliveryZoneId,
+  } = req.body;
+
+  const deliveryData = {
+    venueName:        venueName        || null,
+    venueCounty:      venueCounty      || null,
+    venueAddress:     venueAddress     || null,
+    venueEircode:     venueEircode     || null,
+    lat:              lat              ? parseFloat(lat)              : null,
+    lng:              lng              ? parseFloat(lng)              : null,
+    distanceKm:       distanceKm       ? parseFloat(distanceKm)       : null,
+    durationMins:     durationMins     ? parseInt(durationMins, 10)   : null,
+    mapsUrl:          mapsUrl          || null,
+    suggestedPrice:   suggestedPrice   ? parseFloat(suggestedPrice)   : null,
+    calculatorResult: calculatorResult || null,
+  };
+
+  const delivery = parseFloat(deliveryCost) || 0;
+  const zoneId   = deliveryZoneId ? parseInt(deliveryZoneId, 10) : null;
+
+  try {
+    const pricing = await prisma.$transaction(async tx => {
+      await tx.delivery.upsert({
+        where:  { jobId: id },
+        create: { jobId: id, outboundMethod: 'STAFF', returnMethod: 'STAFF', ...deliveryData },
+        update: deliveryData,
+      });
+
+      const existing = await tx.pricing.findUnique({ where: { jobId: id } });
+      const rental   = existing ? parseFloat(existing.rentalCost) : 0;
+      const total    = rental + delivery;
+
+      return tx.pricing.upsert({
+        where:  { jobId: id },
+        create: { jobId: id, rentalCost: rental, deliveryCost: delivery, totalCost: total, deliveryZoneId: zoneId },
+        update: { deliveryCost: delivery, totalCost: total, deliveryZoneId: zoneId },
+      });
+    });
+
+    return res.json({
+      ok:           true,
+      deliveryCost: parseFloat(pricing.deliveryCost),
+      totalCost:    parseFloat(pricing.totalCost),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
 // ─── Save Status ──────────────────────────────────────────────────────────────
 
 async function saveStatus(req, res, next) {
@@ -311,4 +368,4 @@ async function saveStatus(req, res, next) {
   }
 }
 
-module.exports = { list, detail, newJob, create, saveDetails, saveDelivery, savePricing, saveStatus };
+module.exports = { list, detail, newJob, create, saveDetails, saveDelivery, savePricing, saveStatus, saveCalculator };

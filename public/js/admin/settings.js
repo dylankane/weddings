@@ -39,6 +39,70 @@ window.addEventListener('popstate', e => {
   activateTab(p.get('tab') || 'company');
 });
 
+// ─── Zone Form Panel ─────────────────────────────────────────────
+
+const zonePanel      = document.getElementById('zone-form-panel');
+const zoneForm       = document.getElementById('zone-form');
+const zoneTitle      = document.getElementById('zone-form-title');
+const zoneName       = document.getElementById('zone-name');
+const zoneDesc       = document.getElementById('zone-description');
+const zoneMinKm      = document.getElementById('zone-min-km');
+const zoneMaxKm      = document.getElementById('zone-max-km');
+const zonePrice      = document.getElementById('zone-price');
+const zoneDeleteForm = document.getElementById('js-zone-delete-form');
+const zoneDeleteBtn  = document.getElementById('js-zone-delete-btn');
+
+function openZonePanel(mode, row) {
+  if (mode === 'edit') {
+    zoneForm.action       = `/admin/settings/zones/${row.dataset.id}`;
+    zoneTitle.textContent = row.dataset.name;
+    zoneName.value        = row.dataset.name;
+    zoneDesc.value        = row.dataset.description;
+    zoneMinKm.value       = row.dataset.minKm;
+    zoneMaxKm.value       = row.dataset.maxKm;
+    zonePrice.value       = row.dataset.price;
+
+    zoneDeleteForm.action    = `/admin/settings/zones/${row.dataset.id}/delete`;
+    zoneDeleteForm.hidden    = false;
+    zoneDeleteBtn.hidden     = false;
+
+    document.querySelectorAll('.js-zone-row').forEach(r => r.classList.remove('is-selected'));
+    row.classList.add('is-selected');
+  } else {
+    zoneForm.action       = '/admin/settings/zones';
+    zoneTitle.textContent = 'New Tier';
+    zoneName.value        = '';
+    zoneDesc.value        = '';
+    zoneMinKm.value       = '';
+    zoneMaxKm.value       = '';
+    zonePrice.value       = '';
+    zoneDeleteForm.hidden = true;
+    zoneDeleteBtn.hidden  = true;
+
+    document.querySelectorAll('.js-zone-row').forEach(r => r.classList.remove('is-selected'));
+  }
+
+  zonePanel.hidden = false;
+  zonePanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+if (zonePanel) {
+  document.getElementById('js-zone-add').addEventListener('click', () => openZonePanel('create', null));
+
+  document.querySelectorAll('.js-zone-row').forEach(row => {
+    row.addEventListener('click', () => openZonePanel('edit', row));
+  });
+
+  document.getElementById('js-zone-cancel').addEventListener('click', () => {
+    zonePanel.hidden = true;
+    document.querySelectorAll('.js-zone-row').forEach(r => r.classList.remove('is-selected'));
+  });
+
+  zoneDeleteForm.addEventListener('submit', e => {
+    if (!confirm('Delete this delivery zone? This cannot be undone.')) e.preventDefault();
+  });
+}
+
 // ─── Template Form Panel ─────────────────────────────────────────
 
 const templatePanel = document.getElementById('template-form-panel');

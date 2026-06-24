@@ -7,6 +7,10 @@
 <link rel="stylesheet" href="/css/admin/jobs.css">
 {% endblock %}
 
+{% block scripts %}
+<script src="/js/admin/delivery.js"></script>
+{% endblock %}
+
 {% block content %}
 
 {# ─── Page Bar ────────────────────────────────────────────────── #}
@@ -157,7 +161,7 @@
   </section>
 
   {# ── Delivery ── #}
-  <section class="form-section" aria-labelledby="section-delivery-title">
+  <section class="form-section" id="section-delivery" aria-labelledby="section-delivery-title">
     <div class="form-section-head">
       <h2 class="form-section-title" id="section-delivery-title">Delivery</h2>
       <label class="toggle-switch" aria-label="Edit delivery">
@@ -188,38 +192,39 @@
       </div>
       <div class="form-row">
         <div class="form-group">
+          <span class="field-label">Delivery date &amp; time</span>
+          <span class="field-value{{ ' field-value--empty' if not (job.delivery and job.delivery.outboundAt) }}">{{ job.delivery.outboundAt | dateFormat('datetime') if job.delivery and job.delivery.outboundAt else '—' }}</span>
+        </div>
+        <div class="form-group">
+          <span class="field-label">Collection date &amp; time</span>
+          <span class="field-value{{ ' field-value--empty' if not (job.delivery and job.delivery.returnAt) }}">{{ job.delivery.returnAt | dateFormat('datetime') if job.delivery and job.delivery.returnAt else '—' }}</span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
           <span class="field-label">Venue name</span>
-          <span class="field-value{{ ' field-value--empty' if not (job.delivery and job.delivery.venueName) }}">{{ job.delivery.venueName if job.delivery and job.delivery.venueName else '—' }}</span>
+          <span id="view-venue-name" class="field-value{{ ' field-value--empty' if not (job.delivery and job.delivery.venueName) }}">{{ job.delivery.venueName if job.delivery and job.delivery.venueName else '—' }}</span>
         </div>
         <div class="form-group">
           <span class="field-label">County</span>
-          <span class="field-value{{ ' field-value--empty' if not (job.delivery and job.delivery.venueCounty) }}">{{ job.delivery.venueCounty if job.delivery and job.delivery.venueCounty else '—' }}</span>
+          <span id="view-venue-county" class="field-value{{ ' field-value--empty' if not (job.delivery and job.delivery.venueCounty) }}">{{ job.delivery.venueCounty if job.delivery and job.delivery.venueCounty else '—' }}</span>
         </div>
       </div>
       <div class="form-group">
         <span class="field-label">Venue address</span>
-        <span class="field-value{{ ' field-value--empty' if not (job.delivery and job.delivery.venueAddress) }}">{{ job.delivery.venueAddress if job.delivery and job.delivery.venueAddress else '—' }}</span>
+        <span id="view-venue-address" class="field-value{{ ' field-value--empty' if not (job.delivery and job.delivery.venueAddress) }}">{{ job.delivery.venueAddress if job.delivery and job.delivery.venueAddress else '—' }}</span>
       </div>
       <div class="form-row">
         <div class="form-group">
           <span class="field-label">Eircode</span>
-          <span class="field-value mono{{ ' field-value--empty' if not (job.delivery and job.delivery.venueEircode) }}">{{ job.delivery.venueEircode if job.delivery and job.delivery.venueEircode else '—' }}</span>
-        </div>
-        <div class="form-group">
-          <span class="field-label">Delivery date &amp; time</span>
-          <span class="field-value{{ ' field-value--empty' if not (job.delivery and job.delivery.outboundAt) }}">{{ job.delivery.outboundAt | dateFormat('datetime') if job.delivery and job.delivery.outboundAt else '—' }}</span>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <span class="field-label">Collection date &amp; time</span>
-          <span class="field-value{{ ' field-value--empty' if not (job.delivery and job.delivery.returnAt) }}">{{ job.delivery.returnAt | dateFormat('datetime') if job.delivery and job.delivery.returnAt else '—' }}</span>
+          <span id="view-venue-eircode" class="field-value mono{{ ' field-value--empty' if not (job.delivery and job.delivery.venueEircode) }}">{{ job.delivery.venueEircode if job.delivery and job.delivery.venueEircode else '—' }}</span>
         </div>
         <div class="form-group">
           <span class="field-label">Delivery notes</span>
           <span class="field-value{{ ' field-value--empty' if not (job.delivery and job.delivery.notes) }}">{{ job.delivery.notes if job.delivery and job.delivery.notes else '—' }}</span>
         </div>
       </div>
+
     </div>
 
     <form class="form-section-form" action="/admin/jobs/{{ job.id }}/delivery" method="POST">
@@ -237,6 +242,68 @@
     </form>
   </section>
 
+  {# ── Delivery Calculator ── #}
+  <section class="form-section" aria-labelledby="section-calculator-title" data-job-id="{{ job.id }}">
+    <div class="form-section-head">
+      <h2 class="form-section-title" id="section-calculator-title">Delivery Calculator</h2>
+      <div class="form-dropdown" id="venue-search-dropdown">
+        <button type="button" class="btn" id="js-find-venue">
+          <svg class="btn-svg" aria-hidden="true"><use href="#icon-search"/></svg>
+          <span id="js-find-venue-label">Find venue</span>
+        </button>
+        <ul class="form-dropdown-list form-dropdown-list--wide" id="venue-results-list" role="listbox"></ul>
+      </div>
+    </div>
+    {% set hasCalc = job.delivery and job.delivery.distanceKm %}
+    <div class="form-section-view">
+      <div class="form-row">
+        <div class="form-group">
+          <span class="field-label">Result</span>
+          <span class="field-value{{ ' field-value--empty' if not (job.delivery and job.delivery.calculatorResult) }}" id="venue-result-display">{{ job.delivery.calculatorResult if job.delivery and job.delivery.calculatorResult else '—' }}</span>
+        </div>
+        <div class="form-group">
+          <button type="button" class="field-label field-label--copy" id="js-copy-maps-url" aria-label="Copy maps URL">
+            Maps URL
+            <svg class="field-label-icon" aria-hidden="true"><use href="#icon-copy"/></svg>
+          </button>
+          <a class="field-value{{ ' field-value--empty' if not (job.delivery and job.delivery.mapsUrl) }}" id="venue-maps-display" target="_blank"{% if job.delivery and job.delivery.mapsUrl %} href="{{ job.delivery.mapsUrl }}"{% endif %}>{{ job.delivery.mapsUrl if job.delivery and job.delivery.mapsUrl else '—' }}</a>
+        </div>
+      </div>
+      <div class="form-row js-calc-row"{% if not hasCalc %} hidden{% endif %}>
+        <div class="form-group">
+          <span class="field-label">Distance</span>
+          <span class="field-value js-calc-distance">{{ (job.delivery.distanceKm | string + ' km') if hasCalc else '—' }}</span>
+        </div>
+        <div class="form-group">
+          <span class="field-label">Drive time</span>
+          <span class="field-value js-calc-duration">
+            {%- if hasCalc and job.delivery.durationMins -%}
+              {%- if job.delivery.durationMins < 60 -%}{{ job.delivery.durationMins }} mins
+              {%- else -%}{{ (job.delivery.durationMins / 60) | int }}h {% if job.delivery.durationMins % 60 %}{{ job.delivery.durationMins % 60 }}min{% endif %}
+              {%- endif -%}
+            {%- else -%}—{%- endif -%}
+          </span>
+        </div>
+      </div>
+      <div class="form-row js-calc-row"{% if not hasCalc %} hidden{% endif %}>
+        <div class="form-group">
+          <span class="field-label">Tier</span>
+          <span class="field-value js-calc-tier">{{ job.pricing.deliveryZone.name if job.pricing and job.pricing.deliveryZone else '—' }}</span>
+        </div>
+        <div class="form-group">
+          <span class="field-label">Suggested price</span>
+          <span class="field-value js-calc-price">{{ job.delivery.suggestedPrice | currency if hasCalc and job.delivery.suggestedPrice else '—' }}</span>
+        </div>
+      </div>
+      <div class="section-actions section-actions--hidden" id="js-calc-save-row">
+        <button type="button" class="btn btn-save" id="js-save-calculator">
+          <svg class="btn-svg" aria-hidden="true"><use href="#icon-save"/></svg>
+          Save to job
+        </button>
+      </div>
+    </div>
+  </section>
+
   {# ── Pricing ── #}
   <section class="form-section" aria-labelledby="section-pricing-title">
     <div class="form-section-head">
@@ -251,27 +318,17 @@
     <div class="form-section-view">
       <div class="form-row">
         <div class="form-group">
-          <span class="field-label">Delivery zone</span>
-          <span class="field-value{{ ' field-value--empty' if not (job.pricing and job.pricing.deliveryZone) }}">
-            {%- if job.pricing and job.pricing.deliveryZone -%}
-              {{ job.pricing.deliveryZone.name }}{% if job.pricing.deliveryZone.price %} — {{ job.pricing.deliveryZone.price | currency }}{% endif %}
-            {%- else -%}—{%- endif -%}
-          </span>
-        </div>
-        <div class="form-group">
           <span class="field-label">Rental cost</span>
           <span class="field-value mono{{ ' field-value--empty' if not job.pricing }}">{{ job.pricing.rentalCost | currency if job.pricing else '—' }}</span>
         </div>
-      </div>
-      <div class="form-row">
         <div class="form-group">
           <span class="field-label">Delivery cost</span>
-          <span class="field-value mono{{ ' field-value--empty' if not job.pricing }}">{{ job.pricing.deliveryCost | currency if job.pricing else '—' }}</span>
+          <span id="view-delivery-cost" class="field-value mono{{ ' field-value--empty' if not job.pricing }}">{{ job.pricing.deliveryCost | currency if job.pricing else '—' }}</span>
         </div>
-        <div class="form-group">
-          <span class="field-label">Total</span>
-          <span class="field-value mono{{ ' field-value--empty' if not job.pricing }}">{{ job.pricing.totalCost | currency if job.pricing else '—' }}</span>
-        </div>
+      </div>
+      <div class="form-group">
+        <span class="field-label">Total</span>
+        <span id="view-total-cost" class="field-value mono{{ ' field-value--empty' if not job.pricing }}">{{ job.pricing.totalCost | currency if job.pricing else '—' }}</span>
       </div>
     </div>
 

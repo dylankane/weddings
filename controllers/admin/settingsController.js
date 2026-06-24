@@ -7,6 +7,7 @@ async function show(req, res) {
   const settings  = await prisma.companySettings.findFirst();
   const social    = (settings && settings.socialLinks) ? settings.socialLinks : {};
   const templates = await prisma.emailTemplate.findMany({ orderBy: { id: 'asc' } });
+  const zones     = await prisma.deliveryZone.findMany({ orderBy: { minKm: 'asc' } });
 
   // TODO: replace with req.session.userId when auth is built
   const profileUser = await getCurrentUser(req);
@@ -17,6 +18,7 @@ async function show(req, res) {
     settings,
     social,
     templates,
+    zones,
     profileUser,
     profileNotice: req.query.notice || null,
   });
@@ -150,7 +152,45 @@ async function savePassword(req, res) {
   res.redirect('/admin/settings?tab=profile&notice=password-saved');
 }
 
+async function saveZone(req, res) {
+  const id = req.params.id ? parseInt(req.params.id, 10) : null;
+  const { name, description, minKm, maxKm, price } = req.body;
+
+  const data = {
+    name,
+    description: description || null,
+    minKm:    minKm  !== '' && minKm  != null ? parseFloat(minKm)  : 0,
+    maxKm:    maxKm  !== '' && maxKm  != null ? parseFloat(maxKm)  : null,
+    price:    price  !== '' && price  != null ? parseFloat(price)  : null,
+  };
+
+  if (id) {
+    await prisma.deliveryZone.update({ where: { id }, data });
+  } else {
+    await prisma.deliveryZone.create({ data });
+  }
+
+  await reRankZones();
+  res.redirect('/admin/settings?tab=delivery-zones');
+}
+
+async function deleteZone(req, res) {
+  const id = parseInt(req.params.id, 10);
+  await prisma.deliveryZone.delete({ where: { id } });
+  await reRankZones();
+  res.redirect('/admin/settings?tab=delivery-zones');
+}
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
+
+async function reRankZones() {
+  const zones = await prisma.deliveryZone.findMany({ orderBy: { minKm: 'asc' } });
+  await Promise.all(
+    zones.map((z, i) =>
+      prisma.deliveryZone.update({ where: { id: z.id }, data: { displayOrder: i + 1 } })
+    )
+  );
+}
 
 // TODO: replace with session lookup when auth is built
 async function getCurrentUser(req) {
@@ -180,4 +220,4 @@ async function upsert(data) {
   });
 }
 
-module.exports = { show, saveIdentity, saveContact, saveSeo, saveLocation, saveSignOff, saveTemplate, saveProfile, savePassword };
+module.exports = { show, saveIdentity, saveContact, saveSeo, saveLocation, saveSignOff, saveTemplate, saveProfile, savePassword, saveZone, deleteZone };
