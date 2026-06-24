@@ -11,6 +11,11 @@
   justify-content: flex-end;
 }
 
+.form-row--items {
+  grid-template-columns: 2fr 1fr 1fr;
+}
+
+
 /* ─── Filter Tabs ────────────────────────────────────────────── */
 
 .filter-mobile-bar {
@@ -113,6 +118,7 @@
   color: var(--text-2);
   margin: 1rem;
 }
+
 
 
 @media (max-width: 768px) {

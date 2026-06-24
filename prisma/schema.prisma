@@ -218,11 +218,33 @@ enum CustomisationOptionType {
   @@schema("rental")
 }
 
+// ─── Enquiries ─────────────────────────────────────────────────────────────────
+
+model Enquiry {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String
+  phone        String?
+  weddingDate  DateTime @map("wedding_date") @db.Date
+  venueName    String   @map("venue_name")
+  venueCounty  String   @map("venue_county")
+  venueAddress String?  @map("venue_address")
+  productSlugs Json     @map("product_slugs")
+  notes        String?
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  job Job?
+
+  @@map("enquiries")
+  @@schema("rental")
+}
+
 // ─── Jobs ──────────────────────────────────────────────────────────────────────
 
 model Job {
   id          Int       @id @default(autoincrement())
   customerId  Int       @map("customer_id")
+  enquiryId   Int?      @unique @map("enquiry_id")
   status      JobStatus @default(ENQUIRY)
   source      JobSource
   jobStart    DateTime? @map("job_start") @db.Date
@@ -234,6 +256,7 @@ model Job {
 
   customer  Customer  @relation(fields: [customerId], references: [id])
   createdBy User      @relation("JobCreatedBy", fields: [createdById], references: [id])
+  enquiry      Enquiry?      @relation(fields: [enquiryId], references: [id])
   items        JobItem[]
   blockedDates JobItemDate[]
   delivery     Delivery?
@@ -262,12 +285,13 @@ enum JobSource {
 }
 
 model JobItem {
-  id        Int      @id @default(autoincrement())
-  jobId     Int      @map("job_id")
-  productId Int      @map("product_id")
-  unitPrice             Decimal? @map("unit_price") @db.Decimal(10, 2)
-  notes                 String?
-  customisationCheck    Boolean? @map("customisation_check")
+  id                 Int      @id @default(autoincrement())
+  jobId              Int      @map("job_id")
+  productId          Int      @map("product_id")
+  quantity           Int      @default(1)
+  unitPrice          Decimal? @map("unit_price") @db.Decimal(10, 2)
+  notes              String?
+  customisationCheck Boolean? @map("customisation_check")
 
   job            Job                   @relation(fields: [jobId], references: [id])
   product        Product               @relation(fields: [productId], references: [id])

@@ -82,6 +82,23 @@
   background: var(--bg-active);
 }
 
+.data-table th.td--center,
+.data-table td.td--center {
+  text-align: center;
+}
+
+.data-table tbody tr.tr--static {
+  cursor: default;
+}
+
+.data-table tbody tr.tr--static:hover {
+  background: none;
+}
+
+.data-table tbody tr.tr--total td {
+ font-weight: 600;
+}
+
 /* ─── Status Dot ─────────────────────────────────────────────── */
 
 .dot {
@@ -223,7 +240,8 @@
   gap: 1.2rem;
 }
 
-.form-section.is-editing .form-section-view {
+.form-section.is-editing .form-section-view,
+.form-section.is-editing > .data-card {
   display: none;
 }
 
@@ -470,9 +488,8 @@
 
 .form-textarea {
   resize: none;
-  overflow-y: hidden;
-  min-height: 2.25rem;
   max-height: 12rem;
+  overflow-y: hidden;
 }
 
 .form-select {
@@ -553,3 +570,4 @@
     mask-image: none;
   }
 }
+

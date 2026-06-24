@@ -1,0 +1,20 @@
+{# Customer details — included in detail.njk #}
+
+<div class="form-row">
+  <div class="form-group">
+    <label class="form-label" for="customerName">Customer name</label>
+    <input class="form-input" type="text" id="customerName" name="customerName"
+      value="{{ job.customer.name }}" required autocomplete="name">
+  </div>
+  <div class="form-group">
+    <label class="form-label" for="customerEmail">Email</label>
+    <input class="form-input" type="email" id="customerEmail" name="customerEmail"
+      value="{{ job.customer.email }}" required autocomplete="email">
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="form-label" for="customerPhone">Phone</label>
+  <input class="form-input" type="tel" id="customerPhone" name="customerPhone"
+    value="{{ job.customer.phone or '' }}" autocomplete="tel">
+</div>

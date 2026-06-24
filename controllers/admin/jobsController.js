@@ -46,7 +46,7 @@ async function detail(req, res, next) {
   if (isNaN(id)) return next({ status: 404 });
 
   try {
-    const [job, prevJob, nextJob, deliveryZones] = await Promise.all([
+    const [job, prevJob, nextJob, deliveryZones, availableProducts] = await Promise.all([
       prisma.job.findUnique({
         where: { id },
         include: {
@@ -72,17 +72,23 @@ async function detail(req, res, next) {
         where: { isActive: true },
         orderBy: { displayOrder: 'asc' },
       }),
+      prisma.product.findMany({
+        where:   { isActive: true },
+        orderBy: { displayOrder: 'asc' },
+        select:  { id: true, name: true },
+      }),
     ]);
 
     if (!job) return next({ status: 404, message: 'Job not found' });
 
     return res.render('admin/jobs/detail.njk', {
-      title:        `Job #${id} — ${job.customer.name}`,
-      currentPage:  'jobs',
+      title:             `Job #${id} — ${job.customer.name}`,
+      currentPage:       'jobs',
       job,
       prevJob,
       nextJob,
       deliveryZones,
+      availableProducts,
     });
   } catch (err) {
     next(err);
@@ -293,6 +299,89 @@ async function savePricing(req, res, next) {
   }
 }
 
+// ─── Save Customer ────────────────────────────────────────────────────────────
+
+async function saveCustomer(req, res, next) {
+  const id = parseInt(req.params.id, 10);
+  const { customerName, customerEmail, customerPhone } = req.body;
+
+  try {
+    const job = await prisma.job.findUnique({ where: { id }, select: { customerId: true } });
+    if (!job) return next({ status: 404 });
+
+    await prisma.customer.update({
+      where: { id: job.customerId },
+      data: {
+        name:  customerName  || '',
+        email: customerEmail || '',
+        phone: customerPhone || null,
+      },
+    });
+
+    return res.redirect(`/admin/jobs/${id}`);
+  } catch (err) {
+    next(err);
+  }
+}
+
+// ─── Save Job Details ─────────────────────────────────────────────────────────
+
+async function saveJobDetails(req, res, next) {
+  const id = parseInt(req.params.id, 10);
+  const { jobStart, jobEnd, notes } = req.body;
+
+  let rawItems = req.body.items;
+  if (!rawItems)                  rawItems = [];
+  else if (!Array.isArray(rawItems)) rawItems = [rawItems];
+  const items = rawItems.filter(i => i && i.productId);
+
+  try {
+    await prisma.$transaction(async tx => {
+      await tx.job.update({
+        where: { id },
+        data: {
+          jobStart: jobStart ? new Date(jobStart) : null,
+          jobEnd:   jobEnd   ? new Date(jobEnd)   : null,
+          notes:    notes    || null,
+        },
+      });
+
+      const existing    = await tx.jobItem.findMany({ where: { jobId: id }, select: { id: true } });
+      const existingIds = existing.map(i => i.id);
+      const keptIds     = items.filter(i => i.id).map(i => parseInt(i.id, 10));
+      const toDelete    = existingIds.filter(i => !keptIds.includes(i));
+
+      if (toDelete.length) {
+        await tx.jobItemCustomisation.deleteMany({ where: { jobItemId: { in: toDelete } } });
+        await tx.jobItemDate.deleteMany({ where: { jobItemId: { in: toDelete } } });
+        await tx.jobItem.deleteMany({ where: { id: { in: toDelete } } });
+      }
+
+      for (const item of items) {
+        const productId = parseInt(item.productId, 10);
+        const quantity  = Math.max(1, parseInt(item.quantity, 10) || 1);
+        const unitPrice = item.unitPrice ? parseFloat(item.unitPrice) : null;
+        if (!productId) continue;
+
+        if (item.id) {
+          await tx.jobItem.update({
+            where: { id: parseInt(item.id, 10) },
+            data:  { productId, quantity, unitPrice },
+          });
+        } else {
+          await tx.jobItem.create({
+            data: { jobId: id, productId, quantity, unitPrice },
+          });
+        }
+      }
+    });
+
+    return res.redirect(`/admin/jobs/${id}`);
+  } catch (err) {
+    next(err);
+  }
+}
+
 // ─── Save Calculator ──────────────────────────────────────────────────────────
 
 async function saveCalculator(req, res, next) {
@@ -368,4 +457,4 @@ async function saveStatus(req, res, next) {
   }
 }
 
-module.exports = { list, detail, newJob, create, saveDetails, saveDelivery, savePricing, saveStatus, saveCalculator };
+module.exports = { list, detail, newJob, create, saveDetails, saveCustomer, saveJobDetails, saveDelivery, savePricing, saveStatus, saveCalculator };

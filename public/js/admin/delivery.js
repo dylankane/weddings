@@ -17,7 +17,6 @@ if (calcSaveBtn) {
   calcSaveBtn.addEventListener('click', async () => {
     if (!calcState || !jobId) return;
     calcSaveBtn.disabled = true;
-    calcSaveBtn.querySelector('span') && (calcSaveBtn.querySelector('span').textContent = 'Saving…');
 
     try {
       const res  = await fetch(`/admin/jobs/${jobId}/calculator`, {
@@ -26,12 +25,14 @@ if (calcSaveBtn) {
         body:    JSON.stringify(calcState),
       });
       const data = await res.json();
-      if (data.ok) updateViewSections(data);
-    } catch (_) {}
-    finally {
+      if (data.ok) {
+        updateViewSections(data);
+        if (calcSaveRow) calcSaveRow.classList.add('section-actions--hidden');
+      }
+    } catch (err) {
+      console.error('Save to job failed:', err);
+    } finally {
       calcSaveBtn.disabled = false;
-      const span = calcSaveBtn.querySelector('span');
-      if (span) span.textContent = 'Save to job';
     }
   });
 }
@@ -41,8 +42,26 @@ function updateViewSections(data) {
   setView('view-venue-county',  calcState.venueCounty);
   setView('view-venue-address', calcState.venueAddress);
   setView('view-venue-eircode', calcState.venueEircode);
-  setView('view-delivery-cost', '€' + Number(data.deliveryCost).toFixed(2));
-  setView('view-total-cost',    '€' + Number(data.totalCost).toFixed(2));
+
+  const price = Number(calcState.suggestedPrice || 0);
+  const formatted = '€' + price.toFixed(2);
+
+  let deliveryRow = document.getElementById('js-pricing-delivery-row');
+  if (!deliveryRow) {
+    const spacer = document.getElementById('js-pricing-spacer-row');
+    deliveryRow = document.createElement('tr');
+    deliveryRow.id = 'js-pricing-delivery-row';
+    deliveryRow.className = 'tr--static';
+    deliveryRow.innerHTML = `<td>Delivery</td><td class="td--center">1</td><td class="td--center"></td><td class="js-pricing-subtotal td--center" data-value="0"></td>`;
+    spacer.parentNode.insertBefore(deliveryRow, spacer);
+  }
+
+  deliveryRow.cells[2].textContent = formatted;
+  const subtotalCell = deliveryRow.querySelector('.js-pricing-subtotal');
+  subtotalCell.dataset.value = price;
+  subtotalCell.textContent   = formatted;
+
+  if (window.recalcPricingTotal) window.recalcPricingTotal();
 }
 
 function setView(id, value) {

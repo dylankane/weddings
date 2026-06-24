@@ -9,6 +9,8 @@
 
 {% block scripts %}
 <script src="/js/admin/delivery.js"></script>
+<script src="/js/admin/items.js"></script>
+<script src="/js/admin/pricing.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -97,11 +99,11 @@
 
 <div class="content-container">
 
-  {# ── Details ── #}
-  <section class="form-section" aria-labelledby="section-details-title">
+  {# ── Customer Details ── #}
+  <section class="form-section" aria-labelledby="section-customer-title">
     <div class="form-section-head">
-      <h2 class="form-section-title" id="section-details-title">Details</h2>
-      <label class="toggle-switch" aria-label="Edit details">
+      <h2 class="form-section-title" id="section-customer-title">Customer Details</h2>
+      <label class="toggle-switch" aria-label="Edit customer details">
         <input type="checkbox" class="js-section-toggle">
         <span class="toggle-track"></span>
         <span class="toggle-label">Edit</span>
@@ -111,7 +113,7 @@
     <div class="form-section-view">
       <div class="form-row">
         <div class="form-group">
-          <span class="field-label">Customer name</span>
+          <span class="field-label">Name</span>
           <span class="field-value">{{ job.customer.name }}</span>
         </div>
         <div class="form-group">
@@ -119,15 +121,45 @@
           <span class="field-value">{{ job.customer.email }}</span>
         </div>
       </div>
+      <div class="form-group">
+        <span class="field-label">Phone</span>
+        <span class="field-value{{ ' field-value--empty' if not job.customer.phone }}">{{ job.customer.phone or '—' }}</span>
+      </div>
+    </div>
+
+    <form class="form-section-form" action="/admin/jobs/{{ job.id }}/customer" method="POST">
+      {% include "admin/jobs/partials/_form-customer.njk" %}
+      <div class="section-actions">
+        <button type="button" class="btn btn-cancel js-section-cancel">
+          <svg class="btn-svg" aria-hidden="true"><use href="#icon-close"/></svg>
+          Cancel
+        </button>
+        <button type="submit" class="btn btn-save">
+          <svg class="btn-svg" aria-hidden="true"><use href="#icon-save"/></svg>
+          Save
+        </button>
+      </div>
+    </form>
+  </section>
+
+  {# ── Job Details ── #}
+  <section class="form-section" aria-labelledby="section-job-title">
+    <div class="form-section-head">
+      <h2 class="form-section-title" id="section-job-title">Job Details</h2>
+      <label class="toggle-switch" aria-label="Edit job details">
+        <input type="checkbox" class="js-section-toggle">
+        <span class="toggle-track"></span>
+        <span class="toggle-label">Edit</span>
+      </label>
+    </div>
+
+    <div class="form-section-view">
       <div class="form-row">
-        <div class="form-group">
-          <span class="field-label">Phone</span>
-          <span class="field-value{{ ' field-value--empty' if not job.customer.phone }}">{{ job.customer.phone or '—' }}</span>
-        </div>
         <div class="form-group">
           <span class="field-label">Source</span>
           <span class="field-value">{{ 'Website form' if job.source === 'CUSTOMER_FORM' else 'Manager created' }}</span>
         </div>
+        <div class="form-group"></div>
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -143,19 +175,44 @@
         <span class="field-label">Notes</span>
         <span class="field-value{{ ' field-value--empty' if not job.notes }}">{{ job.notes or '—' }}</span>
       </div>
+      {% if job.items and job.items.length %}
+        {% for item in job.items %}
+        <div class="form-row form-row--items">
+          <div class="form-group">
+            <span class="field-label">Product {{ loop.index }}</span>
+            <span class="field-value">{{ item.product.name }}</span>
+          </div>
+          <div class="form-group">
+            <span class="field-label">Qty</span>
+            <span class="field-value">{{ item.quantity }}</span>
+          </div>
+          <div class="form-group">
+            <span class="field-label">Price</span>
+            <span class="field-value{{ ' field-value--empty' if not (item.unitPrice or item.product.pricePerEvent) }}">{{ (item.unitPrice or item.product.pricePerEvent) | currency if (item.unitPrice or item.product.pricePerEvent) else '—' }}</span>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+      <div class="form-row">
+        <div class="form-group">
+          <span class="field-label">Products</span>
+          <span class="field-value field-value--empty">—</span>
+        </div>
+      </div>
+      {% endif %}
     </div>
 
-    <form class="form-section-form" action="/admin/jobs/{{ job.id }}/details" method="POST">
-      {% include "admin/jobs/partials/_form-details.njk" %}
+    <form class="form-section-form" action="/admin/jobs/{{ job.id }}/job" method="POST">
+      {% include "admin/jobs/partials/_form-job.njk" %}
       <div class="section-actions">
         <button type="button" class="btn btn-cancel js-section-cancel">
-                <svg class="btn-svg" aria-hidden="true"><use href="#icon-close"/></svg>
-                Cancel
-              </button>
+          <svg class="btn-svg" aria-hidden="true"><use href="#icon-close"/></svg>
+          Cancel
+        </button>
         <button type="submit" class="btn btn-save">
-                <svg class="btn-svg" aria-hidden="true"><use href="#icon-save"/></svg>
-                Save
-              </button>
+          <svg class="btn-svg" aria-hidden="true"><use href="#icon-save"/></svg>
+          Save
+        </button>
       </div>
     </form>
   </section>
@@ -217,7 +274,7 @@
       <div class="form-row">
         <div class="form-group">
           <span class="field-label">Eircode</span>
-          <span id="view-venue-eircode" class="field-value mono{{ ' field-value--empty' if not (job.delivery and job.delivery.venueEircode) }}">{{ job.delivery.venueEircode if job.delivery and job.delivery.venueEircode else '—' }}</span>
+          <span id="view-venue-eircode" class="field-value{{ ' field-value--empty' if not (job.delivery and job.delivery.venueEircode) }}">{{ job.delivery.venueEircode if job.delivery and job.delivery.venueEircode else '—' }}</span>
         </div>
         <div class="form-group">
           <span class="field-label">Delivery notes</span>
@@ -315,36 +372,113 @@
       </label>
     </div>
 
-    <div class="form-section-view">
-      <div class="form-row">
-        <div class="form-group">
-          <span class="field-label">Rental cost</span>
-          <span class="field-value mono{{ ' field-value--empty' if not job.pricing }}">{{ job.pricing.rentalCost | currency if job.pricing else '—' }}</span>
-        </div>
-        <div class="form-group">
-          <span class="field-label">Delivery cost</span>
-          <span id="view-delivery-cost" class="field-value mono{{ ' field-value--empty' if not job.pricing }}">{{ job.pricing.deliveryCost | currency if job.pricing else '—' }}</span>
-        </div>
-      </div>
-      <div class="form-group">
-        <span class="field-label">Total</span>
-        <span id="view-total-cost" class="field-value mono{{ ' field-value--empty' if not job.pricing }}">{{ job.pricing.totalCost | currency if job.pricing else '—' }}</span>
+    <div class="data-card">
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th class="td--center">Qty</th>
+              <th class="td--center">Unit Price</th>
+              <th class="td--center">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in job.items %}
+            {% set unitPrice = item.unitPrice or item.product.pricePerEvent or 0 %}
+            {% set subtotal = unitPrice * item.quantity %}
+            <tr class="tr--static">
+              <td>{{ item.product.name }}</td>
+              <td class="td--center">{{ item.quantity }}</td>
+              <td class="td--center">{{ unitPrice | currency if unitPrice else '—' }}</td>
+              <td class="js-pricing-subtotal td--center" data-value="{{ subtotal }}">{{ subtotal | currency }}</td>
+            </tr>
+            {% endfor %}
+            {% if job.delivery and job.delivery.suggestedPrice %}
+            <tr id="js-pricing-delivery-row" class="tr--static">
+              <td>Delivery</td>
+              <td class="td--center">1</td>
+              <td class="td--center">{{ job.delivery.suggestedPrice | currency }}</td>
+              <td class="js-pricing-subtotal td--center" data-value="{{ job.delivery.suggestedPrice }}">{{ job.delivery.suggestedPrice | currency }}</td>
+            </tr>
+            {% endif %}
+            <tr id="js-pricing-spacer-row" class="tr--static">
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr class="tr--static tr--total">
+              <td></td>
+              <td></td>
+              <td class="td--center">Total</td>
+              <td id="js-pricing-total" class="td--center"></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
     <form class="form-section-form" action="/admin/jobs/{{ job.id }}/pricing" method="POST">
-      {% include "admin/jobs/partials/_form-pricing.njk" %}
+      <div class="data-card">
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th class="td--center">Qty</th>
+                <th class="td--center">Unit Price</th>
+                <th class="td--center">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody id="js-pricing-edit-body" data-next-row="{{ job.items | length + (1 if (job.delivery and job.delivery.suggestedPrice) else 0) }}">
+              {% for item in job.items %}
+              {% set unitPrice = item.unitPrice or item.product.pricePerEvent or 0 %}
+              {% set subtotal = unitPrice * item.quantity %}
+              <tr class="tr--static">
+                <td><input class="form-input" type="text" name="rows[{{ loop.index0 }}][description]" value="{{ item.product.name }}"></td>
+                <td class="td--center"><input class="form-input js-row-qty" type="number" name="rows[{{ loop.index0 }}][qty]" value="{{ item.quantity }}" min="1"></td>
+                <td class="td--center"><input class="form-input js-row-price" type="number" name="rows[{{ loop.index0 }}][unitPrice]" value="{{ unitPrice }}" step="0.01" min="0"></td>
+                <td class="js-edit-subtotal td--center" data-value="{{ subtotal }}">{{ subtotal | currency }}</td>
+              </tr>
+              {% endfor %}
+              {% if job.delivery and job.delivery.suggestedPrice %}
+              {% set deliveryRowIndex = job.items | length %}
+              <tr class="tr--static">
+                <td><input class="form-input" type="text" name="rows[{{ deliveryRowIndex }}][description]" value="Delivery"></td>
+                <td class="td--center"><input class="form-input js-row-qty" type="number" name="rows[{{ deliveryRowIndex }}][qty]" value="1" min="1"></td>
+                <td class="td--center"><input class="form-input js-row-price" type="number" name="rows[{{ deliveryRowIndex }}][unitPrice]" value="{{ job.delivery.suggestedPrice }}" step="0.01" min="0"></td>
+                <td class="js-edit-subtotal td--center" data-value="{{ job.delivery.suggestedPrice }}">{{ job.delivery.suggestedPrice | currency }}</td>
+              </tr>
+              {% endif %}
+              <tr id="js-edit-spacer-row" class="tr--static">
+                <td></td><td></td><td></td><td></td>
+              </tr>
+              <tr class="tr--static tr--total">
+                <td></td><td></td>
+                <td class="td--center">Total</td>
+                <td id="js-edit-total" class="td--center"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
       <div class="section-actions">
+        <button type="button" class="btn" id="js-pricing-add-row" style="margin-right: auto;">
+          <svg class="btn-svg" aria-hidden="true"><use href="#icon-plus"/></svg>
+          Add row
+        </button>
         <button type="button" class="btn btn-cancel js-section-cancel">
-                <svg class="btn-svg" aria-hidden="true"><use href="#icon-close"/></svg>
-                Cancel
-              </button>
+          <svg class="btn-svg" aria-hidden="true"><use href="#icon-close"/></svg>
+          Cancel
+        </button>
         <button type="submit" class="btn btn-save">
-                <svg class="btn-svg" aria-hidden="true"><use href="#icon-save"/></svg>
-                Save
-              </button>
+          <svg class="btn-svg" aria-hidden="true"><use href="#icon-save"/></svg>
+          Save
+        </button>
       </div>
     </form>
+
   </section>
 
 </div>

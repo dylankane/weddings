@@ -4,7 +4,7 @@ const express = require('express');
 const router  = express.Router();
 
 const { dashboard }                                                          = require('../../controllers/admin/dashboardController');
-const { list, detail, newJob, create, saveDetails, saveDelivery, savePricing, saveStatus, saveCalculator } = require('../../controllers/admin/jobsController');
+const { list, detail, newJob, create, saveDetails, saveCustomer, saveJobDetails, saveDelivery, savePricing, saveStatus, saveCalculator } = require('../../controllers/admin/jobsController');
 const { list: productList, newProduct, editProduct, create: createProduct, update: updateProduct, toggleActive, toggleCustomisable, toggleOptionActive, deleteProduct } = require('../../controllers/admin/productsController');
 const { show: settingsShow, saveIdentity, saveContact, saveSeo, saveLocation, saveSignOff, saveTemplate, saveProfile, savePassword, saveZone, deleteZone } = require('../../controllers/admin/settingsController');
 const productUpload = require('../../middleware/productUpload');
@@ -19,6 +19,8 @@ router.get('/jobs/new',             newJob);
 router.get('/jobs/:id',             detail);
 router.post('/jobs',                create);
 router.post('/jobs/:id/details',     saveDetails);
+router.post('/jobs/:id/customer',    saveCustomer);
+router.post('/jobs/:id/job',         saveJobDetails);
 router.post('/jobs/:id/delivery',    saveDelivery);
 router.post('/jobs/:id/pricing',     savePricing);
 router.post('/jobs/:id/status',      saveStatus);
