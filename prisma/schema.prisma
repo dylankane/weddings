@@ -123,6 +123,10 @@ model CompanySettings {
   deliveryInfoText      String?  @map("delivery_info_text")
   deliveryFreeZoneLabel String?  @map("delivery_free_zone_label")
   emailSignOff          String?  @map("email_sign_off")
+  paymentInstructions   String?  @map("payment_instructions")
+  bankDetails           String?  @map("bank_details")
+  quoteNotes            String?  @map("quote_notes")
+  invoiceNotes          String?  @map("invoice_notes")
   businessLat       Decimal? @map("business_lat")
   businessLng       Decimal? @map("business_lng")
   updatedAt         DateTime @updatedAt @map("updated_at")
@@ -303,11 +307,12 @@ model JobItem {
 }
 
 model JobItemCustomisation {
-  id                    Int     @id @default(autoincrement())
-  jobItemId             Int     @map("job_item_id")
-  customisationOptionId Int?    @map("customisation_option_id")
+  id                    Int      @id @default(autoincrement())
+  jobItemId             Int      @map("job_item_id")
+  customisationOptionId Int?     @map("customisation_option_id")
   value                 String
   notes                 String?
+  price                 Decimal? @db.Decimal(10, 2)
 
   jobItem             JobItem                     @relation(fields: [jobItemId], references: [id])
   customisationOption ProductCustomisationOption? @relation(fields: [customisationOptionId], references: [id])
@@ -390,7 +395,7 @@ model Pricing {
 model Quote {
   id        Int       @id @default(autoincrement())
   jobId     Int       @unique @map("job_id")
-  pdfUrl    String    @map("pdf_url")
+  pdfUrl    String?   @map("pdf_url")
   sentAt    DateTime? @map("sent_at")
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")

@@ -280,11 +280,11 @@
         <div class="form-row">
           <div class="form-group">
             <span class="field-label">Business lat</span>
-            <span class="field-value mono{{ ' field-value--empty' if not (settings and settings.businessLat) }}">{{ settings.businessLat if settings and settings.businessLat else '—' }}</span>
+            <span class="field-value{{ ' field-value--empty' if not (settings and settings.businessLat) }}">{{ settings.businessLat if settings and settings.businessLat else '—' }}</span>
           </div>
           <div class="form-group">
             <span class="field-label">Business lng</span>
-            <span class="field-value mono{{ ' field-value--empty' if not (settings and settings.businessLng) }}">{{ settings.businessLng if settings and settings.businessLng else '—' }}</span>
+            <span class="field-value{{ ' field-value--empty' if not (settings and settings.businessLng) }}">{{ settings.businessLng if settings and settings.businessLng else '—' }}</span>
           </div>
         </div>
         <div class="form-group">
@@ -297,11 +297,11 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label" for="businessLat">Business latitude</label>
-            <input class="form-input mono" type="number" step="any" id="businessLat" name="businessLat" value="{{ settings.businessLat if settings and settings.businessLat else '' }}">
+            <input class="form-input" type="number" step="any" id="businessLat" name="businessLat" value="{{ settings.businessLat if settings and settings.businessLat else '' }}">
           </div>
           <div class="form-group">
             <label class="form-label" for="businessLng">Business longitude</label>
-            <input class="form-input mono" type="number" step="any" id="businessLng" name="businessLng" value="{{ settings.businessLng if settings and settings.businessLng else '' }}">
+            <input class="form-input" type="number" step="any" id="businessLng" name="businessLng" value="{{ settings.businessLng if settings and settings.businessLng else '' }}">
           </div>
         </div>
         <div class="form-group">

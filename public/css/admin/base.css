@@ -304,49 +304,53 @@ button,
 
 .btn-save {
   padding: 0.4rem 0.6rem;
-  border: 2px solid var(--save);
+  background: var(--bg-active);
+  /* border: 2px solid var(--save); */
   /* color: var(--save); */
   font-weight: 500;
 }
 
 .btn-save:hover {
-  background: transparent;
+  background: var(--off-white);
   color: var(--save);
 }
 
 .btn-edit {
   padding: 0.4rem 0.6rem;
-  border: 2px solid var(--save);
+  background: var(--bg-active);
+  /* border: 2px solid var(--save); */
   /* color: var(--save); */
   font-weight: 500;
 }
 
 .btn-edit:hover {
-  background: transparent;
+  background: var(--off-white);
   color: var(--edit);
 }
 
 .btn-cancel {
   padding: 0.4rem 0.6rem;
-  border: 2px solid var(--cancel);
+  background: var(--bg-active);
+  /* border: 2px solid var(--cancel); */
   /* color: var(--cancel); */
   font-weight: 500;
 }
 
 .btn-cancel:hover {
-  background: transparent;
+  background: var(--off-white);
   color: var(--cancel);
 }
 
 .btn-delete {
   padding: 0.4rem 0.6rem;
-  border: 2px solid var(--cancel);
+  background: var(--bg-active);
+  /* border: 2px solid var(--cancel); */
   /* color: var(--cancel); */
   font-weight: 500;
 }
 
 .btn-delete:hover {
-  background: transparent;
+  background: var(--off-white);
   color: var(--cancel);
 }
 

@@ -20,10 +20,36 @@
 
 .item-object {
   /* background-color: var(--off-white); */
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-dark);
-  margin-bottom: 2rem;
+  /* border-radius: var(--radius-md);
+  border: 1px solid var(--border-dark); */
+  margin-bottom: 3rem;
   padding: 2rem 2rem;
+}
+
+/* ─── Item Cover Thumbnail ───────────────────────────────────── */
+
+.item-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.item-header-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-cover-thumb {
+  width: 3.5rem;
+  height: 3.5rem;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  display: block;
+}
+
+.item-cover-thumb--empty {
+  background: var(--bg-active);
 }
 
 .item-ref {
@@ -100,6 +126,7 @@
 }
 
 .js-product-section.is-open > .form-section-view {
+  border: 1px solid var(--border-dark);
   display: flex;
 }
 

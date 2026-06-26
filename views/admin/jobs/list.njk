@@ -8,13 +8,6 @@
 
 {% block content %}
 
-{% set activeLabel = 'All' %}
-{% if activeStatus === 'ENQUIRY' %}{% set activeLabel = 'Enquiries' %}
-{% elif activeStatus === 'CONFIRMED' %}{% set activeLabel = 'Confirmed' %}
-{% elif activeStatus === 'COMPLETED' %}{% set activeLabel = 'Completed' %}
-{% elif activeStatus === 'CANCELLED' %}{% set activeLabel = 'Cancelled' %}
-{% endif %}
-
 {# ─── Page Bar ────────────────────────────────────────────────── #}
 
 <div class="page-bar">
@@ -29,58 +22,25 @@
 
 <h1 class="page-greeting">All Jobs</h1>
 
-{# ─── Mobile Filter Bar ───────────────────────────────────────── #}
-
-<div class="filter-mobile-bar">
-  <button type="button" class="btn js-filter-drawer-open" aria-label="Filter jobs" aria-expanded="false">
-    {% if activeStatus %}
-      {{ status_badge(activeStatus, 'status-badge--plain') }}
-    {% else %}
-      <span class="status-badge status-badge--plain">
-        <span class="dot" style="background: var(--text-3)" aria-hidden="true"></span>
-        All jobs
-      </span>
-    {% endif %}
-    <svg class="btn-left-extra" aria-hidden="true"><use href="#icon-chevron-down"/></svg>
-  </button>
-</div>
-
-{# ─── Filter Tabs ─────────────────────────────────────────────── #}
-
-<nav class="filter-tabs" aria-label="Filter jobs by status">
-  <a href="/admin/jobs"
-    class="filter-tab {{ 'is-active' if not activeStatus }}"
-    aria-current="{{ 'page' if not activeStatus }}">
-    All
-    <span class="filter-tab-count">{{ (counts.ENQUIRY or 0) + (counts.CONFIRMED or 0) + (counts.COMPLETED or 0) + (counts.CANCELLED or 0) }}</span>
-  </a>
-  <a href="/admin/jobs?status=ENQUIRY"
-    class="filter-tab {{ 'is-active' if activeStatus === 'ENQUIRY' }}"
-    aria-current="{{ 'page' if activeStatus === 'ENQUIRY' }}">
-    Enquiries
-    <span class="filter-tab-count">{{ counts.ENQUIRY or 0 }}</span>
-  </a>
-  <a href="/admin/jobs?status=CONFIRMED"
-    class="filter-tab {{ 'is-active' if activeStatus === 'CONFIRMED' }}"
-    aria-current="{{ 'page' if activeStatus === 'CONFIRMED' }}">
-    Confirmed
-    <span class="filter-tab-count">{{ counts.CONFIRMED or 0 }}</span>
-  </a>
-  <a href="/admin/jobs?status=COMPLETED"
-    class="filter-tab {{ 'is-active' if activeStatus === 'COMPLETED' }}"
-    aria-current="{{ 'page' if activeStatus === 'COMPLETED' }}">
-    Completed
-    <span class="filter-tab-count">{{ counts.COMPLETED or 0 }}</span>
-  </a>
-  <a href="/admin/jobs?status=CANCELLED"
-    class="filter-tab {{ 'is-active' if activeStatus === 'CANCELLED' }}"
-    aria-current="{{ 'page' if activeStatus === 'CANCELLED' }}">
-    Cancelled
-    <span class="filter-tab-count">{{ counts.CANCELLED or 0 }}</span>
-  </a>
-</nav>
-
 {# ─── Table ───────────────────────────────────────────────────── #}
+
+<div class="table-filter-bar">
+  <input type="text" class="search-input" placeholder="Search jobs by customer, month, invoice, job number…" title="Search jobs by customer, month, invoice or job number" aria-label="Search jobs">
+  <div class="form-dropdown" data-dropdown>
+    <input type="hidden" class="js-filter-status" value="">
+    <button type="button" class="btn js-dropdown-trigger" aria-haspopup="listbox" aria-expanded="false">
+      <span class="form-dropdown-value">All Jobs</span>
+      <svg class="btn-left-extra" aria-hidden="true"><use href="#icon-chevron-down"/></svg>
+    </button>
+    <ul class="form-dropdown-list form-dropdown-list--wide" role="listbox">
+      <li class="form-dropdown-option is-selected" role="option" aria-selected="true"  tabindex="-1" data-value="">All Jobs</li>
+      <li class="form-dropdown-option" role="option" aria-selected="false" tabindex="-1" data-value="ENQUIRY">Enquiry</li>
+      <li class="form-dropdown-option" role="option" aria-selected="false" tabindex="-1" data-value="CONFIRMED">Confirmed</li>
+      <li class="form-dropdown-option" role="option" aria-selected="false" tabindex="-1" data-value="COMPLETED">Completed</li>
+      <li class="form-dropdown-option" role="option" aria-selected="false" tabindex="-1" data-value="CANCELLED">Cancelled</li>
+    </ul>
+  </div>
+</div>
 
 <div class="data-card">
   {% if jobs | length %}
@@ -98,8 +58,8 @@
       </thead>
       <tbody>
         {% for job in jobs %}
-        <tr class="data-row" data-href="/admin/jobs/{{ job.id }}">
-          <td class="mono">{{ job.id }}</td>
+        <tr class="data-row" data-href="/admin/jobs/{{ job.id }}" data-status="{{ job.status }}">
+          <td>{{ job.id }}</td>
           <td>{{ job.customer.name }}</td>
           <td>
             {{ job.jobStart | dateFormat('short') if job.jobStart else '—' }}

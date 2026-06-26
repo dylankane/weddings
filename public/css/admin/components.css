@@ -3,6 +3,26 @@
    Reusable UI shared across multiple pages.
 ───────────────────────────────────────────────────────────────── */
 
+/* ─── Table Filter Bar ───────────────────────────────────────── */
+
+.table-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.7rem;
+}
+
+.table-filter-bar .search-input {
+  flex: 1;
+  min-width: 0;
+  width: auto;
+}
+
+.table-filter-bar .form-dropdown-trigger {
+  width: auto;
+  white-space: nowrap;
+}
+
 /* ─── Data Card ──────────────────────────────────────────────── */
 
 .data-card {
@@ -95,8 +115,19 @@
   background: none;
 }
 
-.data-table tbody tr.tr--total td {
+/* .data-table tbody tr.tr--total td {
  font-weight: 600;
+} */
+
+.tr--total {
+  font-weight: 600;
+  border-top: 2px solid var(--text);
+}
+
+.data-table tbody tr.tr--sub td:first-child::before {
+  content: '•';
+  margin-right: 0.5rem;
+  color: var(--text-2);
 }
 
 /* ─── Status Dot ─────────────────────────────────────────────── */
@@ -127,6 +158,11 @@
   background: var(--cancelled);
 }
 
+.dot--draft   { background: var(--completed); }
+.dot--sent    { background: var(--enquiry); }
+.dot--paid    { background: var(--confirmed); }
+.dot--overdue { background: var(--cancelled); }
+
 /* ─── Status Badge ───────────────────────────────────────────── */
 
 .status-badge {
@@ -145,6 +181,11 @@
 .status-badge--confirmed { border-color: var(--confirmed); }
 .status-badge--completed { border-color: var(--completed); }
 .status-badge--cancelled { border-color: var(--cancelled); }
+
+.status-badge--draft    { border-color: var(--completed); }
+.status-badge--sent     { border-color: var(--enquiry); }
+.status-badge--paid     { border-color: var(--confirmed); }
+.status-badge--overdue  { border-color: var(--cancelled); }
 
 .status-badge--plain { border: none; }
 
@@ -201,10 +242,6 @@
   text-align: center;
   color: var(--text-2);
   font-size: var(--font-xs);
-}
-
-.form-section--nested {
-  margin-top: 1.5rem;
 }
 
 

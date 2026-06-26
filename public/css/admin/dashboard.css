@@ -73,7 +73,6 @@
 
 .cal-day-num {
   display: block;
-  font-family: var(--font-mono);
   font-size: var(--font-xs);
   color: var(--text);
   margin-top: 2px;

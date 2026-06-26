@@ -6,7 +6,8 @@ const router  = express.Router();
 const { dashboard }                                                          = require('../../controllers/admin/dashboardController');
 const { list, detail, newJob, create, saveDetails, saveCustomer, saveJobDetails, saveDelivery, savePricing, saveStatus, saveCalculator } = require('../../controllers/admin/jobsController');
 const { list: productList, newProduct, editProduct, create: createProduct, update: updateProduct, toggleActive, toggleCustomisable, toggleOptionActive, deleteProduct } = require('../../controllers/admin/productsController');
-const { show: settingsShow, saveIdentity, saveContact, saveSeo, saveLocation, saveSignOff, saveTemplate, saveProfile, savePassword, saveZone, deleteZone } = require('../../controllers/admin/settingsController');
+const { show: settingsShow, saveIdentity, saveContact, saveSeo, saveLocation, saveSignOff, savePdfSettings, saveQuoteSettings, saveTemplate, saveProfile, savePassword, saveZone, deleteZone, previewQuote, previewInvoice } = require('../../controllers/admin/settingsController');
+const { list: listDocuments, generateQuote, downloadQuote, createInvoice, regenerateInvoice, downloadInvoice, saveInvoiceStatus, previewJobQuote, previewJobInvoice } = require('../../controllers/admin/documentsController');
 const productUpload = require('../../middleware/productUpload');
 
 // TODO: add requireAuth, requireRole(['SUPER_ADMIN', 'MANAGER']) once login is built
@@ -37,6 +38,17 @@ router.post('/products/:id/toggle-customisable', toggleCustomisable);
 router.post('/products/:id/options/:optionId/toggle-active', toggleOptionActive);
 router.post('/products/:id/delete',        deleteProduct);
 
+// ─── Documents ────────────────────────────────────────────────────────────────
+router.get('/documents',                         listDocuments);
+router.post('/jobs/:id/quote',                   generateQuote);
+router.get('/jobs/:id/quote/download',           downloadQuote);
+router.get('/jobs/:id/quote/preview',            previewJobQuote);
+router.post('/jobs/:id/invoice',                 createInvoice);
+router.post('/jobs/:id/invoice/regenerate',      regenerateInvoice);
+router.get('/jobs/:id/invoice/download',         downloadInvoice);
+router.get('/jobs/:id/invoice/preview',          previewJobInvoice);
+router.post('/jobs/:id/invoice/status',          saveInvoiceStatus);
+
 // ─── Settings ─────────────────────────────────────────────────────────────────
 router.get('/settings',                          settingsShow);
 router.post('/settings/company/identity',        saveIdentity);
@@ -48,6 +60,10 @@ router.post('/settings/templates/:id',           saveTemplate);
 router.post('/settings/zones',                   saveZone);
 router.post('/settings/zones/:id',               saveZone);
 router.post('/settings/zones/:id/delete',        deleteZone);
+router.post('/settings/documents/invoice',        savePdfSettings);
+router.post('/settings/documents/quote',          saveQuoteSettings);
+router.get('/settings/documents/preview/quote',   previewQuote);
+router.get('/settings/documents/preview/invoice', previewInvoice);
 router.post('/settings/profile',                 saveProfile);
 router.post('/settings/password',                savePassword);
 

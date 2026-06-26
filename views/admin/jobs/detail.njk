@@ -10,6 +10,7 @@
 {% block scripts %}
 <script src="/js/admin/delivery.js"></script>
 <script src="/js/admin/items.js"></script>
+<script src="/js/admin/customisations.js"></script>
 <script src="/js/admin/pricing.js"></script>
 {% endblock %}
 
@@ -191,6 +192,22 @@
             <span class="field-value{{ ' field-value--empty' if not (item.unitPrice or item.product.pricePerEvent) }}">{{ (item.unitPrice or item.product.pricePerEvent) | currency if (item.unitPrice or item.product.pricePerEvent) else '—' }}</span>
           </div>
         </div>
+        {% for cus in item.customisations %}
+        <div class="form-row form-row--sub">
+          <div class="form-group">
+            <span class="field-label">Customisation {{ loop.index }}</span>
+            <span class="field-value">{{ cus.customisationOption.name }}</span>
+          </div>
+          <div class="form-group">
+            <span class="field-label">Description</span>
+            <span class="field-value{{ ' field-value--empty' if not cus.value }}">{{ cus.value or '—' }}</span>
+          </div>
+          <div class="form-group">
+            <span class="field-label">Price</span>
+            <span class="field-value{{ ' field-value--empty' if not cus.price }}">{{ cus.price | currency if cus.price else '—' }}</span>
+          </div>
+        </div>
+        {% endfor %}
         {% endfor %}
       {% else %}
       <div class="form-row">
@@ -393,6 +410,16 @@
               <td class="td--center">{{ unitPrice | currency if unitPrice else '—' }}</td>
               <td class="js-pricing-subtotal td--center" data-value="{{ subtotal }}">{{ subtotal | currency }}</td>
             </tr>
+            {% for cus in item.customisations %}
+            {% if cus.price %}
+            <tr class="tr--static tr--sub">
+              <td>{{ cus.customisationOption.name }}</td>
+              <td class="td--center">1</td>
+              <td class="td--center">{{ cus.price | currency }}</td>
+              <td class="js-pricing-subtotal td--center" data-value="{{ cus.price }}">{{ cus.price | currency }}</td>
+            </tr>
+            {% endif %}
+            {% endfor %}
             {% endfor %}
             {% if job.delivery and job.delivery.suggestedPrice %}
             <tr id="js-pricing-delivery-row" class="tr--static">
@@ -441,6 +468,16 @@
                 <td class="td--center"><input class="form-input js-row-price" type="number" name="rows[{{ loop.index0 }}][unitPrice]" value="{{ unitPrice }}" step="0.01" min="0"></td>
                 <td class="js-edit-subtotal td--center" data-value="{{ subtotal }}">{{ subtotal | currency }}</td>
               </tr>
+              {% for cus in item.customisations %}
+              {% if cus.price %}
+              <tr class="tr--static tr--sub">
+                <td>{{ cus.customisationOption.name }}</td>
+                <td class="td--center">1</td>
+                <td class="td--center">{{ cus.price | currency }}</td>
+                <td class="js-edit-subtotal td--center" data-value="{{ cus.price }}">{{ cus.price | currency }}</td>
+              </tr>
+              {% endif %}
+              {% endfor %}
               {% endfor %}
               {% if job.delivery and job.delivery.suggestedPrice %}
               {% set deliveryRowIndex = job.items | length %}
@@ -479,6 +516,147 @@
       </div>
     </form>
 
+  </section>
+
+
+  {# ── Quote ── #}
+  <section class="form-section" aria-labelledby="section-quote-title">
+    <div class="form-section-head">
+      <h2 class="form-section-title" id="section-quote-title">Quote</h2>
+    </div>
+
+    {% if job.quote and job.quote.pdfUrl %}
+      <div class="form-section-view">
+        <div class="form-row">
+          <div class="form-group">
+            <span class="field-label">Generated</span>
+            <span class="field-value">{{ job.quote.createdAt | dateFormat('short') }}</span>
+          </div>
+          <div class="form-group">
+            <span class="field-label">Last updated</span>
+            <span class="field-value">{{ job.quote.updatedAt | dateFormat('short') }}</span>
+          </div>
+        </div>
+        <div class="section-actions">
+          <form action="/admin/jobs/{{ job.id }}/quote" method="POST" style="margin-right: auto;">
+            <button type="submit" class="btn">
+              <svg class="btn-svg" aria-hidden="true"><use href="#icon-save"/></svg>
+              Regenerate
+            </button>
+          </form>
+          <a href="/admin/jobs/{{ job.id }}/quote/download" class="btn btn-save">
+            <svg class="btn-svg" aria-hidden="true"><use href="#icon-pdf"/></svg>
+            Download PDF
+          </a>
+        </div>
+      </div>
+    {% else %}
+      <div class="form-section-view">
+        <div class="form-group">
+          <span class="field-value field-value--empty">No quote generated yet.</span>
+        </div>
+        <div class="section-actions" style="padding-top: 1rem;">
+          <form action="/admin/jobs/{{ job.id }}/quote" method="POST">
+            <button type="submit" class="btn btn-save">
+              <svg class="btn-svg" aria-hidden="true"><use href="#icon-pdf"/></svg>
+              Generate Quote
+            </button>
+          </form>
+        </div>
+      </div>
+    {% endif %}
+  </section>
+
+  {# ── Invoice ── #}
+  <section class="form-section" aria-labelledby="section-invoice-title">
+    <div class="form-section-head">
+      <h2 class="form-section-title" id="section-invoice-title">Invoice</h2>
+      {% if job.invoice %}
+        <form action="/admin/jobs/{{ job.id }}/invoice/status" method="POST">
+          <div class="form-dropdown" data-dropdown data-autosubmit>
+            <input type="hidden" name="status" value="{{ job.invoice.status }}">
+            <button type="button" class="btn js-dropdown-trigger" aria-haspopup="listbox" aria-expanded="false">
+              <span class="status-badge status-badge--{{ job.invoice.status | lower }}">
+                <span class="dot dot--{{ job.invoice.status | lower }}"></span>
+                <span class="form-dropdown-value">
+                  {%- if job.invoice.status === 'DRAFT' %}Draft
+                  {%- elif job.invoice.status === 'SENT' %}Sent
+                  {%- elif job.invoice.status === 'PAID' %}Paid
+                  {%- elif job.invoice.status === 'OVERDUE' %}Overdue
+                  {%- endif -%}
+                </span>
+              </span>
+              <svg class="btn-left-extra" aria-hidden="true"><use href="#icon-chevron-down"/></svg>
+            </button>
+            <ul class="form-dropdown-list" role="listbox">
+              <li class="form-dropdown-option{{ ' is-selected' if job.invoice.status === 'DRAFT' }}"   role="option" aria-selected="{{ 'true' if job.invoice.status === 'DRAFT' else 'false' }}"   tabindex="-1" data-value="DRAFT">Draft</li>
+              <li class="form-dropdown-option{{ ' is-selected' if job.invoice.status === 'SENT' }}"    role="option" aria-selected="{{ 'true' if job.invoice.status === 'SENT' else 'false' }}"    tabindex="-1" data-value="SENT">Sent</li>
+              <li class="form-dropdown-option{{ ' is-selected' if job.invoice.status === 'PAID' }}"    role="option" aria-selected="{{ 'true' if job.invoice.status === 'PAID' else 'false' }}"    tabindex="-1" data-value="PAID">Paid</li>
+              <li class="form-dropdown-option{{ ' is-selected' if job.invoice.status === 'OVERDUE' }}" role="option" aria-selected="{{ 'true' if job.invoice.status === 'OVERDUE' else 'false' }}" tabindex="-1" data-value="OVERDUE">Overdue</li>
+            </ul>
+          </div>
+        </form>
+      {% endif %}
+    </div>
+
+    {% if job.invoice and job.invoice.pdfUrl %}
+      <div class="form-section-view">
+        <div class="form-row">
+          <div class="form-group">
+            <span class="field-label">Reference</span>
+            <span class="field-value">{{ job.invoice.reference }}</span>
+          </div>
+          <div class="form-group">
+            <span class="field-label">Due date</span>
+            <span class="field-value{{ ' field-value--empty' if not job.invoice.dueDate }}">{{ job.invoice.dueDate | dateFormat('short') if job.invoice.dueDate else '—' }}</span>
+          </div>
+        </div>
+        <div class="section-actions">
+          <form action="/admin/jobs/{{ job.id }}/invoice/regenerate" method="POST" style="margin-right: auto;">
+            <button type="submit" class="btn">
+              <svg class="btn-svg" aria-hidden="true"><use href="#icon-save"/></svg>
+              Regenerate
+            </button>
+          </form>
+          <a href="/admin/jobs/{{ job.id }}/invoice/download" class="btn btn-save">
+            <svg class="btn-svg" aria-hidden="true"><use href="#icon-pdf"/></svg>
+            Download PDF
+          </a>
+        </div>
+      </div>
+    {% elif job.invoice %}
+      <div class="form-section-view">
+        <div class="form-row">
+          <div class="form-group">
+            <span class="field-label">Reference</span>
+            <span class="field-value">{{ job.invoice.reference }}</span>
+          </div>
+        </div>
+        <div class="section-actions">
+          <form action="/admin/jobs/{{ job.id }}/invoice/regenerate" method="POST">
+            <button type="submit" class="btn btn-save">
+              <svg class="btn-svg" aria-hidden="true"><use href="#icon-pdf"/></svg>
+              Generate Invoice
+            </button>
+          </form>
+        </div>
+      </div>
+    {% else %}
+      <div class="form-section-view">
+        <form action="/admin/jobs/{{ job.id }}/invoice" method="POST">
+          <div class="form-group">
+            <label class="form-label" for="invoiceDueDate">Due date (optional)</label>
+            <input class="form-input" type="date" id="invoiceDueDate" name="dueDate">
+          </div>
+          <div class="section-actions" style="padding-top: 1rem;">
+            <button type="submit" class="btn btn-save">
+              <svg class="btn-svg" aria-hidden="true"><use href="#icon-pdf"/></svg>
+              Generate Invoice
+            </button>
+          </div>
+        </form>
+      </div>
+    {% endif %}
   </section>
 
 </div>

@@ -49,14 +49,23 @@
       <div class="item-object js-product-row"
            aria-expanded="false"
            aria-controls="pd-{{ product.id }}">
-        <span class="item-ref">Product #{{ product.id }}</span>
-        <div class="item-title-row">
-          <h1 class="item-name">{{ product.name }}</h1>
-          <label class="toggle-switch js-product-active" data-id="{{ product.id }}" aria-label="Toggle active">
-            <input type="checkbox" {{ 'checked' if product.isActive }}>
-            <span class="toggle-track"></span>
-            <span class="toggle-label">Active</span>
-          </label>
+        <div class="item-header">
+          {% if primaryImg %}
+            <img class="item-cover-thumb" src="{{ primaryImg.url }}" alt="{{ primaryImg.altText or product.name }}" loading="lazy">
+          {% else %}
+            <div class="item-cover-thumb item-cover-thumb--empty" aria-hidden="true"></div>
+          {% endif %}
+          <div class="item-header-text">
+            <span class="item-ref">Product #{{ product.id }}</span>
+            <div class="item-title-row">
+              <h1 class="item-name">{{ product.name }}</h1>
+              <label class="toggle-switch js-product-active" data-id="{{ product.id }}" aria-label="Toggle active">
+                <input type="checkbox" {{ 'checked' if product.isActive }}>
+                <span class="toggle-track"></span>
+                <span class="toggle-label">Active</span>
+              </label>
+            </div>
+          </div>
         </div>
         <div class="item-recap">
           {% if product.pricePerEvent %}<div class="recap-item">{{ product.pricePerEvent | currency }} / event</div>{% endif %}
@@ -119,7 +128,7 @@
                       {% if opt.basePrice %}
                       <div class="form-group">
                         <span class="field-label">Price</span>
-                        <span class="field-value mono">{{ opt.basePrice | currency }}</span>
+                        <span class="field-value">{{ opt.basePrice | currency }}</span>
                       </div>
                       {% endif %}
                     </div>

@@ -97,6 +97,79 @@ async function saveSignOff(req, res) {
   res.redirect('/admin/settings?tab=email-templates');
 }
 
+async function savePdfSettings(req, res) {
+  const { paymentInstructions, bankDetails, invoiceNotes } = req.body;
+  await upsert({
+    paymentInstructions: paymentInstructions || null,
+    bankDetails:         bankDetails         || null,
+    invoiceNotes:        invoiceNotes        || null,
+  });
+  res.redirect('/admin/documents?tab=settings');
+}
+
+async function saveQuoteSettings(req, res) {
+  const { quoteNotes } = req.body;
+  await upsert({ quoteNotes: quoteNotes || null });
+  res.redirect('/admin/documents?tab=settings');
+}
+
+// ─── PDF Previews ─────────────────────────────────────────────────────────────
+
+const MOCK_JOB = {
+  id: 42,
+  notes: 'Please ensure white gloves are worn during setup. Access to the venue from 10am.',
+  jobStart: new Date('2026-09-12'),
+  jobEnd:   new Date('2026-09-14'),
+  customer: {
+    name:  'Sarah & James Murphy',
+    email: 'sarah.murphy@email.com',
+    phone: '+353 87 123 4567',
+  },
+  delivery: {
+    venueName:   'Ballymagarvey Village',
+    venueCounty: 'Meath',
+  },
+  pricing: {
+    rentalCost:   450.00,
+    deliveryCost:  75.00,
+    totalCost:    525.00,
+  },
+  items: [
+    {
+      quantity:   2,
+      unitPrice:  150.00,
+      product: { name: 'Cast Iron Post Box', pricePerEvent: 150.00 },
+      customisations: [
+        { price: 25.00, value: 'Murphy', customisationOption: { name: 'Custom name plate' } },
+      ],
+    },
+    {
+      quantity:  3,
+      unitPrice: 50.00,
+      product: { name: 'Decorative Lantern', pricePerEvent: 50.00 },
+      customisations: [],
+    },
+  ],
+  quote: { createdAt: new Date(), updatedAt: new Date() },
+};
+
+const MOCK_INVOICE = {
+  reference: 'INV-2026-0042',
+  createdAt: new Date(),
+  dueDate:   new Date('2026-08-01'),
+  status:    'DRAFT',
+};
+
+async function previewQuote(req, res) {
+  const settings = await prisma.companySettings.findFirst();
+  res.render('pdf/quote.njk', { job: MOCK_JOB, settings });
+}
+
+async function previewInvoice(req, res) {
+  const settings = await prisma.companySettings.findFirst();
+  res.render('pdf/invoice.njk', { job: MOCK_JOB, invoice: MOCK_INVOICE, settings });
+}
+
 async function saveTemplate(req, res) {
   const id = parseInt(req.params.id, 10);
   const { subject, body, isActive } = req.body;
@@ -220,4 +293,4 @@ async function upsert(data) {
   });
 }
 
-module.exports = { show, saveIdentity, saveContact, saveSeo, saveLocation, saveSignOff, saveTemplate, saveProfile, savePassword, saveZone, deleteZone };
+module.exports = { show, saveIdentity, saveContact, saveSeo, saveLocation, saveSignOff, savePdfSettings, saveQuoteSettings, saveTemplate, saveProfile, savePassword, saveZone, deleteZone, previewQuote, previewInvoice };

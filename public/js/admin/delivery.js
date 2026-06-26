@@ -61,7 +61,7 @@ function updateViewSections(data) {
   subtotalCell.dataset.value = price;
   subtotalCell.textContent   = formatted;
 
-  if (window.recalcPricingTotal) window.recalcPricingTotal();
+  document.dispatchEvent(new CustomEvent('pricing:recalc'));
 }
 
 function setView(id, value) {

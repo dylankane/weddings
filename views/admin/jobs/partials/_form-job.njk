@@ -19,11 +19,12 @@
 </div>
 
 {% for item in job.items %}
-<div class="form-row form-row--items">
-  <input type="hidden" name="items[{{ loop.index0 }}][id]" value="{{ item.id }}">
+{% set itemIndex = loop.index0 %}
+<div class="form-row form-row--items-edit">
+  <input type="hidden" name="items[{{ itemIndex }}][id]" value="{{ item.id }}">
   <div class="form-group">
     <label class="form-label js-item-label">Product {{ loop.index }}</label>
-    <select class="form-select" name="items[{{ loop.index0 }}][productId]" required>
+    <select class="form-select" name="items[{{ itemIndex }}][productId]" required>
       {% for product in availableProducts %}
       <option value="{{ product.id }}"{{ ' selected' if product.id === item.productId }}>{{ product.name }}</option>
       {% endfor %}
@@ -31,21 +32,71 @@
   </div>
   <div class="form-group">
     <label class="form-label">Qty</label>
-    <input class="form-input" type="number" name="items[{{ loop.index0 }}][quantity]"
+    <input class="form-input" type="number" name="items[{{ itemIndex }}][quantity]"
       value="{{ item.quantity }}" min="1" required>
   </div>
   <div class="form-group">
     <label class="form-label">Price</label>
-    <input class="form-input" type="number" name="items[{{ loop.index0 }}][unitPrice]"
+    <input class="form-input" type="number" name="items[{{ itemIndex }}][unitPrice]"
       step="0.01" min="0"
       value="{{ item.unitPrice if item.unitPrice else (item.product.pricePerEvent if item.product.pricePerEvent else '') }}" placeholder="0.00">
   </div>
 </div>
+{% if item.product.isCustomisable and item.product.customisationOptions.length %}
+<div class="js-item-customisations"
+     data-item-index="{{ itemIndex }}"
+     data-options="{{ item.product.customisationOptions | dump }}">
+  {% for cus in item.customisations %}
+  <div class="form-row form-row--sub js-cus-row">
+    <div class="form-group">
+      <label class="form-label">Customisation {{ loop.index }}</label>
+      <span class="field-value">{{ cus.customisationOption.name }}</span>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      {% if cus.customisationOption.type === 'BOOLEAN' %}
+      <select class="form-select" name="items[{{ itemIndex }}][customisations][c{{ cus.customisationOptionId }}]">
+        <option value="">—</option>
+        <option value="Yes"{{ ' selected' if cus.value === 'Yes' }}>Yes</option>
+        <option value="No"{{ ' selected' if cus.value === 'No' }}>No</option>
+      </select>
+      {% elif cus.customisationOption.type === 'SELECT' %}
+      <select class="form-select" name="items[{{ itemIndex }}][customisations][c{{ cus.customisationOptionId }}]">
+        <option value="">—</option>
+        {% for choice in cus.customisationOption.options %}
+        <option{{ ' selected' if cus.value === choice }}>{{ choice }}</option>
+        {% endfor %}
+      </select>
+      {% else %}
+      <input class="form-input" type="text"
+             name="items[{{ itemIndex }}][customisations][c{{ cus.customisationOptionId }}]"
+             value="{{ cus.value }}">
+      {% endif %}
+    </div>
+    <div class="form-group">
+      <label class="form-label">Price</label>
+      <input class="form-input" type="number" step="0.01" min="0"
+             name="items[{{ itemIndex }}][customisationPrices][c{{ cus.customisationOptionId }}]"
+             value="{{ cus.price if cus.price else '' }}"
+             placeholder="0.00">
+    </div>
+  </div>
+  {% endfor %}
+  <div class="form-row form-row--add-btn">
+    <button type="button" class="btn js-add-cus">
+      <svg class="btn-svg" aria-hidden="true"><use href="#icon-plus"/></svg>
+      Add customisation
+    </button>
+  </div>
+</div>
+{% endif %}
 {% endfor %}
 
 <script type="application/json" id="js-products-data">{{ availableProducts | dump | safe }}</script>
 
-<button type="button" class="btn" id="js-add-item">
-  <svg class="btn-svg" aria-hidden="true"><use href="#icon-plus"/></svg>
-  Add product
-</button>
+<div class="form-row form-row--add-btn">
+  <button type="button" class="btn" id="js-add-item">
+    <svg class="btn-svg" aria-hidden="true"><use href="#icon-plus"/></svg>
+    Add product
+  </button>
+</div>

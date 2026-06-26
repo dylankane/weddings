@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quote #{{ job.id }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --text:      #1a1a1a;
+      --text-2:    #787774;
+      --border:    #e6e5e3;
+      --accent:    #357438;
+      --white:     #ffffff;
+      --off-white: #f7f7f5;
+    }
+
+    html {
+      font-size: 1.4vw;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-size: 1rem;
+      color: var(--text);
+      background: var(--white);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    /* ─── Page ─── */
+    .page {
+      width: 100%;
+      height: 100%;
+      padding: 5%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── Header ─── */
+    .doc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-bottom: 3rem;
+      border-bottom: 2px solid var(--accent);
+    }
+
+    .company-logo {
+      max-height: 3.5rem;
+      max-width: 14rem;
+      object-fit: contain;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .company-name {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.2rem;
+    }
+
+    .company-meta {
+      font-size: 0.9rem;
+      color: var(--text-2);
+      line-height: 1.6;
+    }
+
+    .doc-type-block {
+      text-align: right;
+    }
+
+    .doc-type {
+      font-size: 2.3rem;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .doc-ref {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.2rem;
+    }
+
+    .doc-date {
+      font-size: 0.9rem;
+      color: var(--text-2);
+    }
+
+    /* ─── Meta Grid ─── */
+    .meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 5%;
+      padding: 2.5rem 0 0;
+    }
+
+    .meta-block + .meta-block {
+      padding-left: 2.5%;
+      text-align: right;
+    }
+
+    .meta-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-2);
+      margin-bottom: 0.5rem;
+    }
+
+    .meta-value {
+      font-size: 1rem;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .meta-value strong {
+      font-weight: 600;
+      display: block;
+    }
+
+    /* ─── Items Table ─── */
+    .section-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-2);
+      margin: 6rem 0 0.8rem;
+    }
+
+    /* ─── Spacer ─── */
+    .doc-spacer {
+      flex: 1;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8rem;
+    }
+
+    thead tr {
+      background: var(--off-white);
+    }
+
+    thead th {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-2);
+      padding: 0.5rem 0.7rem;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+
+    thead th.td-right { text-align: right; }
+
+    tbody td {
+      padding: 0.6rem 0.7rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      color: var(--text);
+    }
+
+    tbody td.td-right { text-align: right; }
+
+    tr.tr-sub td {
+      padding-top: 0.35rem;
+      padding-bottom: 0.35rem;
+      color: var(--text-2);
+      font-size: 0.9rem;
+    }
+
+    tr.tr-sub td:first-child {
+      padding-left: 1.8rem;
+    }
+
+    tr.tr-total td {
+      border-top: 2px solid var(--text);
+      border-bottom: none;
+      padding-top: 0.7rem;
+    }
+
+    .total-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-2);
+    }
+
+    .total-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* ─── Notes ─── */
+    .notes-block {
+      margin-top: 1.2rem;
+      padding: 1rem;
+      background: var(--off-white);
+      border: 1px solid var(--border);
+      border-radius: 0.3rem;
+    }
+
+    .notes-block .meta-label { margin-bottom: 0.35rem; }
+
+    .notes-text {
+      font-size: 0.95rem;
+      color: var(--text);
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    /* ─── Footer ─── */
+    .doc-footer {
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-notice {
+      font-size: 0.85rem;
+      color: var(--text-2);
+      margin-bottom: 0.35rem;
+    }
+
+    .footer-signoff {
+      font-size: 0.9rem;
+      color: var(--text);
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  {# ─── Header ─── #}
+  <div class="doc-header">
+    <div>
+      {% if settings and settings.logoLightLargeUrl %}
+        <img class="company-logo" src="{{ settings.logoLightLargeUrl }}" alt="{{ settings.companyName }}">
+      {% endif %}
+      <div class="company-name">{{ settings.companyName if settings else '' }}</div>
+      <div class="company-meta">
+        {% if settings and settings.contactAddress %}{{ settings.contactAddress }}<br>{% endif %}
+        {% if settings and settings.contactPhone %}{{ settings.contactPhone }}<br>{% endif %}
+        {% if settings and settings.contactEmail %}{{ settings.contactEmail }}{% endif %}
+      </div>
+    </div>
+    <div class="doc-type-block">
+      <div class="doc-type">QUOTE</div>
+      <div class="doc-ref">Quote #{{ job.id }}</div>
+      <div class="doc-date">{{ job.quote.createdAt | dateFormat if job.quote else '' }}</div>
+    </div>
+  </div>
+
+  {# ─── Meta ─── #}
+  <div class="meta-grid">
+    <div class="meta-block">
+      <div class="meta-label">Prepared for</div>
+      <div class="meta-value">
+        <strong>{{ job.customer.name }}</strong>
+        {{ job.customer.email }}<br>
+        {% if job.customer.phone %}{{ job.customer.phone }}{% endif %}
+      </div>
+    </div>
+    <div class="meta-block">
+      <div class="meta-label">Event details</div>
+      <div class="meta-value">
+        {% if job.jobStart %}
+          <strong>
+            {{ job.jobStart | dateFormat('short') }}{% if job.jobEnd %} → {{ job.jobEnd | dateFormat('short') }}{% endif %}
+          </strong>
+        {% endif %}
+        {% if job.delivery and job.delivery.venueName %}{{ job.delivery.venueName }}<br>{% endif %}
+        {% if job.delivery and job.delivery.venueCounty %}{{ job.delivery.venueCounty }}{% endif %}
+      </div>
+    </div>
+  </div>
+
+  {# ─── Line Items ─── #}
+  <table>
+    <thead>
+      <tr>
+        <th>Description</th>
+        <th class="td-right">Qty</th>
+        <th class="td-right">Unit Price</th>
+        <th class="td-right">Subtotal</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in job.items %}
+        {% set unitPrice = item.unitPrice or item.product.pricePerEvent or 0 %}
+        {% set subtotal  = unitPrice * item.quantity %}
+        <tr>
+          <td>{{ item.product.name }}</td>
+          <td class="td-right">{{ item.quantity }}</td>
+          <td class="td-right">{{ unitPrice | currency if unitPrice else '—' }}</td>
+          <td class="td-right">{{ subtotal | currency }}</td>
+        </tr>
+        {% for cus in item.customisations %}
+          {% if cus.price %}
+          <tr class="tr-sub">
+            <td>{{ cus.customisationOption.name }}</td>
+            <td class="td-right">1</td>
+            <td class="td-right">{{ cus.price | currency }}</td>
+            <td class="td-right">{{ cus.price | currency }}</td>
+          </tr>
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+      {% if job.pricing and job.pricing.deliveryCost and job.pricing.deliveryCost > 0 %}
+      <tr>
+        <td>Delivery</td>
+        <td class="td-right">1</td>
+        <td class="td-right">{{ job.pricing.deliveryCost | currency }}</td>
+        <td class="td-right">{{ job.pricing.deliveryCost | currency }}</td>
+      </tr>
+      {% endif %}
+      <tr class="tr-total">
+        <td colspan="3" class="td-right total-label">Total</td>
+        <td class="td-right total-value">{{ job.pricing.totalCost | currency if job.pricing else '—' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="doc-spacer"></div>
+
+  {# ─── Notes ─── #}
+  {% if settings and settings.quoteNotes %}
+  <div class="notes-block">
+    <div class="meta-label">Notes</div>
+    <div class="notes-text">{{ settings.quoteNotes }}</div>
+  </div>
+  {% endif %}
+
+  {# ─── Footer ─── #}
+  <div class="doc-footer">
+    {% if settings and settings.emailSignOff %}
+      <div class="footer-signoff">{{ settings.emailSignOff }}</div>
+    {% endif %}
+  </div>
+
+</div>
+</body>
+</html>

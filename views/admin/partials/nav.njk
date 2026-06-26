@@ -16,7 +16,7 @@
   </div>
 
   <div class="sidebar-search" id="sidebar-search">
-    <input type="text" class="search-input" placeholder="Search jobs, customers…" aria-label="Search jobs">
+    <input type="text" class="search-input" placeholder="Search jobs by customer, month, invoice, job number…" title="Search jobs by customer, month, invoice or job number" aria-label="Search jobs">
     <div class="search-results" id="sidebar-search-results">
       <p class="search-empty">Start typing to search…</p>
     </div>
@@ -37,6 +37,10 @@
     <a href="/admin/products" class="btn btn-nav {{ 'is-active' if currentPage === 'products' }}">
       <svg class="btn-svg" aria-hidden="true"><use href="#icon-products"/></svg>
       Products
+    </a>
+    <a href="/admin/documents" class="btn btn-nav {{ 'is-active' if currentPage === 'documents' }}">
+      <svg class="btn-svg" aria-hidden="true"><use href="#icon-pdf"/></svg>
+      Documents
     </a>
     <a href="/admin/settings" class="btn btn-nav {{ 'is-active' if currentPage === 'settings' }}">
       <svg class="btn-svg" aria-hidden="true"><use href="#icon-settings"/></svg>
@@ -114,6 +118,10 @@
         <svg class="btn-svg" aria-hidden="true"><use href="#icon-products"/></svg>
         Products
       </a>
+      <a href="/admin/documents" class="btn btn--lg">
+        <svg class="btn-svg" aria-hidden="true"><use href="#icon-pdf"/></svg>
+        Documents
+      </a>
       <a href="/admin/settings" class="btn btn--lg">
         <svg class="btn-svg" aria-hidden="true"><use href="#icon-settings"/></svg>
         Settings
@@ -135,7 +143,7 @@
   <div class="search-overlay-bg" id="search-overlay-bg"></div>
   <div class="search-overlay-panel">
     <div class="search-overlay-head">
-      <input type="text" class="search-input" placeholder="Search jobs, customers…" aria-label="Search jobs">
+      <input type="text" class="search-input" placeholder="Search jobs by customer, month, invoice, job number…" title="Search jobs by customer, month, invoice or job number" aria-label="Search jobs">
       <button class="btn btn--muted" id="search-overlay-close" aria-label="Close search">
         <svg class="btn-svg" aria-hidden="true"><use href="#icon-close"/></svg>
       </button>

@@ -1,0 +1,247 @@
+{% extends "admin/layout.njk" %}
+{% from "admin/macros/breadcrumb.njk" import breadcrumb %}
+
+{% block styles %}
+<link rel="stylesheet" href="/css/admin/settings.css">
+{% endblock %}
+
+{% block content %}
+
+<div class="page-bar">
+  {{ breadcrumb([
+    { label: 'Home', url: '/admin' },
+    { label: 'Documents' }
+  ]) }}
+</div>
+
+{# ─── Tab Bar ─────────────────────────────────────────────────── #}
+
+<nav class="settings-tab-bar" role="tablist" aria-label="Documents sections">
+  <button class="settings-tab" role="tab" data-tab="invoices" aria-selected="false" aria-controls="panel-invoices">Invoices</button>
+  <button class="settings-tab" role="tab" data-tab="quotes"   aria-selected="false" aria-controls="panel-quotes">Quotes</button>
+  <button class="settings-tab" role="tab" data-tab="settings" aria-selected="false" aria-controls="panel-settings">Settings</button>
+</nav>
+
+{# ─── Invoices Panel ───────────────────────────────────────────── #}
+
+<div class="settings-panel" id="panel-invoices" role="tabpanel">
+
+  <div class="page-greeting">All Invoices</div>
+
+  <div class="table-filter-bar">
+    <input type="text" class="search-input" placeholder="Search invoices by customer, month, reference, job number…" title="Search invoices by customer, month, reference or job number" aria-label="Search invoices">
+    <div class="form-dropdown" data-dropdown>
+      <input type="hidden" class="js-filter-status" value="">
+      <button type="button" class="btn js-dropdown-trigger" aria-haspopup="listbox" aria-expanded="false">
+        <span class="form-dropdown-value">All Invoices</span>
+        <svg class="btn-left-extra" aria-hidden="true"><use href="#icon-chevron-down"/></svg>
+      </button>
+      <ul class="form-dropdown-list form-dropdown-list--wide" role="listbox">
+        <li class="form-dropdown-option is-selected" role="option" aria-selected="true"  tabindex="-1" data-value="">All Invoices</li>
+        <li class="form-dropdown-option" role="option" aria-selected="false" tabindex="-1" data-value="DRAFT">Draft</li>
+        <li class="form-dropdown-option" role="option" aria-selected="false" tabindex="-1" data-value="SENT">Sent</li>
+        <li class="form-dropdown-option" role="option" aria-selected="false" tabindex="-1" data-value="PAID">Paid</li>
+        <li class="form-dropdown-option" role="option" aria-selected="false" tabindex="-1" data-value="OVERDUE">Overdue</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="data-card">
+    {% if invoices | length %}
+    <div class="table-wrap">
+      <table class="data-table" aria-label="Invoices">
+        <thead>
+          <tr>
+            <th scope="col">Reference</th>
+            <th scope="col">Customer</th>
+            <th scope="col">Event date</th>
+            <th scope="col">Status</th>
+            <th scope="col">Due date</th>
+            <th scope="col">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for invoice in invoices %}
+          <tr class="data-row js-invoice-row" data-job-id="{{ invoice.jobId }}" data-status="{{ invoice.status }}">
+            <td class="fw-medium">{{ invoice.reference }}</td>
+            <td>{{ invoice.job.customer.name if invoice.job and invoice.job.customer else '—' }}</td>
+            <td>{{ invoice.job.jobStart | dateFormat('short') if invoice.job and invoice.job.jobStart else '—' }}</td>
+            <td>
+              <span class="status-badge status-badge--{{ invoice.status | lower }} status-badge--plain">
+                <span class="dot dot--{{ invoice.status | lower }}"></span>
+                {%- if invoice.status === 'DRAFT' %}Draft
+                {%- elif invoice.status === 'SENT' %}Sent
+                {%- elif invoice.status === 'PAID' %}Paid
+                {%- elif invoice.status === 'OVERDUE' %}Overdue
+                {%- endif -%}
+              </span>
+            </td>
+            <td>{{ invoice.dueDate | dateFormat('short') if invoice.dueDate else '—' }}</td>
+            <td>{{ invoice.job.pricing.totalCost | currency if invoice.job and invoice.job.pricing else '—' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty">No invoices created yet.</div>
+    {% endif %}
+  </div>
+
+  <div id="invoice-preview" hidden>
+    <div class="doc-preview-frame">
+      <iframe title="Invoice preview" loading="lazy"></iframe>
+    </div>
+  </div>
+
+</div>
+
+{# ─── Quotes Panel ─────────────────────────────────────────────── #}
+
+<div class="settings-panel" id="panel-quotes" role="tabpanel">
+
+  <div class="page-greeting">All Quotes</div>
+
+  <div class="table-filter-bar">
+    <input type="text" class="search-input" placeholder="Search quotes by customer, month, reference, job number…" title="Search quotes by customer, month, reference or job number" aria-label="Search quotes">
+  </div>
+
+  <div class="data-card">
+    {% if quotes | length %}
+    <div class="table-wrap">
+      <table class="data-table" aria-label="Quotes">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Customer</th>
+            <th scope="col">Event date</th>
+            <th scope="col">Generated</th>
+            <th scope="col">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for quote in quotes %}
+          <tr class="data-row js-quote-row" data-job-id="{{ quote.jobId }}">
+            <td class="fw-medium">{{ quote.jobId }}</td>
+            <td>{{ quote.job.customer.name if quote.job and quote.job.customer else '—' }}</td>
+            <td>{{ quote.job.jobStart | dateFormat('short') if quote.job and quote.job.jobStart else '—' }}</td>
+            <td>{{ quote.createdAt | dateFormat('short') }}</td>
+            <td>{{ quote.job.pricing.totalCost | currency if quote.job and quote.job.pricing else '—' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty">No quotes created yet.</div>
+    {% endif %}
+  </div>
+
+  <div id="quote-preview" hidden>
+    <div class="doc-preview-frame">
+      <iframe title="Quote preview" loading="lazy"></iframe>
+    </div>
+  </div>
+
+</div>
+
+{# ─── Settings Panel ───────────────────────────────────────────── #}
+
+<div class="settings-panel" id="panel-settings" role="tabpanel">
+
+  <div class="page-greeting">Docs Settings</div>
+
+  <div class="content-container">
+
+    {# ── Quote Settings ── #}
+    <section class="form-section" aria-labelledby="section-quote-settings-title">
+      <div class="form-section-head">
+        <h2 class="form-section-title" id="section-quote-settings-title">Quote</h2>
+        <label class="toggle-switch" aria-label="Edit quote settings">
+          <input type="checkbox" class="js-section-toggle">
+          <span class="toggle-track"></span>
+          <span class="toggle-label">Edit</span>
+        </label>
+      </div>
+      <div class="form-section-view">
+        <div class="form-group">
+          <span class="field-label">Notes</span>
+          <span class="field-value{{ ' field-value--empty' if not (settings and settings.quoteNotes) }}">{{ settings.quoteNotes if settings and settings.quoteNotes else '—' }}</span>
+        </div>
+      </div>
+      <form class="form-section-form" action="/admin/settings/documents/quote" method="POST">
+        <div class="form-group">
+          <label class="form-label" for="quoteNotes">Notes</label>
+          <textarea class="form-textarea" id="quoteNotes" name="quoteNotes" rows="1">{{ settings.quoteNotes if settings and settings.quoteNotes else '' }}</textarea>
+        </div>
+        <div class="section-actions">
+          <button type="button" class="btn btn-cancel js-section-cancel">
+            <svg class="btn-svg" aria-hidden="true"><use href="#icon-close"/></svg>
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-save">
+            <svg class="btn-svg" aria-hidden="true"><use href="#icon-save"/></svg>
+            Save
+          </button>
+        </div>
+      </form>
+    </section>
+
+    {# ── Invoice Settings ── #}
+    <section class="form-section" aria-labelledby="section-invoice-settings-title">
+      <div class="form-section-head">
+        <h2 class="form-section-title" id="section-invoice-settings-title">Invoice</h2>
+        <label class="toggle-switch" aria-label="Edit invoice settings">
+          <input type="checkbox" class="js-section-toggle">
+          <span class="toggle-track"></span>
+          <span class="toggle-label">Edit</span>
+        </label>
+      </div>
+      <div class="form-section-view">
+        <div class="form-group">
+          <span class="field-label">Notes</span>
+          <span class="field-value{{ ' field-value--empty' if not (settings and settings.invoiceNotes) }}">{{ settings.invoiceNotes if settings and settings.invoiceNotes else '—' }}</span>
+        </div>
+        <div class="form-group">
+          <span class="field-label">Payment instructions</span>
+          <span class="field-value{{ ' field-value--empty' if not (settings and settings.paymentInstructions) }}">{{ settings.paymentInstructions if settings and settings.paymentInstructions else '—' }}</span>
+        </div>
+        <div class="form-group">
+          <span class="field-label">Bank details</span>
+          <span class="field-value{{ ' field-value--empty' if not (settings and settings.bankDetails) }}">{{ settings.bankDetails if settings and settings.bankDetails else '—' }}</span>
+        </div>
+      </div>
+      <form class="form-section-form" action="/admin/settings/documents/invoice" method="POST">
+        <div class="form-group">
+          <label class="form-label" for="invoiceNotes">Notes</label>
+          <textarea class="form-textarea" id="invoiceNotes" name="invoiceNotes" rows="1">{{ settings.invoiceNotes if settings and settings.invoiceNotes else '' }}</textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="paymentInstructions">Payment instructions</label>
+          <textarea class="form-textarea" id="paymentInstructions" name="paymentInstructions" rows="1">{{ settings.paymentInstructions if settings and settings.paymentInstructions else '' }}</textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="bankDetails">Bank details</label>
+          <textarea class="form-textarea" id="bankDetails" name="bankDetails" rows="1">{{ settings.bankDetails if settings and settings.bankDetails else '' }}</textarea>
+        </div>
+        <div class="section-actions">
+          <button type="button" class="btn btn-cancel js-section-cancel">
+            <svg class="btn-svg" aria-hidden="true"><use href="#icon-close"/></svg>
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-save">
+            <svg class="btn-svg" aria-hidden="true"><use href="#icon-save"/></svg>
+            Save
+          </button>
+        </div>
+      </form>
+    </section>
+
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/js/admin/documents.js"></script>
+{% endblock %}

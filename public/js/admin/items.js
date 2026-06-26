@@ -60,5 +60,12 @@ function reindex() {
     });
     const label = row.querySelector('.js-item-label');
     if (label) label.textContent = `Product ${i + 1}`;
+
+    const nested = row.nextElementSibling;
+    if (nested && nested.classList.contains('js-item-customisations')) {
+      nested.querySelectorAll('[name]').forEach(el => {
+        el.name = el.name.replace(/items\[\d+\]/, `items[${i}]`);
+      });
+    }
   });
 }

@@ -195,6 +195,7 @@ function selectDrawerPick(li) {
   const opts    = [...activeDropdown.querySelectorAll('.form-dropdown-option')];
 
   input.value = li.dataset.value;
+  input.dispatchEvent(new Event('change', { bubbles: true }));
   valueEl.textContent = li.textContent.trim();
   opts.forEach(o => { o.classList.remove('is-selected'); o.setAttribute('aria-selected', 'false'); });
   const match = opts.find(o => o.dataset.value === li.dataset.value);
@@ -208,42 +209,6 @@ function selectDrawerPick(li) {
 
 if (selectDrawerBackdrop) selectDrawerBackdrop.addEventListener('click', closeSelectDrawer);
 if (selectDrawerClose)    selectDrawerClose.addEventListener('click', closeSelectDrawer);
-
-// ─── Filter Drawer (mobile jobs filter) ──────────────────────────
-
-function openFilterDrawer() {
-  if (!selectDrawer) return;
-  activeDropdown = null;
-
-  selectDrawerList.innerHTML = '';
-  document.querySelectorAll('.filter-tab').forEach(tab => {
-    const countEl = tab.querySelector('.filter-tab-count');
-    const count   = countEl ? countEl.textContent.trim() : '';
-    const rawLabel = tab.childNodes[0].textContent.trim();
-    const label    = count ? `${rawLabel} (${count})` : rawLabel;
-    const isSelected = tab.classList.contains('is-active');
-    const status = new URL(tab.href, location.origin).searchParams.get('status') || '';
-
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'btn' + (isSelected ? ' fw-heavy' : '');
-    btn.appendChild(makeStatusBadge(status.toUpperCase(), label));
-    btn.addEventListener('click', () => { closeSelectDrawer(); window.location.href = tab.href; });
-    btn.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); closeSelectDrawer(); window.location.href = tab.href; }
-      if (e.key === 'Escape') closeSelectDrawer();
-    });
-    selectDrawerList.appendChild(btn);
-  });
-
-  selectDrawer.classList.add('is-open');
-  selectDrawer.setAttribute('aria-hidden', 'false');
-  document.body.style.overflow = 'hidden';
-  history.pushState({ selectDrawer: true }, '');
-}
-
-const filterDrawerBtn = document.querySelector('.js-filter-drawer-open');
-if (filterDrawerBtn) filterDrawerBtn.addEventListener('click', openFilterDrawer);
 
 // ─── Table Scroll Fade ───────────────────────────────────────────
 
@@ -300,6 +265,7 @@ document.querySelectorAll('[data-dropdown]').forEach(dropdown => {
       closeDropdown();
       trigger.focus();
       if (dropdown.hasAttribute('data-autosubmit')) dropdown.closest('form').submit();
+      input.dispatchEvent(new Event('change', { bubbles: true }));
     });
 
     option.addEventListener('keydown', e => {
@@ -326,4 +292,121 @@ document.querySelectorAll('.js-section-cancel').forEach(btn => {
     section.classList.remove('is-editing');
     if (toggle) toggle.checked = false;
   });
+});
+
+// ─── Nav Search ──────────────────────────────────────────────
+
+const sidebarSearchResults = document.getElementById('sidebar-search-results');
+const mobileSearchResults  = document.getElementById('mobile-search-results');
+
+function formatSearchDate(iso) {
+  if (!iso) return null;
+  const d = new Date(iso);
+  return isNaN(d.getTime()) ? null : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function renderSearchResults(container, results) {
+  container.innerHTML = '';
+  if (!results.length) {
+    container.innerHTML = '<p class="search-empty">No results found.</p>';
+    return;
+  }
+  results.forEach(r => {
+    const a    = document.createElement('a');
+    a.href     = r.url;
+    a.className = 'search-result-item';
+
+    const info = document.createElement('div');
+
+    const name = document.createElement('span');
+    name.className   = 'search-result-name';
+    name.textContent = r.customerName || `Job #${r.id}`;
+    info.appendChild(name);
+
+    const meta = document.createElement('span');
+    meta.className   = 'search-result-meta';
+    meta.textContent = formatSearchDate(r.jobStart) || `Job #${r.id}`;
+    info.appendChild(meta);
+
+    a.appendChild(info);
+
+    if (r.status) {
+      const dot = document.createElement('span');
+      dot.className = `dot dot--${r.status.toLowerCase()}`;
+      dot.setAttribute('aria-hidden', 'true');
+      a.appendChild(dot);
+    }
+
+    container.appendChild(a);
+  });
+}
+
+function resetSearchResults() {
+  [sidebarSearchResults, mobileSearchResults].forEach(el => {
+    if (el) el.innerHTML = '<p class="search-empty">Start typing to search…</p>';
+  });
+}
+
+let searchTimer = null;
+let lastQuery   = '';
+
+function doSearch(q) {
+  if (q === lastQuery) return;
+  lastQuery = q;
+
+  if (q.length < 2) {
+    resetSearchResults();
+    return;
+  }
+
+  fetch(`/admin/api/search?q=${encodeURIComponent(q)}`)
+    .then(r => r.json())
+    .then(data => {
+      [sidebarSearchResults, mobileSearchResults].forEach(el => {
+        if (el) renderSearchResults(el, data.results);
+      });
+    })
+    .catch(() => {
+      [sidebarSearchResults, mobileSearchResults].forEach(el => {
+        if (el) el.innerHTML = '<p class="search-empty">Search unavailable.</p>';
+      });
+    });
+}
+
+[sidebarSearchInput, mobileSearchInput].forEach(input => {
+  if (!input) return;
+  input.addEventListener('input', () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => doSearch(input.value.trim()), 250);
+  });
+});
+
+// ─── Table Search ────────────────────────────────────────────────
+
+const TABLE_MONTH_NORM = {
+  january: 'jan', february: 'feb', march: 'mar', april: 'apr',
+  may: 'may', june: 'jun', july: 'jul', august: 'aug',
+  september: 'sep', october: 'oct', november: 'nov', december: 'dec',
+};
+
+document.querySelectorAll('.table-filter-bar').forEach(bar => {
+  const textInput   = bar.querySelector('.search-input');
+  const statusInput = bar.querySelector('.js-filter-status');
+  const card        = bar.nextElementSibling;
+  if (!textInput || !card) return;
+
+  function applyFilter() {
+    const raw    = textInput.value.trim().toLowerCase();
+    const q      = TABLE_MONTH_NORM[raw] || raw;
+    const status = statusInput ? statusInput.value : '';
+
+    card.querySelectorAll('tbody tr').forEach(row => {
+      const textMatch   = !q      || row.textContent.toLowerCase().includes(q);
+      const statusMatch = !status || row.dataset.status === status;
+      row.style.display = (textMatch && statusMatch) ? '' : 'none';
+    });
+  }
+
+  textInput.addEventListener('input', applyFilter);
+  if (statusInput) statusInput.addEventListener('change', applyFilter);
 });

@@ -10,7 +10,7 @@ function recalcPricingTotal() {
 }
 
 recalcPricingTotal();
-window.recalcPricingTotal = recalcPricingTotal;
+document.addEventListener('pricing:recalc', recalcPricingTotal);
 
 // ─── Edit table ───────────────────────────────────────────────────
 

@@ -3,7 +3,6 @@
 function resize(el) {
   el.style.height = 'auto';
   el.style.height = el.scrollHeight + 'px';
-  el.style.overflowY = el.offsetHeight < el.scrollHeight ? 'auto' : 'hidden';
 }
 
 document.querySelectorAll('.form-textarea').forEach(el => {

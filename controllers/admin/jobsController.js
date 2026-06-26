@@ -53,7 +53,22 @@ async function detail(req, res, next) {
           customer: true,
           delivery: true,
           pricing: { include: { deliveryZone: true } },
-          items:   { include: { product: true } },
+          items: {
+            include: {
+              product: {
+                include: {
+                  customisationOptions: {
+                    where:   { isActive: true },
+                    orderBy: { displayOrder: 'asc' },
+                  },
+                },
+              },
+              customisations: {
+                include:  { customisationOption: true },
+                orderBy:  { id: 'asc' },
+              },
+            },
+          },
           quote:   true,
           invoice: true,
         },
@@ -363,15 +378,51 @@ async function saveJobDetails(req, res, next) {
         const unitPrice = item.unitPrice ? parseFloat(item.unitPrice) : null;
         if (!productId) continue;
 
+        let jobItemId;
         if (item.id) {
+          jobItemId = parseInt(item.id, 10);
           await tx.jobItem.update({
-            where: { id: parseInt(item.id, 10) },
+            where: { id: jobItemId },
             data:  { productId, quantity, unitPrice },
           });
         } else {
-          await tx.jobItem.create({
+          const created = await tx.jobItem.create({
             data: { jobId: id, productId, quantity, unitPrice },
           });
+          jobItemId = created.id;
+        }
+
+        const cusRaw   = item.customisations       || {};
+        const priceRaw = item.customisationPrices  || {};
+
+        const cusEntries = Object.entries(cusRaw)
+          .filter(([, val]) => val && String(val).trim())
+          .map(([key, val]) => {
+            const rp    = priceRaw[key];
+            const price = rp !== undefined && rp !== '' ? parseFloat(rp) : null;
+            return { optionId: parseInt(key.slice(1), 10), value: String(val), price };
+          });
+
+        await tx.jobItemCustomisation.deleteMany({ where: { jobItemId } });
+
+        if (cusEntries.length) {
+          const options = await tx.productCustomisationOption.findMany({
+            where:  { id: { in: cusEntries.map(e => e.optionId) } },
+            select: { id: true, basePrice: true },
+          });
+          const optMap       = new Map(options.map(o => [o.id, o]));
+          const validEntries = cusEntries.filter(e => optMap.has(e.optionId));
+
+          if (validEntries.length) {
+            await tx.jobItemCustomisation.createMany({
+              data: validEntries.map(e => ({
+                jobItemId,
+                customisationOptionId: e.optionId,
+                value: e.value,
+                price: (e.price !== null && !isNaN(e.price)) ? e.price : (optMap.get(e.optionId).basePrice ?? null),
+              })),
+            });
+          }
         }
       }
     });

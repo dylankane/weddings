@@ -210,11 +210,11 @@ async function update(req, res, next) {
       await prisma.productCustomisationOption.deleteMany({ where: { id: { in: delOptIds } } });
     }
 
-    const optIds     = toArray(b['optionId[]']);
-    const optNames   = toArray(b['optionName[]']);
-    const optDescs   = toArray(b['optionDesc[]']);
-    const optPrices  = toArray(b['optionPrice[]']);
-    const optActives = toArray(b['optionActive[]']);
+    const optIds     = toArray(b.optionId);
+    const optNames   = toArray(b.optionName);
+    const optDescs   = toArray(b.optionDesc);
+    const optPrices  = toArray(b.optionPrice);
+    const optActives = toArray(b.optionActive);
 
     for (let i = 0; i < optNames.length; i++) {
       if (!optNames[i]) continue;

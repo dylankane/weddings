@@ -2,3 +2,7 @@ node_modules/
 .env
 public/uploads/*
 !public/uploads/.gitkeep
+storage/pdfs/quotes/*
+storage/pdfs/invoices/*
+!storage/pdfs/quotes/.gitkeep
+!storage/pdfs/invoices/.gitkeep
