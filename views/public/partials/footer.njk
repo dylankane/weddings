@@ -1,16 +1,17 @@
 <footer class="footer" role="contentinfo">
   <div class="footer-grid">
     <div class="footer-col">
-      <a href="/" class="footer-brand">Posta</a>
+      <a href="/" class="footer-brand">{{ companySettings.companyName or 'posadh' }}</a>
       <p class="footer-tagline">{{ companySettings.tagline if companySettings and companySettings.tagline else 'Cast iron post box hire for Irish weddings.' }}</p>
     </div>
     <div class="footer-col">
       <span class="footer-col-label">Explore</span>
       <ul class="footer-links" role="list">
         <li><a href="/collection">Collection</a></li>
-        <li><a href="/delivery">Delivery</a></li>
+        <li><a href="/?delivery=1">Delivery</a></li>
         <li><a href="/about">About</a></li>
         <li><a href="/enquiry">Enquire</a></li>
+        <li><a href="/contact">Contact</a></li>
       </ul>
     </div>
     <div class="footer-col">
@@ -50,7 +51,7 @@
     </div>
   </div>
   <div class="footer-base">
-    <span>&copy; {{ currentYear }} {{ companySettings.companyName if companySettings and companySettings.companyName else 'Posta' }}. All rights reserved.</span>
+    <span>&copy; {{ currentYear }} {{ companySettings.companyName if companySettings and companySettings.companyName else 'posadh' }}. All rights reserved.</span>
     <a href="/legal">Terms &amp; Conditions</a>
   </div>
 </footer>

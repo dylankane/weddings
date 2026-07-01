@@ -42,6 +42,14 @@
     }
   }
 
+  // ── Nav scroll state ─────────────────────────────────────
+  const nav = document.getElementById('nav');
+  if (nav) {
+    const updateNav = () => nav.classList.toggle('nav--scrolled', window.scrollY > 0);
+    window.addEventListener('scroll', updateNav, { passive: true });
+    updateNav();
+  }
+
   // ── Scroll reveals ────────────────────────────────────────
   const SCROLL_CLASSES = ['reveal-left', 'reveal-right', 'reveal-bottom'];
   const scrollEls = document.querySelectorAll(SCROLL_CLASSES.map(c => `.${c}`).join(', '));

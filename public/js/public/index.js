@@ -64,4 +64,45 @@
     ccClose.addEventListener('click', () => closePanel(ccPanel, ccToggle));
   }
 
+  // ── Query param: delivery footer link animation ──────────
+  if (new URLSearchParams(window.location.search).get('delivery') === '1'
+      && deliveryPanel && deliveryToggle) {
+
+    history.replaceState(null, '', '/');
+
+    var deliveryCard = deliveryToggle.closest('.card');
+
+    setTimeout(function () {
+
+      // Step 1: scroll to delivery card and let it settle
+      if (deliveryCard) {
+        deliveryCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+
+      // Step 2: scroll + reveal animation complete — run highlight
+      setTimeout(function () {
+        if (deliveryCard) {
+          deliveryCard.classList.add('card--highlight');
+        }
+
+        // Step 3: highlight finished — open panel, remove highlight class
+        setTimeout(function () {
+          if (deliveryCard) {
+            deliveryCard.classList.remove('card--highlight');
+          }
+          deliveryPanel.classList.add('is-open');
+          deliveryToggle.setAttribute('aria-expanded', 'true');
+
+          // Step 4: panel fully expanded — scroll to it
+          setTimeout(function () {
+            deliveryPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 900);
+
+        }, 1100);
+
+      }, 2200);
+
+    }, 300);
+  }
+
 })();

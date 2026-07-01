@@ -1,6 +1,6 @@
 {% extends "public/layout.njk" %}
 
-{% block title %}Posta — Cast Iron Post Box Hire, Ireland{% endblock %}
+{% block title %}{{ companySettings.companyName or 'posadh' }} — Cast Iron Post Box Hire, Ireland{% endblock %}
 
 {% block meta %}
 <meta name="description" content="Premium cast iron post box hire for Irish weddings. Delivered to your venue, collected the morning after.">
@@ -18,7 +18,7 @@
 
     <div class="card-outer fade-slow">
       <div class="card card-1">
-        <p class="hero-kicker">Posta &ensp;&middot;&ensp; Welcome</p>
+        <p class="hero-kicker">Welcome &ensp;&middot;&ensp; {{ companySettings.companyName or 'posadh' }}</p>
         <h1 class="hero-title" id="title">
           The Post Box<br>
           To<br>
@@ -206,7 +206,7 @@
       <div class="blob blob--info" aria-hidden="true"></div>
       <div class="info-body">
         <h3 class="info-heading">What We Offer</h3>
-        <p>Posta hires original antique cast iron post boxes for wedding days across Ireland. Each piece is lockable and secure, keeping cards safe throughout your day. They bring real weight and character to any table setting — and because guests post independently, there is no need for anyone to manage card collection on the day itself.</p>
+        <p>{{ companySettings.companyName or 'posadh' }} hires original antique cast iron post boxes for wedding days across Ireland. Each piece is lockable and secure, keeping cards safe throughout your day. They bring real weight and character to any table setting — and because guests post independently, there is no need for anyone to manage card collection on the day itself.</p>
         <h3 class="info-heading">How It Works</h3>
         <p>Check availability for your date and make an enquiry with your venue details. We offer full delivery and collection to your venue, or self-collection if you prefer. Delivery is free to venues in Wicklow, Kildare, Meath, and Louth — all other locations quoted on enquiry. If nothing is showing for your date, get in touch anyway — we may be able to source a piece.</p>
       </div>

@@ -2,10 +2,10 @@
 {% set navCtaLabel = 'Enquire' %}
 {% set navCtaHref = '/enquiry' %}
 
-{% block title %}Contact — Posta{% endblock %}
+{% block title %}Contact — {{ companySettings.companyName or 'posadh' }}{% endblock %}
 
 {% block meta %}
-<meta name="description" content="Get in touch with Posta. Questions about hire, delivery, or availability — we reply within 24 hours.">
+<meta name="description" content="Get in touch with {{ companySettings.companyName or 'posadh' }}. Questions about hire, delivery, or availability — we reply within 24 hours.">
 {% endblock %}
 
 {% block styles %}
@@ -19,7 +19,7 @@
   <section class="con-header">
     <div class="blob blob--contact-header fade-fast" aria-hidden="true"></div>
     <div class="con-header-body fade-slow">
-      <p class="con-kicker">Posta &ensp;&middot;&ensp; Contact</p>
+      <p class="con-kicker">Contact &ensp;&middot;&ensp; {{ companySettings.companyName or 'posadh' }}</p>
       <h1 class="con-title">Get in Touch</h1>
       <p class="con-subtitle">Questions about hire, delivery, or availability. We reply within 24 hours.</p>
     </div>
@@ -100,7 +100,7 @@
           <h3 class="info-heading">Hours</h3>
           <p>We respond to all enquiries within 24 hours. For urgent queries on a wedding day, please call directly.</p>
           <h3 class="info-heading">About</h3>
-          <p>Posta hires original antique cast iron post boxes for wedding days across Ireland. Each piece is lockable, secure, and delivered directly to your venue. We started with a single post box and a belief that the details matter — the weight of iron, the turn of a key, the character of something genuinely old.</p>
+          <p>{{ companySettings.companyName or 'posadh' }} hires original antique cast iron post boxes for wedding days across Ireland. Each piece is lockable, secure, and delivered directly to your venue. We started with a single post box and a belief that the details matter — the weight of iron, the turn of a key, the character of something genuinely old.</p>
         </div>
 
       </div>

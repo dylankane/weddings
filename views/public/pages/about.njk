@@ -1,0 +1,48 @@
+{% extends "public/layout.njk" %}
+{% set navCtaLabel = 'Enquire' %}
+{% set navCtaHref = '/enquiry' %}
+
+{% block title %}About — {{ companySettings.companyName or 'posadh' }}{% endblock %}
+
+{% block meta %}
+<meta name="description" content="About {{ companySettings.companyName or 'posadh' }} — original cast iron post box hire for weddings across Ireland. Delivered to your venue, collected the morning after.">
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="/css/public/about.css">
+{% endblock %}
+
+{% block content %}
+
+<div class="abt-wrapper">
+
+  <section class="abt-header">
+    <div class="blob blob--about-header fade-fast" aria-hidden="true"></div>
+    <div class="abt-header-body fade-slow">
+      <p class="abt-kicker">About &ensp;&middot;&ensp; {{ companySettings.companyName or 'posadh' }}</p>
+      <h1 class="abt-title">About Us</h1>
+      <p class="abt-subtitle">A small Irish company hiring original antique cast iron post boxes for wedding days.</p>
+    </div>
+  </section>
+
+  <section class="abt-body">
+    <div class="abt-content">
+      <div class="abt-info">
+
+        <h3 class="info-heading">Who We Are</h3>
+        <p>{{ companySettings.companyName or 'posadh' }} hires original antique cast iron post boxes for wedding days across Ireland. Each piece is lockable and secure, keeping cards safe throughout your day. They bring real weight and character to any table setting — and because guests post independently, there is no need for anyone to manage card collection on the day itself.</p>
+        <p>We started with a single post box and a belief that the details matter — the weight of iron, the turn of a key, the character of something genuinely old.</p>
+
+        <h3 class="info-heading">How It Works</h3>
+        <p>Browse the collection and check availability for your date. Make an enquiry with your venue details and we will confirm availability and pricing within 24 hours. A deposit secures your date. We deliver directly to your venue, typically the evening before your wedding day, and collect the morning after.</p>
+
+        <h3 class="info-heading">Delivery</h3>
+        <p>We deliver to venues across Ireland. Delivery is free to venues in Wicklow, Kildare, Meath, and Louth. All other locations are quoted on enquiry — just include your venue details and we will confirm the cost upfront. Self-collection is also available if you prefer.</p>
+
+      </div>
+    </div>
+  </section>
+
+</div>
+
+{% endblock %}

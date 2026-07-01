@@ -1,6 +1,6 @@
 {% extends "public/layout.njk" %}
 
-{% block title %}The Collection — Posta{% endblock %}
+{% block title %}The Collection — {{ companySettings.companyName or 'posadh' }}{% endblock %}
 
 {% block meta %}
 <meta name="description" content="Browse cast iron post boxes available to hire for your wedding day. Check availability for your date and enquire directly.">
@@ -17,7 +17,7 @@
   <section class="col-header">
     <div class="blob blob--col-header fade-fast" aria-hidden="true"></div>
     <div class="col-header-body fade-slow">
-      <p class="col-kicker">Posta &ensp;&middot;&ensp; Products</p>
+      <p class="col-kicker">Products &ensp;&middot;&ensp; {{ companySettings.companyName or 'posadh' }}</p>
       <h1 class="col-title">The Collection</h1>
       <p class="col-subtitle">Cast iron post boxes, available to hire for your wedding day. Each piece is original, lockable, and delivered to your venue.</p>
     </div>

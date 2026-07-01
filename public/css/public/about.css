@@ -1,0 +1,96 @@
+/* -- Page wrapper ------------------------------------------ */
+.abt-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+/* -- Header ------------------------------------------------ */
+.abt-header {
+  position: relative;
+  background: var(--dark);
+  padding: 6rem;
+  overflow: hidden;
+}
+
+.abt-header-body {
+  position: relative;
+  z-index: 1;
+}
+
+.abt-kicker {
+  font-size: var(--font-xxxs);
+  font-weight: 400;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 2rem;
+}
+
+.abt-title {
+  font-size: var(--font-xl);
+  letter-spacing: 0.06em;
+  color: var(--white);
+  margin-bottom: 1.5rem;
+}
+
+.abt-subtitle {
+  font-size: var(--font-xs);
+  line-height: 1.8;
+  color: var(--light-grey);
+  max-width: 44ch;
+}
+
+/* -- Body -------------------------------------------------- */
+.abt-body {
+  background: var(--dark);
+  padding: 5rem 6rem 8rem;
+  border-top: 1px solid var(--mid);
+}
+
+.abt-content {
+  max-width: 62ch;
+}
+
+/* -- Info sections ----------------------------------------- */
+.abt-info .info-heading {
+  font-size: var(--font-xxxs);
+  font-family: var(--f-body);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.25rem;
+  margin-top: 3rem;
+}
+
+.abt-info .info-heading:first-child {
+  margin-top: 0;
+}
+
+.abt-info p {
+  font-size: var(--font-xs);
+  line-height: 1.9;
+  color: var(--light-grey);
+  margin-bottom: 1.25rem;
+}
+
+.abt-info p:last-child {
+  margin-bottom: 0;
+}
+
+/* -- Responsive -------------------------------------------- */
+@media (max-width: 768px) {
+  .abt-header {
+    padding: 5.5rem 2rem;
+  }
+
+  .abt-body {
+    padding: 3rem 2rem 5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .abt-body {
+    padding: 2.5rem 1.5rem 4rem;
+  }
+}

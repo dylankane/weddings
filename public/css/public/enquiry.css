@@ -219,3 +219,45 @@
   color: var(--grey);
   text-indent: 2em;
 }
+
+/* -- Responsive -------------------------------------------- */
+@media (max-width: 900px) {
+  .enq-grid {
+    grid-template-columns: 1fr;
+    gap: 4rem;
+  }
+
+  .enq-info-col {
+    order: -1;
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .enq-row {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .enq-header {
+    padding: 5.5rem 2rem;
+  }
+
+  .enq-body {
+    padding: 3rem 2rem 5rem;
+  }
+
+  .enq-radio-group {
+    gap: 1.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .enq-header {
+    padding: 5.5rem 1.5rem 2.5rem;
+  }
+
+  .enq-body {
+    padding: 2.5rem 1.5rem 4rem;
+  }
+}

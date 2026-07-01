@@ -29,6 +29,10 @@ router.get('/collection', async (req, res) => {
   res.render('public/pages/collection.njk', { products });
 });
 
+router.get('/about', (req, res) => {
+  res.render('public/pages/about.njk');
+});
+
 router.get('/contact', (req, res) => {
   res.render('public/pages/contact.njk');
 });

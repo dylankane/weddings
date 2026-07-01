@@ -2,7 +2,7 @@
 {% set navCtaLabel = 'Home' %}
 {% set navCtaHref = '/' %}
 
-{% block title %}Enquire — Posta{% endblock %}
+{% block title %}Enquire — {{ companySettings.companyName or 'posadh' }}{% endblock %}
 
 {% block meta %}
 <meta name="description" content="Enquire about hiring a cast iron post box for your wedding day. We reply within 24 hours.">
@@ -19,7 +19,7 @@
   <section class="enq-header">
     <div class="blob blob--enq-header fade-fast" aria-hidden="true"></div>
     <div class="enq-header-body fade-slow">
-      <p class="enq-kicker">Posta &ensp;&middot;&ensp; Enquire</p>
+      <p class="enq-kicker">Enquire &ensp;&middot;&ensp; {{ companySettings.companyName or 'posadh' }}</p>
       <h1 class="enq-title">Make an Enquiry</h1>
       <p class="enq-subtitle">Tell us your date and venue. We reply within 24 hours.</p>
     </div>

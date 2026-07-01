@@ -1,6 +1,6 @@
 <header class="nav" id="nav" role="banner">
   <div class="nav-inner">
-    <a href="/" class="nav-wordmark">Posta</a>
+    <a href="/" class="nav-wordmark">{{ companySettings.companyName or 'posadh' }}</a>
     <a href="{{ navCtaHref or '/enquiry' }}" class="nav-cta btn btn-outline-accent">{{ navCtaLabel or 'Enquire' }}</a>
   </div>
 </header>
